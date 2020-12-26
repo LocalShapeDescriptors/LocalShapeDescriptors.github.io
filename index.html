@@ -1,9 +1,186 @@
 <!doctype html>
-<meta charset="utf-8">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <!-- roboto font -->
+  <link href='https://fonts.googleapis.com/css?family=Roboto:300' rel='stylesheet' type='text/css'>
+
+  <meta name="theme-color" content="#ffffff" />
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-141682504-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-141682504-1');
+  </script>
+
+
+  <!-- SEO -->
+  <meta property="og:title" content="Local Shape Descriptors for Neuron Segmentation" />
+  <meta property="og:type" content="article" />
+  <meta property="og:description" content="Auxiliary learning for large scale connectomics" />
+  <meta property="og:image" content="assets/img/lsds_header.jpeg" />
+  <meta property="og:url" content="https://localshapedescriptors.github.io" />
+
+  <!-- Twitter Card data -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Local Shape Descriptors for Neuron Segmentation" />
+  <meta name="twitter:description" content="" />
+  <meta property="og:site_name" content="Local Shape Descriptors for Neuron Segmentation" />
+  <meta name="twitter:image" content="assets/img/lsds_header.jpeg" />
+
+</head>
+
 <style>
+
 body {
-  overflow-x: hidden;
+  margin: 0px;
 }
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 4px;
+}
+
+/* Create four equal columns that sits next to each other */
+.column {
+  flex: 25%;
+  max-width: 25%;
+  padding: 0 4px;
+}
+
+.column img {
+  vertical-align: middle;
+  width: 100%;
+}
+
+/* Responsive layout - makes a two column-layout instead of four columns */
+@media screen and (max-width: 800px) {
+  .column {
+    flex: 50%;
+    max-width: 50%;
+  }
+}
+
+/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .column {
+    flex: 100%;
+    max-width: 100%;
+  }
+}
+
+.image-grid {
+  display: flex;
+  flex-wrap: wrap;
+  width: 90%;
+  margin: 0 auto;
+}
+.grid-image {
+  display: block;
+  flex-basis: 100%;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+@media only screen and (min-width: 640px) {
+  .grid-image {
+    flex-basis: 50%;
+  }
+}
+
+@media only screen and (min-width: 960px) {
+  .grid-image {
+    flex-basis: 33.333%;
+  }
+}
+
+@media only screen and (min-width: 1280px) {
+  .grid-image {
+    flex-basis: 25%;
+  }
+}
+
+@media only screen and (min-width: 1600px) {
+  .grid-image {
+    flex-basis: 20%;
+  }
+}
+
+.a {
+  position: absolute;
+  z-index: 3;
+}
+
+.b {
+  position: absolute;
+  z-index: 2;
+}
+
+.img-magnifier-glass {
+  position: absolute;
+  border: 2px solid #000;
+  border-radius: 50%;
+  cursor: none;
+  /*Set the size of the magnifier glass:*/
+  width: 50px;
+  height: 50px;
+  z-index: 1;
+}
+
+.accordion-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  margin: auto;
+}
+
+.responsive-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  margin: auto;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+}
+
+.test-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  margin: auto;
+  border: 5px solid red;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+}
+
+.plot-container {
+  position: relative;
+  width: 100%;
+  height: 650px;
+  overflow: hidden;
+  margin: auto;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: none;
+}
+
 .scroll-down {
   width: 80px;
   height: 40px;
@@ -21,6 +198,7 @@ body {
   -ms-transition: opacity 2s ease-in;
   transition: opacity 2s ease-in;
 }
+
 .scroll-down span {
   margin-top: 5px;
   position: absolute;
@@ -31,10 +209,12 @@ body {
   width: 10px;
   background: #FFFFFF;
 }
+
 .scroll-down span:nth-of-type(2) {
   transform-origin: 0 100%;
   transform: translate(0, 0) rotate(-45deg);
 }
+
 .spinner {
   position: absolute;
   height: 160px;
@@ -52,6 +232,106 @@ body {
   left: calc(50% - 80px);
   right: auto;
   bottom: auto;
+}
+
+.accordion {
+  margin: auto;
+  position: relative;
+}
+.accordion input {
+  display: none;
+}
+
+.box {
+  position: relative;
+  background: white;
+  height: 64px;
+  transition: all .15s ease-in-out;
+}
+
+.box::before {
+  content: '';
+  position: absolute;
+  display: block;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  box-shadow: 0 -1px 0 #e5e5e5,0 0 2px rgba(0,0,0,.12),0 2px 4px rgba(0,0,0,.24);
+}
+
+header.box {
+  background: #00BCD4;
+  z-index: 100;
+  cursor: initial;
+  box-shadow: 0 -1px 0 #e5e5e5,0 0 2px -2px rgba(0,0,0,.12),0 2px 4px -4px rgba(0,0,0,.24);
+}
+
+header.box-title {
+  margin: 0;
+  font-weight: normal;
+  font-size: 16pt;
+  color: white;
+  cursor: initial;
+}
+
+.box-title {
+  width: calc(100% - 40px);
+  height: 64px;
+  line-height: 64px;
+  padding: 0 20px;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;
+}
+
+.box-content {
+  width: 100%;
+  height: 100%;
+  display: none;
+  overflow: hidden;
+  margin: auto;
+}
+
+.box-close {
+  position: absolute;
+  height: 64px;
+  width: 100%;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+  display: none;
+}
+input:checked + .box {
+  height: auto;
+  margin: 16px 0;
+  box-shadow: 0 0 6px rgba(0,0,0,.16),0 6px 12px rgba(0,0,0,.32);
+}
+input:checked + .box .box-title {
+  border-bottom: 1px solid rgba(0,0,0,.18);
+}
+input:checked + .box .box-content,
+input:checked + .box .box-close {
+  display: inline-block;
+}
+
+.arrows section .box-title {
+  padding-left: 44px;
+  width: calc(100% - 64px);
+}
+.arrows section .box-title:before {
+  position: absolute;
+  display: block;
+  content: '\203a';
+  font-size: 18pt;
+  left: 20px;
+  top: -2px;
+  transition: transform .15s ease-in-out;
+  color: rgba(0,0,0,.54);
+}
+input:checked + section.box .box-title:before {
+  transform: rotate(90deg);
 }
 
 @-webkit-keyframes rotation {
@@ -79,7 +359,7 @@ dt-article figcaption {
   color: rgba(0, 0, 0, 0.6);
   font-size: 12px;
   line-height: 1.5em;
-  text-align: left;
+  text-align: center;
 }
 
 dt-article figcaption a {
@@ -117,50 +397,63 @@ dt-article figcaption b {
   float: center; /* Float the buttons side by side */
 }
 
+#toc_container {
+  float: left;
+  width: auto;
+  background: #eee;
+  font-size: 0.8em;
+  padding: 1em 1em;
+  margin: 0 1em 0 1em;
+  border: 1px solid #aaa;
+}
+
+.toc_title {
+    font-weight: 700;
+    text-align: center;
+}
+
+#toc_container ul>li {
+margin: 0 0 .6em 0;
+list-style-type: none;
+}
+
+#toc_container a {
+text-decoration: none;
+color: #3D5AFE;
+}
+
 /* Add a background color on hover */
 .btn-group button:hover {
   background-color: #FF6C00;
 }
+
+#toc_scroll {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  z-index: 99;
+  border: 2px solid #008CBA;
+  outline: none;
+  background-color: white;
+  color: black;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 18px;
+  border-radius: 8px;
+}
+
+#toc_scroll:hover {
+  background-color: #aaa;
+}
+
 </style>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <!-- roboto font -->
-  <link href='https://fonts.googleapis.com/css?family=Roboto:300' rel='stylesheet' type='text/css'>
 
-  <meta name="theme-color" content="#ffffff" />
-
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-141682504-1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'UA-141682504-1');
-  </script>
-
-
-  <!-- SEO -->
-  <meta property="og:title" content="Local Shape Descriptors for Neuron Segmentation" />
-  <meta property="og:type" content="article" />
-  <meta property="og:description" content="Auxiliary learning for large scale connectomics" />
-  <meta property="og:image" content="https://weightagnostic.github.io/assets/img/lsds.png" />
-  <meta property="og:url" content="https://localshapedescriptors.github.io" />
-
-  <!-- Twitter Card data -->
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Local Shape Descriptors for Neuron Segmentation" />
-  <meta name="twitter:description" content="" />
-  <meta property="og:site_name" content="Local Shape Descriptors for Neuron Segmentation" />
-  <meta name="twitter:image" content="https://weightagnostic.github.io/assets/img/lsds.png" />
-
-</head>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
 
-<!--<script src="lib/jquery-1.12.4.min.js"></script>-->
 <!--<script src="lib/mobile-detect.min.js"></script>-->
 <script src="lib/template.v1.js"></script>
+
 
 <script type="text/front-matter">
   title: "LSDs"
@@ -172,12 +465,14 @@ dt-article figcaption b {
 src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 data-src="assets/img/lsds_header.jpeg" style="display: block; margin: auto; width: 100%;"/>
 <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-<td width="50%"><figcaption style="text-align: center;">Placeholder image</figcaption></td>
-</tr></table>
+<td width="50%"><figcaption style="text-align: center;">Direction vectors of the
+    LSDs on a single neuron from the fly visual system. Colors correspond to
+    the direction in which the neuronal processes travel.</figcaption></td>
+  </tr></table>
 
 </div>
 
-<dt-article id="dtbody">
+<dt-article class="centered" id="dtbody">
 
 <dt-byline class="l-page transparent"></dt-byline>
 <h1>Local Shape Descriptors for Neuron Segmentation</h1>
@@ -198,6 +493,10 @@ data-src="assets/img/lsds_header.jpeg" style="display: block; margin: auto; widt
         <a class="affiliation" href="https://www.janelia.org/lab/turaga-lab">HHMI Janelia</a>
     </div>
     <div class="author">
+        <a class="name" href="https://scholar.google.com/citations?user=y2s07ssAAAAJ&hl=en">Wei-Chung Allen Lee</a>
+        <a class="affiliation" href="https://www.lee.hms.harvard.edu/">Harvard University</a>
+    </div>
+    <div class="author">
         <a class="name" href="https://scholar.google.com/citations?user=oSGyzt4AAAAJ&hl=en">Stephan Saalfeld</a>
         <a class="affiliation" href="https://www.janelia.org/lab/saalfeld-lab">HHMI Janelia</a>
     </div>
@@ -206,55 +505,514 @@ data-src="assets/img/lsds_header.jpeg" style="display: block; margin: auto; widt
         <a class="affiliation" href="https://www.janelia.org/lab/turaga-lab">HHMI Janelia</a>
     </div>
     <div class="author">
+        <a class="name" href="https://scholar.google.com/citations?user=_ZLy6tEAAAAJ&hl=en">Uri Manor</a>
+        <a class="affiliation" href="https://www.salk.edu/science/core-facilities/advanced-biophotonics">Salk Institute</a>
+    </div>
+    <div class="author">
         <a class="name" href="https://scholar.google.com/citations?user=7rqAapgAAAAJ&hl=en">Jan Funke</a>
         <a class="affiliation" href="https://www.janelia.org/lab/funke-lab">HHMI Janelia</a>
     </div>
   </div>
   <div class="date">
-    <div class="month">Hopefully</div>
-    <div class="year">Soon</div>
+    <div class="month">LSD</div>
+    <div class="year" style="color: #2AAFCF;"><a href="https://github.com/funkelab/lsd_paper" target="_blank">Paper</a></div>
   </div>
 </div>
 </dt-byline>
 </dt-byline>
+
+<button onclick="topFunction()" id="toc_scroll" title="Scroll to toc">Contents</button>
+
+<script>
+//Get the button
+var mybutton = document.getElementById("toc_scroll");
+
+// When the user scrolls down 2000px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+  var toc = document.getElementById("toc_container");
+  if (window.scrollY > (toc.offsetTop + toc.offsetHeight)) {
+    mybutton.style.display = "block";
+  } else {
+    mybutton.style.display = "none";
+  }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+  document.getElementById("toc_container").scrollIntoView();
+}
+
+function magnify(imgID, zoom, secondim) {
+  var img, glass, w, h, bw, simg;
+  img = document.getElementById(imgID);
+  simg = document.getElementById(secondim);
+  /*create magnifier glass:*/
+  glass = document.createElement("DIV");
+  glass.setAttribute("class", "img-magnifier-glass");
+  /*insert magnifier glass:*/
+  img.parentElement.insertBefore(glass, img);
+  /*set background properties for the magnifier glass:*/
+  glass.style.backgroundImage = "url('" + simg.src + "')";
+  glass.style.backgroundRepeat = "no-repeat";
+  glass.style.backgroundSize = (img.width * zoom) + "px " + (img.height * zoom) + "px";
+  bw = 3;
+  w = glass.offsetWidth / 2;
+  h = glass.offsetHeight / 2;
+  /*execute a function when someone moves the magnifier glass over the image:*/
+  glass.addEventListener("mousemove", moveMagnifier);
+  img.addEventListener("mousemove", moveMagnifier);
+  /*and also for touch screens:*/
+  glass.addEventListener("touchmove", moveMagnifier);
+  img.addEventListener("touchmove", moveMagnifier);
+  function moveMagnifier(e) {
+    var pos, x, y;
+    /*prevent any other actions that may occur when moving over the image*/
+    e.preventDefault();
+    /*get the cursor's x and y positions:*/
+    pos = getCursorPos(e);
+    x = pos.x;
+    y = pos.y;
+    /*prevent the magnifier glass from being positioned outside the image:*/
+    if (x > img.width - (w / zoom)) {x = img.width - (w / zoom);}
+    if (x < w / zoom) {x = w / zoom;}
+    if (y > img.height - (h / zoom)) {y = img.height - (h / zoom);}
+    if (y < h / zoom) {y = h / zoom;}
+    /*set the position of the magnifier glass:*/
+    glass.style.left = (x - w) + "px";
+    glass.style.top = (y - h) + "px";
+    /*display what the magnifier glass "sees":*/
+    glass.style.backgroundPosition = "-" + ((x * zoom) - w + bw) + "px -" + ((y * zoom) - h + bw) + "px";
+  }
+  function getCursorPos(e) {
+    var a, x = 0, y = 0;
+    e = e || window.event;
+    /*get the x and y positions of the image:*/
+    a = img.getBoundingClientRect();
+    /*calculate the cursor's x and y coordinates, relative to the image:*/
+    x = e.pageX - a.left;
+    y = e.pageY - a.top;
+    /*consider any page scrolling:*/
+    x = x - window.pageXOffset;
+    y = y - window.pageYOffset;
+    return {x : x, y : y};
+  }
+}
+
+</script>
 <h2>Abstract</h2>
-<p>We present a novel loss function for neuron segmentation in electron microscopy
-volumes, which is based on the prediction of local shape descriptors (LSDs). The
-LSDs serve as an auxiliary learning task describing the local shape of objects
-in order to improve generated affinities and subsequent segmentations. We
-conduct a large scale comparative study of competing methods across various
-specimen, imaging techniques, and resolutions. The results suggest that LSDs
-consistently help to improve accuracy over a range of metrics on all
-investigated datasets. We consolidate all data and present a new benchmark for
-the connectomics community.</p>
-<h2>Introduction</h2>
-<p><strong>Connectomics</strong></p>
-<p><strong>Neuron segmentation</strong></p>
-<p><strong>Contributions</strong></p>
-<h2>Methods</h2>
-<p><strong>Local Shape Descriptors</strong></p>
-<p><strong>Network architectures</strong></p>
-<h2>Results</h2>
-<p><strong>Datasets</strong></p>
-<p><strong>Accuracy</strong></p>
-<p><strong>Throughput</strong></p>
-<p><strong>Metric evaluation</strong></p>
-<h2>Discussion</h2>
-<p><strong>Datasets</strong></p>
-<p><strong>Metrics</strong></p>
-<p><strong>LSDs</strong></p>
-<p><strong>Other potential uses</strong></p>
-<p><strong>Auto-context</strong></p>
-<p><strong>Masking</strong></p>
-<p><strong>Agglomeration</strong></p>
-<p><strong>Accuracy vs Throughput</strong></p>
-<p><strong>Inner-network variation</strong></p>
-<p><strong>Limitations</strong></p>
+<p>We present a novel approach to neuron segmentation in electron microscopy
+volumes, which is based on the prediction of Local Shape Descriptors (LSDs) in
+combination with conventional voxel-wise direct neighbor affinities for neuron
+boundary detection. The shape descriptors capture local statistics about the
+neuron to be segmented, such as diameter, elongation, and direction. We show
+that learning to predict LSDs as an auxiliary learning task significantly
+improves the accuracy of the predicted affinities and subsequently of the
+obtained segmentations. We compare our method in a large comparative study
+against several existing methods across various specimen, imaging techniques,
+and resolutions. The results demonstrate that auxiliary learning of LSDs
+consistently increases segmentation accuracy over a range of metrics on all
+investigated datasets, when compared to other affinity-based methods. Notably,
+our method is competitive with the current state of the art for neuron
+segmentation, albeit two orders of magnitude more efficient—a critical
+requirement for the processing of future petabyte-sized datasets. Our method,
+together with evaluation code and consolidated evaluation datasets, is publicly
+available as a benchmark for future method contributions.</p>
+<hr>
+<div id="toc_container">
+<p class="toc_title">Contents</p>
+<ul class="toc_list">
+  <li><a href="#background">1. Background</a>
+  <ul>
+    <li><a href="#connectomics">1.1 Connectomics</a></li>
+    <li><a href="#neuron_segmentation">1.2 Neuron Segmentation</a></li>
+    <li><a href="#related_work">1.3 Related Work</a></li>
+    <li><a href="#contributions">1.4 Contributions</a></li>
+  </ul>
+</li>
+<li><a href="#methods">2. Methods</a></li>
+  <ul>
+    <li><a href="#local_shape_descriptors">2.1 Local Shape Descriptors</a></li>
+    <li><a href="#network_architectures">2.2 Network Architectures</a></li>
+  </ul>
+<li><a href="#results">3. Results</a></li>
+  <ul>
+    <li><a href="#networks">3.1 Networks</a></li>
+    <li><a href="#metrics">3.2 Metrics</a></li>
+    <li><a href="#datasets">3.3 Datasets</a></li>
+    <li><a href="#accuracy">3.4 Accuracy</a></li>
+    <li><a href="#throughput">3.5 Throughput</a></li>
+  </ul>
+<li><a href="#discussion">4. Discussion</a></li>
+  <ul>
+    <li><a href="#metric_eval">4.1 Metric Evaluation</a></li>
+    <li><a href="#auxiliary_learning">4.2 Auxiliary Learning</a></li>
+    <li><a href="#auto_context">4.3 Auto-Context</a></li>
+    <li><a href="#masking">4.4 Masking</a></li>
+  </ul>
+<li><a href="#conclusions">5. Conclusions</a></li>
+<li><a href="#tldr">6. Tl;dr</a></li>
+<li><a href="#acknowledgements">7. Acknowledgements</a></li>
+<li><a href="#code">8. Code</a></li>
+<li><a href="#supplementary">9. Supplementary</a></li>
+<li><a href="#references">10. References</a></li>
+</ul>
+</div>
+<h2 id="background">Background</h2>
+<h3 id="connectomics">Connectomics</h3>
+<p>Connectomics is an emerging field which integrates multiple domains including
+neuroscience, microscopy, and computer science. The overarching goal is to
+provide insights about the brain at resolutions which are not achievable with
+other approaches. The ability to study neural structures at this scale will
+hopefully lead to a better understanding of brain disorders, and subsequently
+advance medical approaches towards finding treatments &amp; cures.</p>
+<p>The basic idea is to produce &quot;connectomes&quot; which are essentially maps of the
+brain. These maps, or &quot;wiring diagrams&quot;, give scientists the ability to see how
+every neuron interacts through synaptic connections. They can be used to
+complement existing techniques <dt-cite
+key="schlegel_synaptic_2016,turner-evans_neuroanatomical_2020"></dt-cite> and
+drive future experiments <dt-cite
+key="schneider-mizell_quantitative_2016,motta_dense_2019,bates_complete_2020"></dt-cite>.</p>
+<p>Okay, but how are the brain maps generated?</p>
+<p>Before generating neural wiring diagrams, we first need to acquire the brain
+tissue to use. Currently, only Electron Microscopy (EM) allows imaging of neural
+tissue at a resolution sufficient to see individual synapses. After extracting a
+brain (for example, from a fruit fly), the tissue is generally stained with
+heavy metals to increase contrast between structures of interest (i.e neuron
+membranes). Once stained, the tissue is imaged with an electron microscope.
+There are a few types of EM imaging approaches; the most common being ssTEM and
+FIB-SEM. The former method involves slicing the brain into super thin (e.g 40
+nanometer) sections. The latter uses an ion beam to erode the tissue. In either
+case, electrons are shot at the tissue to produce an image of the data. This is
+a way oversimplified explanation, for a better overview of imaging techniques,
+see <dt-cite key="briggman_volume_2012"> this paper</dt-cite>, specifically
+Figure 1.</p>
+<p>Sweet! Let's image a human brain and be done with it.</p>
+<p>Unfortunately, by imaging brains at such high resolution, the resulting data is
+massive. Let's consider the fruit fly example.  A full adult fruit fly brain
+(<strong>FAFB</strong>) imaged with ssTEM <dt-cite key="zheng_complete_2018"></dt-cite> at a
+pixel resolution of ~4 nanometers and ~40 nanometer thick sections, comprises
+~213 teravoxels of data (~50 teravoxels of actual brain tissue)<dt-cite
+key="heinrich_synaptic_2018"></dt-cite>. For reference, a voxel is a volumetric
+pixel, and the &quot;tera&quot; prefix means 10<sup>12</sup>. So, one fly brain contains
+upwards of 213,000,000,000,000 volumetric pixels. To put that in perspective,
+<dt-cite key="abbott_mind_2020">Abbott et al.</dt-cite> argue that, assuming a
+scale where 1000 cubic microns is equivalent to 1 centimeter, a fruit fly brain
+would comprise the length of 6 and a half Boeing 747 aeroplanes. This still
+pales in comparison to a mouse brain which would be the distance from Boston to
+Lisbon, and require the acquisition of 1 million terabytes of data.</p>
+<html>
+  <body>
+<div style="text-align: center;">
+<img class="b-lazy"
+src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+data-src="assets/img/scale1.jpeg" style="display: block; margin: auto; width: 100%;"/>
+<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+<td width="50%"><figcaption style="text-align: center;">Scale perspective. A
+fruit fly brain imaged at synaptic resolution takes up 100's of terabytes of
+storage space. It allows us to see fine structures such as neural plasma
+membranes (pink arrow), synapses (blue arrow), vesicles (green arrow) and
+mitochondria (orange arrow). 3D fruit fly model kindly provided by <a
+href="https://scholar.google.com/citations?user=ir1vhA8AAAAJ&hl=en"
+target="_blank">Igor Siwanowicz</a></figcaption></td>
+</tr></table>
+  </div>
+  </body>
+</html>
+<p>Try navigating the fly brain in an interactive <a
+href="https://github.com/google/neuroglancer" target="_blank">Neuroglancer</a>
+viewer (click question mark for controls). Think, Google Earth for brains:</p>
+<html>
+  <body>
+    <div class="accordion-container">
+      <nav class="accordion arrows">
+        <input type="radio" name="accordion" id="cb1" checked/>
+        <section class="box">
+          <label class="box-title" for="cb1">Full adult fly brain interactive viewer</label>
+          <label class="box-close" for="acc-open"></label>
+          <input type="radio" name="accordion" id="acc-open"/>
+          <div class="box-content">
+            <div class="responsive-container">
+              <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B8e-9%2C%22m%22%5D%2C%22y%22:%5B8e-9%2C%22m%22%5D%2C%22z%22:%5B4e-8%2C%22m%22%5D%7D%2C%22position%22:%5B63696.5703125%2C30152.005859375%2C3242.8369140625%5D%2C%22crossSectionScale%22:413.08059520030787%2C%22projectionOrientation%22:%5B-0.06840167939662933%2C-0.4631274342536926%2C-0.204045370221138%2C0.8597671985626221%5D%2C%22projectionScale%22:124585.76409043159%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://neuroglancer-fafb-data/fafb_v14/fafb_v14_clahe%22%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#0088ff%22%2C%22name%22:%22fafb_v14_clahe%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22fafb_v14_clahe%22%7D%2C%22layout%22:%224panel%22%2C%22partialViewport%22:%5B0%2C0%2C1%2C1%5D%7D" "></iframe>
+            </div>
+          </div>
+        </section>
+      </nav>
+    </div>
+  </body>
+</html>
+<p>Okay, now we have the data, so how do we create the wiring diagrams?</p>
+<p>To create a wiring diagram, we need to reconstruct all of the neurons and their
+synaptic connections. This process can be done manually - which consists of
+human annotators navigating these datasets and labeling every neuron and their
+synaptic partners using various software <dt-cite
+key="saalfeld2009catmaid,boergens_webknossos_2017,berger_vast_2018,zhao_neutu_2018"></dt-cite>.
+However, this can become extremely tedious and expensive (<strong>$$$</strong>) given the
+size of the datasets. For example, simply reconstructing 129 neurons from
+<strong>FAFB</strong> took a team of tracers ~60 days to complete<dt-cite
+key="zheng_complete_2018"></dt-cite>. Given that a fruit fly has ~100,000
+neurons, purely manual reconstruction of connectomes is obviously infeasible.</p>
+<p>Consequently, methods have been developed to automate this process. From here
+on, we will focus on the automatic reconstruction of neurons. To see the current
+approaches to synapse detection, check <dt-cite
+key="kreshuk_who_2015,heinrich_synaptic_2018,huang_fully-automatic_2018,buhmann_automatic_2020">
+these papers</dt-cite> out!</p>
+<h3 id="neuron_segmentation">Neuron Segmentation</h3>
+<ul>
+<li>why is neuron segmentation hard</li>
+<li>describe what neuron segmentation is</li>
+</ul>
+<html>
+  <body>
+<div style="text-align: center;">
+<img class="b-lazy"
+src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+data-src="assets/img/detection_vs_segmentation_shoes.jpeg" style="display: block; margin: auto; width: 100%;"/>
+<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+</tr></table>
+  </div>
+  </body>
+</html>
+<html>
+  <body>
+<div style="text-align: center;">
+<img class="b-lazy"
+src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+data-src="assets/img/detection_vs_segmentation_neurons.jpeg" style="display: block; margin: auto; width: 100%;"/>
+<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+</tr></table>
+  </div>
+  </body>
+</html>
+<h3 id="related_work">Related Work</h3>
+<ul>
+<li>boundaries</li>
+<li>affinities</li>
+<li>long range</li>
+<li>malis</li>
+<li>ffn</li>
+<li>metric learning</li>
+<li>watershed / agglom variants</li>
+</ul>
+<html>
+  <body>
+<div style="text-align: center;">
+<img class="b-lazy"
+src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+data-src="assets/img/related_methods.jpeg" style="display: block; margin: auto; width: 100%;"/>
+<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+</tr></table>
+  </div>
+  </body>
+</html>
+<h3 id="contributions">Contributions</h3>
+<ul>
+<li>introduce lsds</li>
+<li>large scale study</li>
+</ul>
+<hr>
+<h2 id="methods">Methods</h2>
+<h3 id="local_shape_descriptors">Local Shape Descriptors</h3>
+<html>
+  <body>
+<div style="text-align: center;">
+<img class="b-lazy"
+src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+data-src="assets/img/lsd_schematic.jpeg" style="display: block; margin: auto; width: 100%;"/>
+<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+</tr></table>
+  </div>
+  </body>
+</html>
+<ul>
+<li>todo: add interactive lsd overview</li>
+</ul>
+<!--<div class="row"> -->
+  <!--<div class="column">-->
+  <!--<div class="a">-->
+  <!--<img id="raw1" src="/assets/img/raw.png">-->
+  <!--</div>-->
+  <!--<div class="b">-->
+  <!--<img id="offsets" src="/assets/img/offsets.png">-->
+  <!--</div>-->
+  <!--</div>-->
+  <!--<div class="column">-->
+  <!--<div class="a">-->
+  <!--<img id="raw2" src="/assets/img/raw.png">-->
+  <!--</div>-->
+  <!--<div class="b">-->
+  <!--<img id="orthogs" src="/assets/img/orthogs.png">-->
+  <!--</div>-->
+  <!--</div>-->
+  <!--<div class="column">-->
+  <!--<div class="a">-->
+  <!--<img id="raw3" src="/assets/img/raw.png">-->
+  <!--</div>-->
+  <!--<div class="b">-->
+  <!--<img id="size" src="/assets/img/size.png">-->
+  <!--</div>-->
+  <!--</div>-->
+<!--</div>-->
+<!--<script>-->
+<!--magnify("raw1", 1, "offsets");-->
+<!--magnify("raw2", 1, "orthogs");-->
+<!--magnify("raw3", 1, "size");-->
+<!--</script>-->
+<h3 id="network_architectures">Network Architectures</h3>
+<html>
+  <body>
+  <div class="accordion-container">
+  <nav class="accordion arrows">
+  <input type="radio" name="accordion" id="cb2" />
+  <section class="box">
+  <label class="box-title" for="cb2">test</label>
+  <label class="box-close" for="acc-close"></label>
+  <div class="box-content"><div>
+    <p> explain lsd architecture </p>
+  </div>
+  <div class="box-content"><div style="text-align: center;">
+    <img src="assets/img/lsd.png" style="display: block; margin: auto; width: 100%;"/>
+  </div>
+  <div class="box-content"><div>
+    <p> explain mtlsd architecture </p>
+  </div>
+  <div class="box-content"><div style="text-align: center;">
+    <img src="assets/img/mtlsd.png" style="display: block; margin: auto; width: 100%;"/>
+  </div>
+  <div class="box-content"><div>
+    <p> explain aclsd architecture </p>
+  </div>
+  <div class="box-content"><div style="text-align: center;">
+    <img src="assets/img/aclsd.png" style="display: block; margin: auto; width: 100%;"/>
+  </div>
+  <div class="box-content"><div>
+    <p> explain acrlsd architecture </p>
+  </div>
+  <div class="box-content"><div style="text-align: center;">
+    <img src="assets/img/acrlsd.png" style="display: block; margin: auto; width: 100%;"/>
+  </div>
+  </div>
+  </section>
+  <input type="radio" name="accordion" id="acc-close" />
+  </nav>
+  </div>
+  </body>
+</html>
+<hr>
+<h2 id="results">Results</h2>
+<h3 id="networks">Networks</h3>
+<h3 id="metrics">Metrics</h3>
+<h3 id="datasets">Datasets</h3>
+<h3 id="accuracy">Accuracy</h3>
+<p>blah blah blah blah
+blah blah blah blah
+blah blah blah blah
+blah blah blah blah
+blah blah blah blah</p>
+<div class="plot-container">
+  <iframe
+    class="responsive-iframe"
+    src="../plots/test.html"
+    sandbox="allow-same-origin allow-scripts"
+    scrolling="no"
+    seamless="seamless"
+    frameborder="0">
+  </iframe>
+</div>
+<p>blah blah blah blah
+blah blah blah blah
+blah blah blah blah
+blah blah blah blah
+blah blah blah blah
+blah blah blah blah</p>
+<h3 id="throughput">Throughput</h3>
+<html>
+  <body>
+  <div class="accordion-container">
+  <nav class="accordion arrows">
+  <input type="radio" name="accordion" id="block" />
+  <section class="box">
+  <label class="box-title" for="block">test</label>
+  <label class="box-close" for="acc-close"></label>
+  <div class="box-content"><div>
+    <p> blah blah blah </p>
+  </div>
+  <div class="box-content"><div style="text-align: center;">
+    <img class="b-lazy"
+    src="assets/videos/watershed_separate_joined.gif" style="display: block; margin: auto; width: 100%;"/>
+  </div>
+  <div class="box-content"><div>
+    <p> blah blah blah </p>
+  </div>
+  <div class="box-content"><div style="text-align: center;">
+    <img class="b-lazy"
+    src="assets/videos/agglom_separate_joined.gif" style="display: block; margin: auto; width: 100%;"/>
+  </div>
+  </div>
+  </section>
+  <input type="radio" name="accordion" id="acc-close" />
+  </nav>
+  </div>
+  </body>
+</html>
+<hr>
+<h2 id="discussion">Discussion</h2>
+<h3 id="metric_eval">Metric Evaluation</h3>
+<h3 id="auxiliary_learning">Auxiliary Learning</h3>
+<h3 id="auto_context">Auto-Context</h3>
+<h3 id="masking">Masking</h3>
+<hr>
+<h2 id="conclusions">Conclusions</h2>
+<hr>
+<h2 id="tldr">Tl;dr</h2>
+<ul>
+<li>
+<p>Connectomics is a relatively new field combining neuroscience, microscopy, biology and computer science.</p>
+</li>
+<li>
+<p>The goal is to generate maps of the brain at synaptic resolution. By doing so,
+it will hopefully lead to a better understanding of how things work and
+subsequently advance medical approaches to various diseases.</p>
+</li>
+<li>
+<p>The datasets required to produce these brain maps are massive since they have
+to be imaged at such a high resolution.</p>
+</li>
+<li>
+<p>Manually reconstructing wiring diagrams in the datasets is extremely time consuming and
+expensive so there is a great need to automate the process.</p>
+</li>
+<li>
+<p>Reconstructing neurons is challenging because many consecutively correct decisions must be made. Errors can propagate throughout a dataset easily.</p>
+</li>
+<li>
+<p>Methods need to also be computationally efficient and scalable to account
+for the size of the data.</p>
+</li>
+<li>
+<p>We present a novel approach to neuron segmentation, Local Shape Descriptors
+(LSDs) - a 10-Dimensional embedding used as an auxiliary learning objective
+for boundary detection.</p>
+</li>
+<li>
+<p>We find that the LSDs help improve boundaries and subsequent neuron
+reconstructions in several large and diverse datasets.</p>
+</li>
+<li>
+<p>They are also two orders of magnitude faster than the current state of the art
+approach.</p>
+</li>
+</ul>
 </dt-article>
 <dt-appendix>
-<h2>Acknowledgements</h2>
-<h2>Code</h2>
-<h2>Supplementary Materials</h2>
+<h2 id="acknowledgements">Acknowledgements</h2>
+<hr>
+<h2 id="code">Code</h2>
+<hr>
+<h2 id="supplementary">Supplementary</h2>
+<hr>
+<h2 id="references"></h2>
 </dt-appendix>
 </dt-appendix>
 </body>
@@ -269,9 +1027,10 @@ the connectomics community.</p>
 	author = {Januszewski, Michał and Kornfeld, Jörgen and Li, Peter H. and Pope, Art and Blakely, Tim and Lindsey, Larry and Maitin-Shepard, Jeremy and Tyka, Mike and Denk, Winfried and Jain, Viren},
 	year = {2018},
 	pages = {605},
+        url = {https://www.nature.com/articles/s41592-018-0049-4}
 }
 @article{zheng_complete_2018,
-	title = {A {Complete} {Electron} {Microscopy} {Volume} of the {Brain} of {Adult} {Drosophila} melanogaster},
+	title = {A Complete Electron Microscopy Volume of the Brain of Adult Drosophila melanogaster},
 	volume = {174},
 	issn = {1097-4172},
 	doi = {10.1016/j.cell.2018.06.019},
@@ -280,6 +1039,7 @@ the connectomics community.</p>
 	author = {Zheng, Zhihao and Lauritzen, J. Scott and Perlman, Eric and Robinson, Camenzind G. and Nichols, Matthew and Milkie, Daniel and Torrens, Omar and Price, John and Fisher, Corey B. and Sharifi, Nadiya and Calle-Schuler, Steven A. and Kmecova, Lucia and Ali, Iqbal J. and Karsh, Bill and Trautman, Eric T. and Bogovic, John A. and Hanslovsky, Philipp and Jefferis, Gregory S. X. E. and Kazhdan, Michael and Khairy, Khaled and Saalfeld, Stephan and Fetter, Richard D. and Bock, Davi D.},
 	year = {2018},
 	pages = {730--743},
+        url = {https://www.sciencedirect.com/science/article/pii/S0092867418307876}
 }
 @article{lee_superhuman_2017,
 	title = {Superhuman {Accuracy} on the {SNEMI}3D {Connectomics} {Challenge}},
@@ -757,6 +1517,164 @@ Publisher: Nature Publishing Group},
 	note = {Publisher: [American Statistical Association, Taylor \& Francis, Ltd.]},
 	pages = {846--850}
 }
+@article{turner-evans_insect_2016,
+	title = {The insect central complex},
+	volume = {26},
+	issn = {09609822},
+	url = {http://linkinghub.elsevier.com/retrieve/pii/S0960982216303232},
+	doi = {10.1016/j.cub.2016.04.006},
+	language = {en},
+	number = {11},
+	urldate = {2020-10-08},
+	journal = {Current Biology},
+	author = {Turner-Evans, Daniel B. and Jayaraman, Vivek},
+	month = jun,
+	year = {2016},
+	pages = {R453--R457},
+	file = {Turner-Evans and Jayaraman - 2016 - The insect central complex.pdf:/Users/ArloS/Zotero/storage/LR7BU6C3/Turner-Evans and Jayaraman - 2016 - The insect central complex.pdf:application/pdf}
+}
+@incollection{maitin-shepard_combinatorial_2016,
+	title = {Combinatorial {Energy} {Learning} for {Image} {Segmentation}},
+	url = {http://papers.nips.cc/paper/6595-combinatorial-energy-learning-for-image-segmentation.pdf},
+	urldate = {2020-10-13},
+	booktitle = {Advances in {Neural} {Information} {Processing} {Systems} 29},
+	publisher = {Curran Associates, Inc.},
+	author = {Maitin-Shepard, Jeremy B and Jain, Viren and Januszewski, Michal and Li, Peter and Abbeel, Pieter},
+	editor = {Lee, D. D. and Sugiyama, M. and Luxburg, U. V. and Guyon, I. and Garnett, R.},
+	year = {2016},
+	pages = {1966--1974},
+	file = {NIPS Full Text PDF:/Users/ArloS/Zotero/storage/VUAW9P2C/Maitin-Shepard et al. - 2016 - Combinatorial Energy Learning for Image Segmentati.pdf:application/pdf;NIPS Snapshot:/Users/ArloS/Zotero/storage/A5AP8YLR/6595-combinatorial-energy-learning-for-image-segmentation.html:text/html}
+}
+@article{nguyen2020daisy,
+	title={Daisy: A Library for Block-Wise Task Scheduling for Large nD Volumes},
+	author={Nguyen, Tri and Malin-Mayor, Caroline and Patton, William and Funke, Jan},
+	journal={in preparation},
+	year={2020}
+}
+@article{funke_ted_2017,
+	series = {Image {Processing} for {Biologists}},
+	title = {{TED}: {A} {Tolerant} {Edit} {Distance} for segmentation evaluation},
+	volume = {115},
+	issn = {1046-2023},
+	shorttitle = {{TED}},
+	url = {http://www.sciencedirect.com/science/article/pii/S1046202316305072},
+	doi = {10.1016/j.ymeth.2016.12.013},
+	language = {en},
+	urldate = {2020-10-28},
+	journal = {Methods},
+	author = {Funke, Jan and Klein, Jonas and Moreno-Noguer, Francesc and Cardona, Albert and Cook, Matthew},
+	month = feb,
+	year = {2017},
+	keywords = {Computer vision, Electron microscopy, Evaluation, Learning, Neuron segmentation, Segmentation},
+	pages = {119--127},
+	file = {ScienceDirect Full Text PDF:/Users/ArloS/Zotero/storage/P4UBBSN6/Funke et al. - 2017 - TED A Tolerant Edit Distance for segmentation eva.pdf:application/pdf;ScienceDirect Snapshot:/Users/ArloS/Zotero/storage/YSBFR2GJ/S1046202316305072.html:text/html}
+}
+@inproceedings{plaza_focused_2016,
+	address = {Cham},
+	series = {Lecture {Notes} in {Computer} {Science}},
+	title = {Focused {Proofreading} to {Reconstruct} {Neural} {Connectomes} from {EM} {Images} at {Scale}},
+	isbn = {978-3-319-46976-8},
+	doi = {10.1007/978-3-319-46976-8_26},
+	language = {en},
+	booktitle = {Deep {Learning} and {Data} {Labeling} for {Medical} {Applications}},
+	publisher = {Springer International Publishing},
+	author = {Plaza, Stephen M.},
+	editor = {Carneiro, Gustavo and Mateus, Diana and Peter, Loïc and Bradley, Andrew and Tavares, João Manuel R. S. and Belagiannis, Vasileios and Papa, João Paulo and Nascimento, Jacinto C. and Loog, Marco and Lu, Zhi and Cardoso, Jaime S. and Cornebise, Julien},
+	year = {2016},
+	keywords = {Automatic Segmentation, Edge Probability, Initial Segmentation, Optic Lobe, Synaptic Connection},
+	pages = {249--258},
+	file = {Springer Full Text PDF:/Users/ArloS/Zotero/storage/JNG5MEDQ/Plaza - 2016 - Focused Proofreading to Reconstruct Neural Connect.pdf:application/pdf}
+}
+@article{gallusser_2020,
+  title={Deep-Learning-Based Automatic Organelle Segmentation in 3D Electron Microscopy Datasets},
+  author={Gallusser, Benjamin and Vadakkan, Tegy John and Sahasrabudhe, Mihir and Di Caprio, Giuseppe and Kirchhausen, Tom},
+  journal={in preparation},
+  year={2020}
+}
+@article{hildebrand_whole-brain_2017,
+	title = {Whole-brain serial-section electron microscopy in larval zebrafish},
+	volume = {545},
+	copyright = {2017 Macmillan Publishers Limited, part of Springer Nature. All rights reserved.},
+	issn = {1476-4687},
+	url = {https://www.nature.com/articles/nature22356},
+	doi = {10.1038/nature22356},
+	abstract = {A complete larval zebrafish brain is examined and its myelinated axons reconstructed using serial-section electron microscopy, revealing remarkable symmetry and providing a valuable resource.},
+	language = {en},
+	number = {7654},
+	urldate = {2020-11-11},
+	journal = {Nature},
+	author = {Hildebrand, David Grant Colburn and Cicconet, Marcelo and Torres, Russel Miguel and Choi, Woohyuk and Quan, Tran Minh and Moon, Jungmin and Wetzel, Arthur Willis and Scott Champion, Andrew and Graham, Brett Jesse and Randlett, Owen and Plummer, George Scott and Portugues, Ruben and Bianco, Isaac Henry and Saalfeld, Stephan and Baden, Alexander David and Lillaney, Kunal and Burns, Randal and Vogelstein, Joshua Tzvi and Schier, Alexander Franz and Lee, Wei-Chung Allen and Jeong, Won-Ki and Lichtman, Jeff William and Engert, Florian},
+	month = may,
+	year = {2017},
+	note = {Number: 7654
+Publisher: Nature Publishing Group},
+	pages = {345--349},
+	file = {Full Text PDF:/Users/ArloS/Zotero/storage/MXUPZ29N/Hildebrand et al. - 2017 - Whole-brain serial-section electron microscopy in .pdf:application/pdf;Snapshot:/Users/ArloS/Zotero/storage/NYCZKHWR/nature22356.html:text/html}
+}
+@article{saalfeld2009catmaid,
+	title={CATMAID: collaborative annotation toolkit for massive amounts of image data},
+	author={Saalfeld, Stephan and Cardona, Albert and Hartenstein, Volker and Toman{\v{c}}{\'a}k, Pavel},
+	journal={Bioinformatics},
+	volume={25},
+	number={15},
+	pages={1984--1986},
+	year={2009},
+	publisher={Oxford University Press}
+}
+@article{boergens_webknossos_2017,
+	title = {{webKnossos}: efficient online {3D} data annotation for connectomics},
+	volume = {14},
+	copyright = {2017 Nature Publishing Group, a division of Macmillan Publishers Limited. All Rights Reserved.},
+	issn = {1548-7105},
+	shorttitle = {{webKnossos}},
+	url = {https://www.nature.com/articles/nmeth.4331},
+	doi = {10.1038/nmeth.4331},
+	language = {en},
+	number = {7},
+	urldate = {2020-11-16},
+	journal = {Nature Methods},
+	author = {Boergens, Kevin M. and Berning, Manuel and Bocklisch, Tom and Bräunlein, Dominic and Drawitsch, Florian and Frohnhofen, Johannes and Herold, Tom and Otto, Philipp and Rzepka, Norman and Werkmeister, Thomas and Werner, Daniel and Wiese, Georg and Wissler, Heiko and Helmstaedter, Moritz},
+	month = jul,
+	year = {2017},
+	note = {Number: 7
+Publisher: Nature Publishing Group},
+	pages = {691--694},
+	file = {Full Text PDF:/Users/ArloS/Zotero/storage/VDHQQKL2/Boergens et al. - 2017 - webKnossos efficient online 3D data annotation fo.pdf:application/pdf;Snapshot:/Users/ArloS/Zotero/storage/CQJI3QWJ/nmeth.html:text/html}
+}
+@article{berger_vast_2018,
+	title = {{VAST} ({Volume} {Annotation} and {Segmentation} {Tool}): {Efficient} {Manual} and {Semi}-{Automatic} {Labeling} of {Large} {3D} {Image} {Stacks}},
+	volume = {12},
+	issn = {1662-5110},
+	shorttitle = {{VAST} ({Volume} {Annotation} and {Segmentation} {Tool})},
+	url = {https://www.frontiersin.org/articles/10.3389/fncir.2018.00088/full},
+	doi = {10.3389/fncir.2018.00088},
+	language = {English},
+	urldate = {2020-11-16},
+	journal = {Frontiers in Neural Circuits},
+	author = {Berger, Daniel R. and Seung, H. Sebastian and Lichtman, Jeff W.},
+	year = {2018},
+	note = {Publisher: Frontiers},
+	keywords = {CLEM, connectomics, proofreading, segmentation, serial section electron microscopy, tracing, TrakEM2, visualization, Voxel},
+	file = {Full Text PDF:/Users/ArloS/Zotero/storage/DBQWS7DN/Berger et al. - 2018 - VAST (Volume Annotation and Segmentation Tool) Ef.pdf:application/pdf}
+}
+@article{zhao_neutu_2018,
+	title = {{NeuTu}: {Software} for {Collaborative}, {Large}-{Scale}, {Segmentation}-{Based} {Connectome} {Reconstruction}},
+	volume = {12},
+	issn = {1662-5110},
+	shorttitle = {{NeuTu}},
+	url = {https://www.frontiersin.org/articles/10.3389/fncir.2018.00101/full},
+	doi = {10.3389/fncir.2018.00101},
+	language = {English},
+	urldate = {2020-11-16},
+	journal = {Frontiers in Neural Circuits},
+	author = {Zhao, Ting and Olbris, Donald J. and Yu, Yang and Plaza, Stephen M.},
+	year = {2018},
+	note = {Publisher: Frontiers},
+	keywords = {connectome, Electron microscopy, NeuTu, proofreading, Segmentation (Image processing)},
+	file = {Full Text PDF:/Users/ArloS/Zotero/storage/4WPFZEFA/Zhao et al. - 2018 - NeuTu Software for Collaborative, Large-Scale, Se.pdf:application/pdf}
+}
+
+
 </script>
 <!--
 

@@ -1,8 +1,18 @@
-./bin/markdown-it draft.md > draft_body.html
-./bin/markdown-it draft_appendix.md > draft_appendix.html
-cat draft_header.html draft_body.html appendix_start draft_appendix.html appendix_end draft_bib.html > draft.html
+./bin/markdown-it sections/abstract.md > abstract.html
+./bin/markdown-it sections/toc.md > toc.html
+./bin/markdown-it sections/background.md > background.html
+./bin/markdown-it sections/methods.md > methods.html
+./bin/markdown-it sections/results.md > results.html
+./bin/markdown-it sections/discussion.md > discussion.html
+./bin/markdown-it sections/conclusions.md > conclusions.html
+./bin/markdown-it sections/tldr.md > tldr.html
+./bin/markdown-it sections/appendix.md > appendix.html
+
+
+cat draft_header.html abstract.html toc.html background.html methods.html results.html discussion.html conclusions.html tldr.html appendix_start appendix.html appendix_end draft_bib.html > draft.html
+
 cp draft.html index.html
-rm draft.html
-rm draft_appendix.html
-rm draft_body.html
+
+rm {draft,abstract,toc,background,methods,results,discussion,conclusions,tldr,appendix}.html
+
 echo "Compiled markdown."

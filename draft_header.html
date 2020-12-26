@@ -1,9 +1,186 @@
 <!doctype html>
-<meta charset="utf-8">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <!-- roboto font -->
+  <link href='https://fonts.googleapis.com/css?family=Roboto:300' rel='stylesheet' type='text/css'>
+
+  <meta name="theme-color" content="#ffffff" />
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-141682504-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-141682504-1');
+  </script>
+
+
+  <!-- SEO -->
+  <meta property="og:title" content="Local Shape Descriptors for Neuron Segmentation" />
+  <meta property="og:type" content="article" />
+  <meta property="og:description" content="Auxiliary learning for large scale connectomics" />
+  <meta property="og:image" content="assets/img/lsds_header.jpeg" />
+  <meta property="og:url" content="https://localshapedescriptors.github.io" />
+
+  <!-- Twitter Card data -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Local Shape Descriptors for Neuron Segmentation" />
+  <meta name="twitter:description" content="" />
+  <meta property="og:site_name" content="Local Shape Descriptors for Neuron Segmentation" />
+  <meta name="twitter:image" content="assets/img/lsds_header.jpeg" />
+
+</head>
+
 <style>
+
 body {
-  overflow-x: hidden;
+  margin: 0px;
 }
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 4px;
+}
+
+/* Create four equal columns that sits next to each other */
+.column {
+  flex: 25%;
+  max-width: 25%;
+  padding: 0 4px;
+}
+
+.column img {
+  vertical-align: middle;
+  width: 100%;
+}
+
+/* Responsive layout - makes a two column-layout instead of four columns */
+@media screen and (max-width: 800px) {
+  .column {
+    flex: 50%;
+    max-width: 50%;
+  }
+}
+
+/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .column {
+    flex: 100%;
+    max-width: 100%;
+  }
+}
+
+.image-grid {
+  display: flex;
+  flex-wrap: wrap;
+  width: 90%;
+  margin: 0 auto;
+}
+.grid-image {
+  display: block;
+  flex-basis: 100%;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+@media only screen and (min-width: 640px) {
+  .grid-image {
+    flex-basis: 50%;
+  }
+}
+
+@media only screen and (min-width: 960px) {
+  .grid-image {
+    flex-basis: 33.333%;
+  }
+}
+
+@media only screen and (min-width: 1280px) {
+  .grid-image {
+    flex-basis: 25%;
+  }
+}
+
+@media only screen and (min-width: 1600px) {
+  .grid-image {
+    flex-basis: 20%;
+  }
+}
+
+.a {
+  position: absolute;
+  z-index: 3;
+}
+
+.b {
+  position: absolute;
+  z-index: 2;
+}
+
+.img-magnifier-glass {
+  position: absolute;
+  border: 2px solid #000;
+  border-radius: 50%;
+  cursor: none;
+  /*Set the size of the magnifier glass:*/
+  width: 50px;
+  height: 50px;
+  z-index: 1;
+}
+
+.accordion-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  margin: auto;
+}
+
+.responsive-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  margin: auto;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+}
+
+.test-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  margin: auto;
+  border: 5px solid red;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+}
+
+.plot-container {
+  position: relative;
+  width: 100%;
+  height: 650px;
+  overflow: hidden;
+  margin: auto;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: none;
+}
+
 .scroll-down {
   width: 80px;
   height: 40px;
@@ -21,6 +198,7 @@ body {
   -ms-transition: opacity 2s ease-in;
   transition: opacity 2s ease-in;
 }
+
 .scroll-down span {
   margin-top: 5px;
   position: absolute;
@@ -31,10 +209,12 @@ body {
   width: 10px;
   background: #FFFFFF;
 }
+
 .scroll-down span:nth-of-type(2) {
   transform-origin: 0 100%;
   transform: translate(0, 0) rotate(-45deg);
 }
+
 .spinner {
   position: absolute;
   height: 160px;
@@ -52,6 +232,106 @@ body {
   left: calc(50% - 80px);
   right: auto;
   bottom: auto;
+}
+
+.accordion {
+  margin: auto;
+  position: relative;
+}
+.accordion input {
+  display: none;
+}
+
+.box {
+  position: relative;
+  background: white;
+  height: 64px;
+  transition: all .15s ease-in-out;
+}
+
+.box::before {
+  content: '';
+  position: absolute;
+  display: block;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  box-shadow: 0 -1px 0 #e5e5e5,0 0 2px rgba(0,0,0,.12),0 2px 4px rgba(0,0,0,.24);
+}
+
+header.box {
+  background: #00BCD4;
+  z-index: 100;
+  cursor: initial;
+  box-shadow: 0 -1px 0 #e5e5e5,0 0 2px -2px rgba(0,0,0,.12),0 2px 4px -4px rgba(0,0,0,.24);
+}
+
+header.box-title {
+  margin: 0;
+  font-weight: normal;
+  font-size: 16pt;
+  color: white;
+  cursor: initial;
+}
+
+.box-title {
+  width: calc(100% - 40px);
+  height: 64px;
+  line-height: 64px;
+  padding: 0 20px;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;
+}
+
+.box-content {
+  width: 100%;
+  height: 100%;
+  display: none;
+  overflow: hidden;
+  margin: auto;
+}
+
+.box-close {
+  position: absolute;
+  height: 64px;
+  width: 100%;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+  display: none;
+}
+input:checked + .box {
+  height: auto;
+  margin: 16px 0;
+  box-shadow: 0 0 6px rgba(0,0,0,.16),0 6px 12px rgba(0,0,0,.32);
+}
+input:checked + .box .box-title {
+  border-bottom: 1px solid rgba(0,0,0,.18);
+}
+input:checked + .box .box-content,
+input:checked + .box .box-close {
+  display: inline-block;
+}
+
+.arrows section .box-title {
+  padding-left: 44px;
+  width: calc(100% - 64px);
+}
+.arrows section .box-title:before {
+  position: absolute;
+  display: block;
+  content: '\203a';
+  font-size: 18pt;
+  left: 20px;
+  top: -2px;
+  transition: transform .15s ease-in-out;
+  color: rgba(0,0,0,.54);
+}
+input:checked + section.box .box-title:before {
+  transform: rotate(90deg);
 }
 
 @-webkit-keyframes rotation {
@@ -79,7 +359,7 @@ dt-article figcaption {
   color: rgba(0, 0, 0, 0.6);
   font-size: 12px;
   line-height: 1.5em;
-  text-align: left;
+  text-align: center;
 }
 
 dt-article figcaption a {
@@ -117,50 +397,63 @@ dt-article figcaption b {
   float: center; /* Float the buttons side by side */
 }
 
+#toc_container {
+  float: left;
+  width: auto;
+  background: #eee;
+  font-size: 0.8em;
+  padding: 1em 1em;
+  margin: 0 1em 0 1em;
+  border: 1px solid #aaa;
+}
+
+.toc_title {
+    font-weight: 700;
+    text-align: center;
+}
+
+#toc_container ul>li {
+margin: 0 0 .6em 0;
+list-style-type: none;
+}
+
+#toc_container a {
+text-decoration: none;
+color: #3D5AFE;
+}
+
 /* Add a background color on hover */
 .btn-group button:hover {
   background-color: #FF6C00;
 }
+
+#toc_scroll {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  z-index: 99;
+  border: 2px solid #008CBA;
+  outline: none;
+  background-color: white;
+  color: black;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 18px;
+  border-radius: 8px;
+}
+
+#toc_scroll:hover {
+  background-color: #aaa;
+}
+
 </style>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <!-- roboto font -->
-  <link href='https://fonts.googleapis.com/css?family=Roboto:300' rel='stylesheet' type='text/css'>
 
-  <meta name="theme-color" content="#ffffff" />
-
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-141682504-1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'UA-141682504-1');
-  </script>
-
-
-  <!-- SEO -->
-  <meta property="og:title" content="Local Shape Descriptors for Neuron Segmentation" />
-  <meta property="og:type" content="article" />
-  <meta property="og:description" content="Auxiliary learning for large scale connectomics" />
-  <meta property="og:image" content="https://weightagnostic.github.io/assets/img/lsds.png" />
-  <meta property="og:url" content="https://localshapedescriptors.github.io" />
-
-  <!-- Twitter Card data -->
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Local Shape Descriptors for Neuron Segmentation" />
-  <meta name="twitter:description" content="" />
-  <meta property="og:site_name" content="Local Shape Descriptors for Neuron Segmentation" />
-  <meta name="twitter:image" content="https://weightagnostic.github.io/assets/img/lsds.png" />
-
-</head>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
 
-<!--<script src="lib/jquery-1.12.4.min.js"></script>-->
 <!--<script src="lib/mobile-detect.min.js"></script>-->
 <script src="lib/template.v1.js"></script>
+
 
 <script type="text/front-matter">
   title: "LSDs"
@@ -172,12 +465,14 @@ dt-article figcaption b {
 src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 data-src="assets/img/lsds_header.jpeg" style="display: block; margin: auto; width: 100%;"/>
 <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-<td width="50%"><figcaption style="text-align: center;">Placeholder image</figcaption></td>
-</tr></table>
+<td width="50%"><figcaption style="text-align: center;">Direction vectors of the
+    LSDs on a single neuron from the fly visual system. Colors correspond to
+    the direction in which the neuronal processes travel.</figcaption></td>
+  </tr></table>
 
 </div>
 
-<dt-article id="dtbody">
+<dt-article class="centered" id="dtbody">
 
 <dt-byline class="l-page transparent"></dt-byline>
 <h1>Local Shape Descriptors for Neuron Segmentation</h1>
@@ -198,6 +493,10 @@ data-src="assets/img/lsds_header.jpeg" style="display: block; margin: auto; widt
         <a class="affiliation" href="https://www.janelia.org/lab/turaga-lab">HHMI Janelia</a>
     </div>
     <div class="author">
+        <a class="name" href="https://scholar.google.com/citations?user=y2s07ssAAAAJ&hl=en">Wei-Chung Allen Lee</a>
+        <a class="affiliation" href="https://www.lee.hms.harvard.edu/">Harvard University</a>
+    </div>
+    <div class="author">
         <a class="name" href="https://scholar.google.com/citations?user=oSGyzt4AAAAJ&hl=en">Stephan Saalfeld</a>
         <a class="affiliation" href="https://www.janelia.org/lab/saalfeld-lab">HHMI Janelia</a>
     </div>
@@ -206,14 +505,99 @@ data-src="assets/img/lsds_header.jpeg" style="display: block; margin: auto; widt
         <a class="affiliation" href="https://www.janelia.org/lab/turaga-lab">HHMI Janelia</a>
     </div>
     <div class="author">
+        <a class="name" href="https://scholar.google.com/citations?user=_ZLy6tEAAAAJ&hl=en">Uri Manor</a>
+        <a class="affiliation" href="https://www.salk.edu/science/core-facilities/advanced-biophotonics">Salk Institute</a>
+    </div>
+    <div class="author">
         <a class="name" href="https://scholar.google.com/citations?user=7rqAapgAAAAJ&hl=en">Jan Funke</a>
         <a class="affiliation" href="https://www.janelia.org/lab/funke-lab">HHMI Janelia</a>
     </div>
   </div>
   <div class="date">
-    <div class="month">Hopefully</div>
-    <div class="year">Soon</div>
+    <div class="month">LSD</div>
+    <div class="year" style="color: #2AAFCF;"><a href="https://github.com/funkelab/lsd_paper" target="_blank">Paper</a></div>
   </div>
 </div>
 </dt-byline>
 </dt-byline>
+
+<button onclick="topFunction()" id="toc_scroll" title="Scroll to toc">Contents</button>
+
+<script>
+//Get the button
+var mybutton = document.getElementById("toc_scroll");
+
+// When the user scrolls down 2000px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+  var toc = document.getElementById("toc_container");
+  if (window.scrollY > (toc.offsetTop + toc.offsetHeight)) {
+    mybutton.style.display = "block";
+  } else {
+    mybutton.style.display = "none";
+  }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+  document.getElementById("toc_container").scrollIntoView();
+}
+
+function magnify(imgID, zoom, secondim) {
+  var img, glass, w, h, bw, simg;
+  img = document.getElementById(imgID);
+  simg = document.getElementById(secondim);
+  /*create magnifier glass:*/
+  glass = document.createElement("DIV");
+  glass.setAttribute("class", "img-magnifier-glass");
+  /*insert magnifier glass:*/
+  img.parentElement.insertBefore(glass, img);
+  /*set background properties for the magnifier glass:*/
+  glass.style.backgroundImage = "url('" + simg.src + "')";
+  glass.style.backgroundRepeat = "no-repeat";
+  glass.style.backgroundSize = (img.width * zoom) + "px " + (img.height * zoom) + "px";
+  bw = 3;
+  w = glass.offsetWidth / 2;
+  h = glass.offsetHeight / 2;
+  /*execute a function when someone moves the magnifier glass over the image:*/
+  glass.addEventListener("mousemove", moveMagnifier);
+  img.addEventListener("mousemove", moveMagnifier);
+  /*and also for touch screens:*/
+  glass.addEventListener("touchmove", moveMagnifier);
+  img.addEventListener("touchmove", moveMagnifier);
+  function moveMagnifier(e) {
+    var pos, x, y;
+    /*prevent any other actions that may occur when moving over the image*/
+    e.preventDefault();
+    /*get the cursor's x and y positions:*/
+    pos = getCursorPos(e);
+    x = pos.x;
+    y = pos.y;
+    /*prevent the magnifier glass from being positioned outside the image:*/
+    if (x > img.width - (w / zoom)) {x = img.width - (w / zoom);}
+    if (x < w / zoom) {x = w / zoom;}
+    if (y > img.height - (h / zoom)) {y = img.height - (h / zoom);}
+    if (y < h / zoom) {y = h / zoom;}
+    /*set the position of the magnifier glass:*/
+    glass.style.left = (x - w) + "px";
+    glass.style.top = (y - h) + "px";
+    /*display what the magnifier glass "sees":*/
+    glass.style.backgroundPosition = "-" + ((x * zoom) - w + bw) + "px -" + ((y * zoom) - h + bw) + "px";
+  }
+  function getCursorPos(e) {
+    var a, x = 0, y = 0;
+    e = e || window.event;
+    /*get the x and y positions of the image:*/
+    a = img.getBoundingClientRect();
+    /*calculate the cursor's x and y coordinates, relative to the image:*/
+    x = e.pageX - a.left;
+    y = e.pageY - a.top;
+    /*consider any page scrolling:*/
+    x = x - window.pageXOffset;
+    y = y - window.pageYOffset;
+    return {x : x, y : y};
+  }
+}
+
+</script>
