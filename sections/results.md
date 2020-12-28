@@ -31,6 +31,9 @@ blah blah blah blah
 
 <h3 id="throughput">Throughput</h3>
 
+<img class="b-lazy"
+    src="assets/img/loader.gif" style="display: block; margin: auto; width: 50%;"/>
+
 
 <html>
   <body>
