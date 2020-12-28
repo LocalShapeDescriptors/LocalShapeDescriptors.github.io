@@ -25,11 +25,13 @@ tissue at a resolution sufficient to see individual synapses. After extracting a
 brain (for example, from a fruit fly), the tissue is generally stained with
 heavy metals to increase contrast between structures of interest (i.e neuron
 membranes). Once stained, the tissue is imaged with an electron microscope.
-There are a few types of EM imaging approaches; the most common being ssTEM and
-FIB-SEM. The former method involves slicing the brain into super thin (e.g 40
-nanometer) sections. The latter uses an ion beam to erode the tissue. In either
-case, electrons are shot at the tissue to produce an image of the data. This is
-a way oversimplified explanation, for a better overview of imaging techniques,
+There are a few types of EM imaging approaches. Three popular techniques are
+serial section transmission EM (ssTEM), serial block-face scanning EM (SBF-SEM)
+and focused ion beam scanning EM (FIB-SEM). The former two methods involve
+slicing the brain into super thin (e.g 20 nanometer) sections. The latter uses
+an ion beam to erode the tissue. In either case, electrons are shot at the
+tissue to produce an image of the data. This is a way oversimplified
+explanation, for a better overview of these EM imaging techniques (and others),
 see <dt-cite key="briggman_volume_2012"> this paper</dt-cite>, specifically
 Figure 1.
 
@@ -113,16 +115,68 @@ these papers</dt-cite> out!
 
 <h3 id="neuron_segmentation">Neuron Segmentation</h3>
 
-* why is neuron segmentation hard
-* describe what neuron segmentation is
+Neuron segmentation is the current rate-limiting step for generating large
+connectomes. Errors in a neuron segmentation can easily propagate throughout a
+dataset as the scale increases, which makes it tedious for humans to proofread
+the data without advanced tools.
+
+<html>
+  <body>
+  <div class="accordion-container">
+  <nav class="accordion arrows">
+  <input type="radio" name="accordion" id="seg" />
+  <section class="box">
+  <label class="box-title" for="seg">Segmentation overview</label>
+  <label class="box-close" for="acc-close"></label>
+
+  <div class="box-content"><div> <p> To better understand the problem of neuron
+  segmentation, it is necessary to understand what segmentation is. There are a
+  few ways to detect objects in an image. A standard approach is called **object
+  detection** which is a technique used to locate and label objects, often
+  resulting in fitting a bounding box to each object. This is a good strategy
+  for finding and tracking objects in an image but it neglects the volumetric
+  data contained within an object. An alternative method is called segmentation
+  in which every pixel of an object is assigned to a class. There are two main
+  techniques: **semantic segmentation** and **instance segmentation**. In
+  semantic segmentation, each pixel is assigned to a broader class, for example
+  each car in an image would be assigned to a car class and each animal in an
+  image would be assigned to a animal class. Conversely, instance segmentation
+  assigns each pixel to a unique label. Consider the following example: each
+  shoe in the image can be located (object detection), each pixel of each shoe
+  can be assigned to a class indicating the type of shoe (semantic
+  segmentation), and each pixel can be assigned a unique label indicating the
+  specific shoe: </p> </div>
+
+  <div class="box-content"><div style="text-align: center;">
+    <img id="shoes" src="assets/img/detection_vs_segmentation_shoes.jpeg" style="display: block; margin: auto; width: 100%;"/>
+  </div>
+
+  <div class="box-content"><div style="text-align: center;">
+    <img id="shoes_vertical" src="assets/img/detection_vs_segmentation_shoes_vertical.jpeg" style="display: block; margin: auto; width: 100%;"/>
+  </div>
+
+  </div>
+  </section>
+  <input type="radio" name="accordion" id="acc-close" />
+  </nav>
+  </div>
+  </body>
+</html>
+
+Neuron reconstruction is an instance segmentation problem because every pixel of
+every neuron needs to be assigned a unique label (in contrast to object
+detection and semantic segmentation).
 
 <html>
   <body>
 <div style="text-align: center;">
-<img class="b-lazy"
-src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-data-src="assets/img/detection_vs_segmentation_shoes.jpeg" style="display: block; margin: auto; width: 100%;"/>
-<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+  <img class="b-lazy"
+    id="neurons"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/detection_vs_segmentation_neurons.jpeg"
+    style="display: block; margin: auto; width: 100%;"/>
+<table id="neurons_caption" style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+<td width="50%"><figcaption style="text-align: center;">foo</figcaption></td>
 </tr></table>
   </div>
   </body>
@@ -131,15 +185,41 @@ data-src="assets/img/detection_vs_segmentation_shoes.jpeg" style="display: block
 <html>
   <body>
 <div style="text-align: center;">
-<img class="b-lazy"
-src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-data-src="assets/img/detection_vs_segmentation_neurons.jpeg" style="display: block; margin: auto; width: 100%;"/>
-<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+  <img class="b-lazy"
+    id="neurons_vertical"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/detection_vs_segmentation_neurons_vertical.jpeg"
+    style="display: block; margin: auto; width: 100%;"/>
+<table id="neurons_caption_vertical" style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+<td width="50%"><figcaption style="text-align: center;">foo</figcaption></td>
 </tr></table>
   </div>
   </body>
 </html>
 
+It would be ideal to directly predict unique labels (neurons) in a dataset.
+Unfortunately this requires global information which is difficult because
+neurons span large distances. Due to the nature of neural networks, field of
+views are not large enough to account for downstream changes in a neuron such as
+branching and merging. Consequently, alternative approaches aim to solve the
+problem locally.
+
+<script>
+
+if (md.is('iPhone')){
+  console.log('foo');
+  document.getElementById('shoes_vertical').style.display = 'none';
+  document.getElementById('neurons_vertical').style.display = 'none';
+  document.getElementById('neurons_caption_vertical').style.display = 'none';
+}
+else {
+  console.log('moo');
+  document.getElementById('shoes').style.display = 'none';
+  document.getElementById('neurons').style.display = 'none';
+  document.getElementById('neurons_caption').style.display = 'none';
+}
+
+</script>
 
 <h3 id="related_work">Related Work</h3>
 
@@ -156,7 +236,7 @@ data-src="assets/img/detection_vs_segmentation_neurons.jpeg" style="display: blo
 <div style="text-align: center;">
 <img class="b-lazy"
 src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-data-src="assets/img/related_methods.jpeg" style="display: block; margin: auto; width: 100%;"/>
+data-src="assets/img/related_methods_vertical.jpeg" style="display: block; margin: auto; width: 100%;"/>
 <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
 </tr></table>
   </div>

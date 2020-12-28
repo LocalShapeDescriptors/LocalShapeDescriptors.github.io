@@ -451,25 +451,22 @@ color: #3D5AFE;
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
 
-<!--<script src="lib/mobile-detect.min.js"></script>-->
+<script src="lib/mobile-detect.min.js"></script>
 <script src="lib/template.v1.js"></script>
-
 
 <script type="text/front-matter">
   title: "LSDs"
   description: ""
 </script>
 <body>
+
 <div style="text-align: center;">
-<img class="b-lazy"
-src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-data-src="assets/img/lsds_header.jpeg" style="display: block; margin: auto; width: 100%;"/>
-<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-<td width="50%"><figcaption style="text-align: center;">Direction vectors of the
+  <img src="assets/img/lsds_header.jpeg" style="display: block; margin: auto; width: 100%;"/>
+  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+  <td width="50%"><figcaption style="text-align: center;">Direction vectors of the
     LSDs on a single neuron from the fly visual system. Colors correspond to
     the direction in which the neuronal processes travel.</figcaption></td>
   </tr></table>
-
 </div>
 
 <dt-article class="centered" id="dtbody">
@@ -524,6 +521,9 @@ data-src="assets/img/lsds_header.jpeg" style="display: block; margin: auto; widt
 <button onclick="topFunction()" id="toc_scroll" title="Scroll to toc">Contents</button>
 
 <script>
+
+var md = new MobileDetect(window.navigator.userAgent);
+
 //Get the button
 var mybutton = document.getElementById("toc_scroll");
 

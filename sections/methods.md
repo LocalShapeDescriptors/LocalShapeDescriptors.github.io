@@ -7,7 +7,7 @@
 <div style="text-align: center;">
 <img class="b-lazy"
 src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-data-src="assets/img/lsd_schematic.jpeg" style="display: block; margin: auto; width: 100%;"/>
+data-src="assets/img/lsd_schematic_vertical.jpeg" style="display: block; margin: auto; width: 100%;"/>
 <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
 </tr></table>
   </div>
