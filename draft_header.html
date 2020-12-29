@@ -447,22 +447,6 @@ color: #3D5AFE;
   background-color: #aaa;
 }
 
-.image-wrapper {
-        background: #FFFFFF url('assets/img/loader2.gif') center center no-repeat;
-        width: 100%
-    }
-    .ratio_16-9 {
-        padding-bottom: 56.25%; 
-        height: 0;
-    }
-    .ratio_test {
-        padding-bottom: 70%; 
-        height: 0;
-    }
-        .b-lazy {
-            max-width: 100%;
-        }
-
 </style>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
@@ -476,16 +460,20 @@ color: #3D5AFE;
 </script>
 <body>
 
-<div class="image-wrapper ratio_test" style="text-align: center;">
+<div style="text-align: center;">
   <img class="b-lazy"
        src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-       data-src="assets/img/lsds_header.jpeg"
-       style="display: block; margin: auto; width: 100%;"/>
-  <noscript> <img src="assets/img/lsds_header.jpeg" alt="alt-text" /></noscript>
-<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-<td width="50%"><figcaption style="text-align: center;">Direction vectors of the
-    LSDs on a single neuron from the fly visual system. Colors correspond to
-    the direction in which the neuronal processes travel.</figcaption></td>
+       data-src="assets/img/small/lsds_header.jpeg"
+       srcset="assets/img/small/lsds_header.jpeg 320w,
+       assets/img/medium/lsds_header.jpeg 800w,
+       assets/img/large/lsds_header.jpeg 1200w,
+       assets/img/xlarge/lsds_header.jpeg 1920w"
+       sizes="100vw"
+       alt="LSD direction vectors">
+  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+  <td width="50%"><figcaption style="text-align: center;">Direction vectors of
+      the LSDs on a single neuron from the fly visual system. Colors correspond
+      to the direction in which the neuronal processes travel.</figcaption></td>
   </tr></table>
 </div>
 
