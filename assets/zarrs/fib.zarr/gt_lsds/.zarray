@@ -1,9 +1,9 @@
 {
     "chunks": [
-        3,
         23,
         46,
-        46
+        46,
+        3,
     ],
     "compressor": {
         "id": "gzip",
@@ -14,10 +14,10 @@
     "filters": null,
     "order": "C",
     "shape": [
-        10,
         92,
         92,
-        92
+        92,
+        10
     ],
     "zarr_format": 2
 }
