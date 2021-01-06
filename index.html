@@ -7,6 +7,8 @@
   <!-- roboto font -->
   <link href='https://fonts.googleapis.com/css?family=Roboto:300' rel='stylesheet' type='text/css'>
 
+  <link rel="icon" href="assets/img/aclsd.png" type="image/png">
+
   <meta name="theme-color" content="#ffffff" />
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -242,6 +244,30 @@ body {
   display: none;
 }
 
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 170px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
 .box {
   position: relative;
   background: white;
@@ -451,8 +477,12 @@ color: #3D5AFE;
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
 
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
 <script src="lib/mobile-detect.min.js"></script>
 <script src="lib/template.v1.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
 <script type="text/front-matter">
   title: "LSDs"
@@ -529,6 +559,10 @@ color: #3D5AFE;
 <button onclick="topFunction()" id="toc_scroll" title="Scroll to toc">Contents</button>
 
 <script>
+
+jQuery(document).ready(function($){
+    $('[data-toggle="popover"]').popover();
+});
 
 var md = new MobileDetect(window.navigator.userAgent);
 
@@ -610,23 +644,23 @@ function magnify(imgID, zoom, secondim) {
 
 </script>
 <h2>Abstract</h2>
-<p>We present a novel approach to neuron segmentation in electron microscopy
-volumes, which is based on the prediction of Local Shape Descriptors (LSDs) in
-combination with conventional voxel-wise direct neighbor affinities for neuron
-boundary detection. The shape descriptors capture local statistics about the
-neuron to be segmented, such as diameter, elongation, and direction. We show
-that learning to predict LSDs as an auxiliary learning task significantly
-improves the accuracy of the predicted affinities and subsequently of the
-obtained segmentations. We compare our method in a large comparative study
-against several existing methods across various specimen, imaging techniques,
-and resolutions. The results demonstrate that auxiliary learning of LSDs
-consistently increases segmentation accuracy over a range of metrics on all
-investigated datasets, when compared to other affinity-based methods. Notably,
-our method is competitive with the current state of the art for neuron
-segmentation, albeit two orders of magnitude more efficient—a critical
-requirement for the processing of future petabyte-sized datasets. Our method,
-together with evaluation code and consolidated evaluation datasets, is publicly
-available as a benchmark for future method contributions.</p>
+<p>We present a simple, yet effective, auxiliary learning task for the problem of
+neuron segmentation in electron microscopy volumes. The auxiliary task
+consists of the prediction of Local Shape Descriptors (LSDs), which we combine
+with conventional voxel-wise direct neighbor affinities for neuron boundary
+detection. The shape descriptors are designed to capture local statistics
+about the neuron to be segmented, such as diameter, elongation, and direction.
+On a large study comparing several existing methods across various specimen,
+imaging techniques, and resolutions, we find that auxiliary learning of LSDs
+consistently increases segmentation accuracy of affinity-based methods over a
+range of metrics. Furthermore, the addition of LSDs promotes affinity-based
+segmentation methods to be on par with the current state of the art for neuron
+segmentation (Flood-Filling Networks, FFN), while being two orders of
+magnitudes more efficient - a critical requirement for the processing of
+future petabyte-sized datasets. Implementations of the new auxiliary learning
+task, network architectures, training, prediction, and evaluation code, as
+well as the datasets used in this study are publicly available as a benchmark
+for future method contributions.</p>
 <hr>
 <div id="toc_container">
 <p class="toc_title">Contents</p>
@@ -646,11 +680,10 @@ available as a benchmark for future method contributions.</p>
   </ul>
 <li><a href="#results">3. Results</a></li>
   <ul>
-    <li><a href="#networks">3.1 Networks</a></li>
-    <li><a href="#metrics">3.2 Metrics</a></li>
-    <li><a href="#datasets">3.3 Datasets</a></li>
-    <li><a href="#accuracy">3.4 Accuracy</a></li>
-    <li><a href="#throughput">3.5 Throughput</a></li>
+    <li><a href="#metrics">3.1 Metrics</a></li>
+    <li><a href="#datasets">3.2 Datasets</a></li>
+    <li><a href="#accuracy">3.3 Accuracy</a></li>
+    <li><a href="#throughput">3.4 Throughput</a></li>
   </ul>
 <li><a href="#discussion">4. Discussion</a></li>
   <ul>
@@ -717,7 +750,7 @@ Lisbon, and require the acquisition of 1 million terabytes of data.</p>
 <div style="text-align: center;">
 <img class="b-lazy"
 src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-data-src="assets/img/scale1.jpeg" style="display: block; margin: auto; width: 100%;"/>
+data-src="assets/img/scale.jpeg" style="display: block; margin: auto; width: 100%;"/>
 <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
 <td width="50%"><figcaption style="text-align: center;">Scale perspective. A
 fruit fly brain imaged at synaptic resolution takes up 100's of terabytes of
@@ -783,21 +816,22 @@ the data without advanced tools.</p>
   <label class="box-close" for="acc-close"></label>
   <div class="box-content"><div> <p> To better understand the problem of neuron
   segmentation, it is necessary to understand what segmentation is. There are a
-  few ways to detect objects in an image. A standard approach is called **object
-  detection** which is a technique used to locate and label objects, often
-  resulting in fitting a bounding box to each object. This is a good strategy
-  for finding and tracking objects in an image but it neglects the volumetric
-  data contained within an object. An alternative method is called segmentation
-  in which every pixel of an object is assigned to a class. There are two main
-  techniques: **semantic segmentation** and **instance segmentation**. In
-  semantic segmentation, each pixel is assigned to a broader class, for example
-  each car in an image would be assigned to a car class and each animal in an
-  image would be assigned to a animal class. Conversely, instance segmentation
-  assigns each pixel to a unique label. Consider the following example: each
-  shoe in the image can be located (object detection), each pixel of each shoe
-  can be assigned to a class indicating the type of shoe (semantic
-  segmentation), and each pixel can be assigned a unique label indicating the
-  specific shoe: </p> </div>
+  few ways to detect objects in an image. A standard approach is called
+  <b>object detection</b> which is a technique used to locate and label objects,
+  often resulting in fitting a bounding box to each object. This is a good
+  strategy for finding and tracking objects in an image but it neglects the
+  volumetric data contained within an object. An alternative method is called
+  segmentation in which every pixel of an object is assigned to a class. There
+  are two main techniques: <b>semantic segmentation</b> and <b>instance
+  segmentation</b>. In semantic segmentation, each pixel is assigned to a
+  broader class, for example each car in an image would be assigned to a car
+  class and each animal in an image would be assigned to a animal class.
+  Conversely, instance segmentation assigns each pixel to a unique label.
+  Consider the following example: each shoe in the image can be located (object
+  detection), each pixel of each shoe can be assigned to a class indicating the
+  type of shoe (semantic segmentation - soccer cleats, boots, sneakers), and
+  each pixel can be assigned a unique label indicating the specific shoe: </p>
+  </div>
   <div class="box-content"><div style="text-align: center;">
     <img id="shoes" src="assets/img/detection_vs_segmentation_shoes.jpeg" style="display: block; margin: auto; width: 100%;"/>
   </div>
@@ -813,7 +847,10 @@ the data without advanced tools.</p>
 </html>
 <p>Neuron reconstruction is an instance segmentation problem because every pixel of
 every neuron needs to be assigned a unique label (in contrast to object
-detection and semantic segmentation).</p>
+detection and semantic segmentation). For example, given a raw EM image, we
+could simply detect mitochondria (object detection), assign all pixels
+containing mitochondria to one class (semantic segmentation), or assign all
+pixels of each object to a unique class (instance segmentation).</p>
 <html>
   <body>
 <div style="text-align: center;">
@@ -822,9 +859,6 @@ detection and semantic segmentation).</p>
     src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
     data-src="assets/img/detection_vs_segmentation_neurons.jpeg"
     style="display: block; margin: auto; width: 100%;"/>
-<table id="neurons_caption" style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-<td width="50%"><figcaption style="text-align: center;">foo</figcaption></td>
-</tr></table>
   </div>
   </body>
 </html>
@@ -836,9 +870,24 @@ detection and semantic segmentation).</p>
     src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
     data-src="assets/img/detection_vs_segmentation_neurons_vertical.jpeg"
     style="display: block; margin: auto; width: 100%;"/>
-<table id="neurons_caption_vertical" style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-<td width="50%"><figcaption style="text-align: center;">foo</figcaption></td>
-</tr></table>
+  </div>
+  </body>
+</html>
+<html>
+  <body>
+  <div class="accordion-container">
+  <nav class="accordion arrows">
+  <input type="radio" name="accordion" id="labels" />
+  <section class="box">
+  <label class="box-title" for="labels">Raw and Labels viewer</label>
+  <label class="box-close" for="acc-close"></label>
+  <div class="box-content"><div class="responsive-container">
+    <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%7D%2C%22position%22:%5B98.5%2C98.5%2C98.5%5D%2C%22crossSectionScale%22:1.0176722261336113%2C%22projectionOrientation%22:%5B-0.21856307983398438%2C-0.4040609300136566%2C-0.18352380394935608%2C0.8690707087516785%5D%2C%22projectionScale%22:484.7402817353436%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/raw%22%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#fb00ff%22%2C%22name%22:%22raw%22%7D%2C%7B%22type%22:%22segmentation%22%2C%22source%22:%7B%22url%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/labels%22%2C%22transform%22:%7B%22matrix%22:%5B%5B1%2C0%2C0%2C52%5D%2C%5B0%2C1%2C0%2C52%5D%2C%5B0%2C0%2C1%2C52%5D%5D%2C%22outputDimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%7D%7D%2C%22subsources%22:%7B%22default%22:true%2C%22bounds%22:true%7D%2C%22enableDefaultSubsources%22:false%7D%2C%22tab%22:%22source%22%2C%22annotationColor%22:%22#00d9ff%22%2C%22crossSectionRenderScale%22:0.24230351153893748%2C%22colorSeed%22:54670317%2C%22name%22:%22labels%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22raw%22%7D%2C%22layout%22:%224panel%22%7D" "></iframe>
+  </div>
+  </div>
+  </section>
+  <input type="radio" name="accordion" id="acc-close" />
+  </nav>
   </div>
   </body>
 </html>
@@ -854,45 +903,249 @@ if (md.is('iPhone')){
   console.log('foo');
   document.getElementById('shoes_vertical').style.display = 'none';
   document.getElementById('neurons_vertical').style.display = 'none';
-  document.getElementById('neurons_caption_vertical').style.display = 'none';
 }
 else {
   console.log('moo');
   document.getElementById('shoes').style.display = 'none';
   document.getElementById('neurons').style.display = 'none';
-  document.getElementById('neurons_caption').style.display = 'none';
 }
 
 </script>
 <h3 id="related_work">Related Work</h3>
-<ul>
-<li>boundaries</li>
-<li>affinities</li>
-<li>long range</li>
-<li>malis</li>
-<li>ffn</li>
-<li>metric learning</li>
-<li>watershed / agglom variants</li>
-</ul>
+<p>Most current approaches to neuron segmentation center around producing boundary
+maps which are then used to generate unique objects with post-processing steps.
+Consider the following example:</p>
 <html>
   <body>
 <div style="text-align: center;">
-<img class="b-lazy"
-src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-data-src="assets/img/related_methods_vertical.jpeg" style="display: block; margin: auto; width: 100%;"/>
+  <img class="b-lazy"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/labels.jpeg"
+    style="display: block; margin: auto; width: 50%;"/>
 <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+<td width="100%"><figcaption style="text-align: center;">We have four neurons
+(A,B,C,D) and we want to assign voxels (squares) to the label they belong to.
+Images kindly provided by <a
+href="https://scholar.google.com/citations?user=oSGyzt4AAAAJ&hl=en"
+target="_blank">Stephan Saalfeld</a>.</figcaption></td>
 </tr></table>
   </div>
   </body>
 </html>
+<ul>
+<li>Foreground / Background
+<ul>
+<li>It is often sufficient to assign pixels as either foreground or background
+and then perform connected components to label unique objects <dt-cite
+key="ciresan_deep_2012"></dt-cite>. This technique can fail for neuron
+segmentation because the axial resolution of fine-tip neurites is lower.</li>
+</ul>
+</li>
+</ul>
+<html>
+  <body>
+<div style="text-align: center;">
+  <img class="b-lazy"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/boundaries.jpeg"
+    style="display: block; margin: auto; width: 50%;"/>
+<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+<td width="100%"><figcaption style="text-align: center;">Naively labeling
+foreground voxels (white squares) and background voxels (black squares) would
+result in the top part of the yellow neuron (B) being falsely labeled as
+background.</figcaption></td>
+</tr></table>
+  </div>
+  </body>
+</html>
+<ul>
+<li>Nearest-neighbor Affinities
+<ul>
+<li>One solution is to predict edges between neighboring voxels rather than the
+voxels themselves <dt-cite
+key="turaga_convolutional_2010,funke_large_2019"></dt-cite>. This ensures
+that distal processes receive the same treatment as larger axons. Since
+these affinity graphs can be computed locally, they can be parallelized
+which leads to performance increases. However, affinities are sensitive to
+small errors. A few incorrectly assigned pixels can lead to false merges
+during post-processing.</li>
+</ul>
+</li>
+</ul>
+<html>
+  <body>
+<div style="text-align: center;">
+  <img class="b-lazy"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/affinities.jpeg"
+    style="display: block; margin: auto; width: 50%;"/>
+<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+<td width="100%"><figcaption style="text-align: center;">The top part of the
+yellow neuron would now be correctly assigned. However, slight changes in
+boundary predictions could result in subsequent post-processing
+errors.</figcaption></td>
+</tr></table>
+  </div>
+  </body>
+</html>
+<ul>
+<li>Long Range Affinities
+<ul>
+<li>In order to incorporate more context for the receptive field of the network, a larger affinity neighborhood can be used as an auxiliary learning objective <dt-cite
+key="lee_superhuman_2017"></dt-cite>. This theoretically helps to improve
+the nearest neighbor affinities and the resulting segmentations.</li>
+</ul>
+</li>
+</ul>
+<html>
+  <body>
+<div style="text-align: center;">
+  <img class="b-lazy"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/longrange.jpeg"
+    style="display: block; margin: auto; width: 50%;"/>
+<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+<td width="100%"><figcaption style="text-align: center;">Several increased
+neighborhood steps can be used to provide increased context to the nearest
+neighbor affinities. This essentially allows the network to see more than it
+otherwise would.</figcaption></td>
+</tr></table>
+  </div>
+  </body>
+</html>
+<ul>
+<li>MALIS loss
+<ul>
+<li>The above approaches rely on a Euclidean loss. An alternative loss function
+(MALIS) <dt-cite key="turaga_maximin_2009"></dt-cite> penalizes topological
+errors by minimizing the Rand Index, a measure of similarity between
+clusterings <dt-cite key="rand_objective_1971"></dt-cite>. This method has
+been further optimized by constraining the loss to a positive and negative
+pass followed by growing a maximal spanning tree on the affinity graph
+<dt-cite key="funke_large_2019"></dt-cite>.</li>
+</ul>
+</li>
+</ul>
+<html>
+  <body>
+<div style="text-align: center;">
+  <img class="b-lazy"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/malis.jpeg"
+    style="display: block; margin: auto; width: 50%;"/>
+<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+<td width="100%"><figcaption style="text-align: center;">Todo: explain this</figcaption></td>
+</tr></table>
+  </div>
+  </body>
+</html>
+<ul>
+<li>Flood Filling Networks (FFN)
+<ul>
+<li>The current state of the art approach <dt-cite
+key="januszewski_high-precision_2018"></dt-cite> eliminates the need for a
+separate post-processing step. After generateing seed points within neurons,
+a recurrent CNN iteratively fills each object by predicting which voxels
+belong to the same objects as the seeds.</li>
+</ul>
+</li>
+</ul>
+<html>
+  <body>
+<div style="text-align: center;">
+  <img class="b-lazy"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/ffn.jpeg"
+    style="display: block; margin: auto; width: 50%;"/>
+<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+<td width="100%"><figcaption style="text-align: center;">Given seed points
+inside a neuron (large white square, for example), the network predicts which
+voxels belong to the same neuron (white squares) and which belong to different
+neurons (black squares).</figcaption></td>
+</tr></table>
+  </div>
+  </body>
+</html>
+<ul>
+<li>Other approaches
+<ul>
+<li>
+<p>Deep Metric Learning</p>
+<ul>
+<li>A relatively new method uses deep metric learning to produce dense voxel
+embeddings <dt-cite key="lee_learning_2019"></dt-cite>. Voxels within an
+objects are similar in embedding space while voxels across objects are
+repelled <dt-fn>This method was introduced after experiment completion and
+is therefore not compared against.</dt-fn>.</li>
+</ul>
+</li>
+<li>
+<p>Watershed / Agglomeration Variants</p>
+<ul>
+<li>Other approaches <dt-cite
+key="ferrari_mutex_2018,beier2017multicut"></dt-cite> aim to improve
+segmentations by targeting the downstream graphs generated during
+post-processing rather than the boundary labels <dt-fn>We assess boundary
+prediction in this paper and do not consider post-processing
+strategies.</dt-fn>.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<!--<html>-->
+  <!--<body>-->
+<!--<div style="text-align: center;">-->
+<!--<img class="b-lazy"-->
+<!--src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==-->
+<!--data-src="assets/img/related_methods_vertical.jpeg" style="display: block; margin: auto; width: 100%;"/>-->
+<!--<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>-->
+<!--</tr></table>-->
+  <!--</div>-->
+  <!--</body>-->
+<!--</html>-->
 <h3 id="contributions">Contributions</h3>
 <ul>
-<li>introduce lsds</li>
-<li>large scale study</li>
+<li>
+<p>Local Shape Descriptors (LSDs)</p>
+<ul>
+<li>We introduce LSDs, a 10-Dimensional <a
+href="#local_shape_descriptors">embedding</a> for each voxel which encodes
+local object shape. We train several <a href="#network_architectures">neural
+networks</a> to predict LSDs as an auxiliary learning objective along with
+direct neighbor affinity predictions <dt-fn>Similar to Long Range
+affinities.</dt-fn>. We engineered LSDs to describe important features that
+could be leveraged to improve boundary detection. They consist of three
+components: size (1-D), offset to center of mass (3-D), and directionality
+(6-D).</li>
+</ul>
+</li>
+<li>
+<p>Large scale study</p>
+<ul>
+<li>We conducted a large scale comparative study of competing algorithms on
+three large and diverse EM <a href="#datasets">datasets</a>. We demonstate
+<a href="#accuracy">competitive results</a> with the current state of the
+art while being two orders of magnitude more <a
+href="#throughput">efficient</a>.</li>
+</ul>
+</li>
 </ul>
 <hr>
 <h2 id="methods">Methods</h2>
 <h3 id="local_shape_descriptors">Local Shape Descriptors</h3>
+<p>The intuition behind LSDs is to improve boundary detection by incorporating
+statistics describing the local shape of an object close to a boundary. A
+similar technique produced superior results over boundary detection alone
+<dt-cite key="bai_deep_2017"></dt-cite>. Given a raw EM dataset and unique
+neuron labels, we can compute ground truth LSDs in a local window. Specifically,
+for each voxel, we grow a gaussian with a fixed radius and intersect it with the
+underlying label. We then calculate the center of mass of the intersected region
+and compute several statistics between the given voxel and the center of mass.
+This is done for all voxels in the window. Perhaps the most important is the
+mean offset to center of mass (shown below). This component ensures that a
+smooth gradient is maintained within objects while providing sharp contrasts at
+object boundaries.</p>
 <html>
   <body>
 <div style="text-align: center;">
@@ -904,72 +1157,116 @@ data-src="assets/img/lsd_schematic_vertical.jpeg" style="display: block; margin:
   </div>
   </body>
 </html>
-<ul>
-<li>todo: add interactive lsd overview</li>
-</ul>
-<!--<div class="row"> -->
-  <!--<div class="column">-->
-  <!--<div class="a">-->
-  <!--<img id="raw1" src="/assets/img/raw.png">-->
-  <!--</div>-->
-  <!--<div class="b">-->
-  <!--<img id="offsets" src="/assets/img/offsets.png">-->
-  <!--</div>-->
-  <!--</div>-->
-  <!--<div class="column">-->
-  <!--<div class="a">-->
-  <!--<img id="raw2" src="/assets/img/raw.png">-->
-  <!--</div>-->
-  <!--<div class="b">-->
-  <!--<img id="orthogs" src="/assets/img/orthogs.png">-->
-  <!--</div>-->
-  <!--</div>-->
-  <!--<div class="column">-->
-  <!--<div class="a">-->
-  <!--<img id="raw3" src="/assets/img/raw.png">-->
-  <!--</div>-->
-  <!--<div class="b">-->
-  <!--<img id="size" src="/assets/img/size.png">-->
-  <!--</div>-->
-  <!--</div>-->
-<!--</div>-->
-<!--<script>-->
-<!--magnify("raw1", 1, "offsets");-->
-<!--magnify("raw2", 1, "orthogs");-->
-<!--magnify("raw3", 1, "size");-->
-<!--</script>-->
-<h3 id="network_architectures">Network Architectures</h3>
+<p>Additionally, we calculate two statistics describing the directionality of
+neural processes (Covariance and Pearson's correlation coefficient). The former
+highlights the orientation of neurons while the latter exposes elongation. The
+final component is simply the voxel count inside the intersected region which
+translates to the size of the process.</p>
 <html>
   <body>
   <div class="accordion-container">
   <nav class="accordion arrows">
-  <input type="radio" name="accordion" id="cb2" />
+  <input type="radio" name="accordion" id="gt_lsds" />
   <section class="box">
-  <label class="box-title" for="cb2">test</label>
+  <label class="box-title" for="gt_lsds">Ground truth LSDs</label>
   <label class="box-close" for="acc-close"></label>
-  <div class="box-content"><div>
-    <p> explain lsd architecture </p>
+  <div class="box-content"><div class="responsive-container">
+    <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%7D%2C%22position%22:%5B98.5%2C98.5%2C98.5%5D%2C%22crossSectionScale%22:1.0456762579315313%2C%22projectionOrientation%22:%5B-0.268303781747818%2C-0.36630383133888245%2C-0.03300556540489197%2C0.8903623819351196%5D%2C%22projectionScale%22:595.714724527316%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/gt_lsds_updated%22%2C%22transform%22:%7B%22matrix%22:%5B%5B1%2C0%2C0%2C0%2C52%5D%2C%5B0%2C1%2C0%2C0%2C52%5D%2C%5B0%2C0%2C1%2C0%2C52%5D%2C%5B0%2C0%2C0%2C1%2C0%5D%5D%2C%22outputDimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%2C%22d3%5E%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22tab%22:%22source%22%2C%22annotationColor%22:%22#0088ff%22%2C%22opacity%22:0.85%2C%22shader%22:%22void%20main%28%29%20%7B%5Cn%20%20%20%20emitRGB%28%5Cn%20%20%20%20%20%20%20%20vec3%28%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%280%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%281%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%282%29%29%29%5Cn%20%20%20%20%20%20%20%20%29%3B%5Cn%7D%5Cn%22%2C%22channelDimensions%22:%7B%22d3%5E%22:%5B1%2C%22%22%5D%7D%2C%22name%22:%22LSD%5B0:3%5D%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/raw%22%2C%22tab%22:%22source%22%2C%22annotationColor%22:%22#e100ff%22%2C%22name%22:%22raw%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/gt_lsds_updated%22%2C%22transform%22:%7B%22matrix%22:%5B%5B1%2C0%2C0%2C0%2C52%5D%2C%5B0%2C1%2C0%2C0%2C52%5D%2C%5B0%2C0%2C1%2C0%2C52%5D%2C%5B0%2C0%2C0%2C1%2C0%5D%5D%2C%22outputDimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%2C%22d3%5E%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22tab%22:%22source%22%2C%22annotationColor%22:%22#0088ff%22%2C%22opacity%22:0.85%2C%22shader%22:%22void%20main%28%29%20%7B%5Cn%20%20%20%20emitRGB%28%5Cn%20%20%20%20%20%20%20%20vec3%28%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%283%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%284%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%285%29%29%29%5Cn%20%20%20%20%20%20%20%20%29%3B%5Cn%7D%22%2C%22channelDimensions%22:%7B%22d3%5E%22:%5B1%2C%22%22%5D%7D%2C%22name%22:%22LSD%5B3:6%5D%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/gt_lsds_updated%22%2C%22transform%22:%7B%22matrix%22:%5B%5B1%2C0%2C0%2C0%2C52%5D%2C%5B0%2C1%2C0%2C0%2C52%5D%2C%5B0%2C0%2C1%2C0%2C52%5D%2C%5B0%2C0%2C0%2C1%2C0%5D%5D%2C%22outputDimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%2C%22d3%5E%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22tab%22:%22source%22%2C%22annotationColor%22:%22#0088ff%22%2C%22opacity%22:0.85%2C%22shader%22:%22void%20main%28%29%20%7B%5Cn%20%20%20%20emitRGB%28%5Cn%20%20%20%20%20%20%20%20vec3%28%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%286%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%287%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%288%29%29%29%5Cn%20%20%20%20%20%20%20%20%29%3B%5Cn%7D%22%2C%22channelDimensions%22:%7B%22d3%5E%22:%5B1%2C%22%22%5D%7D%2C%22name%22:%22LSD%5B6:9%5D%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/gt_lsds_updated%22%2C%22transform%22:%7B%22matrix%22:%5B%5B1%2C0%2C0%2C0%2C52%5D%2C%5B0%2C1%2C0%2C0%2C52%5D%2C%5B0%2C0%2C1%2C0%2C52%5D%2C%5B0%2C0%2C0%2C1%2C0%5D%5D%2C%22outputDimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%2C%22d3%5E%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22tab%22:%22source%22%2C%22annotationColor%22:%22#0088ff%22%2C%22opacity%22:0.8%2C%22shader%22:%22void%20main%28%29%20%7B%5Cn%20%20%20%20float%20v%20=%20toNormalized%28getDataValue%289%29%29%3B%5Cn%20%20%20%20vec4%20rgba%20=%20vec4%280%2C0%2C0%2C0%29%3B%5Cn%20%20%20%20if%20%28v%20%21=%200.0%29%20%7B%5Cn%20%20%20%20%20%20%20%20rgba%20=%20vec4%28colormapJet%28v%29%2C%201.0%29%3B%5Cn%20%20%20%20%7D%5Cn%20%20%20%20emitRGBA%28rgba%29%3B%5Cn%7D%22%2C%22channelDimensions%22:%7B%22d3%5E%22:%5B1%2C%22%22%5D%7D%2C%22name%22:%22LSD%5B9:10%5D%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22LSD%5B9:10%5D%22%2C%22size%22:290%7D%2C%22layout%22:%7B%22type%22:%22row%22%2C%22children%22:%5B%7B%22type%22:%22column%22%2C%22children%22:%5B%7B%22type%22:%22viewer%22%2C%22layers%22:%5B%22raw%22%2C%22LSD%5B0:3%5D%22%5D%2C%22layout%22:%22yz%22%7D%2C%7B%22type%22:%22viewer%22%2C%22layers%22:%5B%22raw%22%2C%22LSD%5B6:9%5D%22%5D%2C%22layout%22:%22yz%22%7D%5D%7D%2C%7B%22type%22:%22column%22%2C%22children%22:%5B%7B%22type%22:%22viewer%22%2C%22layers%22:%5B%22raw%22%2C%22LSD%5B3:6%5D%22%5D%2C%22layout%22:%22yz%22%7D%2C%7B%22type%22:%22viewer%22%2C%22layers%22:%5B%22raw%22%2C%22LSD%5B9:10%5D%22%5D%2C%22layout%22:%22yz%22%7D%5D%7D%5D%7D%7D" "></iframe>
   </div>
-  <div class="box-content"><div style="text-align: center;">
-    <img src="assets/img/lsd.png" style="display: block; margin: auto; width: 100%;"/>
   </div>
-  <div class="box-content"><div>
-    <p> explain mtlsd architecture </p>
+  </section>
+  <input type="radio" name="accordion" id="acc-close" />
+  </nav>
   </div>
-  <div class="box-content"><div style="text-align: center;">
-    <img src="assets/img/mtlsd.png" style="display: block; margin: auto; width: 100%;"/>
+  </body>
+</html>
+<h3 id="network_architectures">Network Architectures</h3>
+<div>
+  <h3>Popover</h3>
+  <p>We implemented the LSDs using three network architectures. All three networks
+use a <a data-toggle="popover" data-html="true" data-placement="bottom" title="blah blah blah fooooooooooooooooooooooooooooooooooooooooooo dhhhhhhhhhhhhhhhhhh moveeeeeeeeeeeeeeeeeeeeeeee nnnnnnnnnnnn nnnnnnnnnnnnnnnnnnnn" data-content="<img src='assets/img/unet.jpeg' width='600' />">3D U-Net</a><dt-cite key="funke_large_2019"></dt-cite>. The first is a multitask approach (MtLSD) in which the LSDs are predicted along
+with affinities in a single pass, which is a similar approach to the Long Range
+affinities: </p></div>
+<html>
+  <body>
+<div style="text-align: center;">
+<img class="b-lazy"
+src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+data-src="assets/img/mtlsd.png" style="display: block; margin: auto; width: 100%;"/>
+<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+</tr></table>
   </div>
-  <div class="box-content"><div>
-    <p> explain aclsd architecture </p>
+  </body>
+</html>
+<p>The second two architectures use an auto-context approach. The first pass predicts LSDs directly from raw data:</p>
+<html>
+  <body>
+<div style="text-align: center;">
+<img class="b-lazy"
+src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+data-src="assets/img/lsd.png" style="display: block; margin: auto; width: 100%;"/>
+<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+</tr></table>
   </div>
-  <div class="box-content"><div style="text-align: center;">
-    <img src="assets/img/aclsd.png" style="display: block; margin: auto; width: 100%;"/>
+  </body>
+</html>
+<p>The LSD network weights are then used to predict LSDs in a larger region. The
+predicted LSDs are fed into a second network (AcLSD) in order to predict
+affinities:</p>
+<html>
+  <body>
+<div style="text-align: center;">
+<img class="b-lazy"
+src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+data-src="assets/img/aclsd.png" style="display: block; margin: auto; width: 100%;"/>
+<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+</tr></table>
   </div>
-  <div class="box-content"><div>
-    <p> explain acrlsd architecture </p>
+  </body>
+</html>
+<p>The other auto-context network (AcrLSD) does the same as AcLSD but also includes
+a cropped version of the raw data as input to the network, in addition to the
+LSDs:</p>
+<html>
+  <body>
+<div style="text-align: center;">
+<img class="b-lazy"
+src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+data-src="assets/img/acrlsd.png" style="display: block; margin: auto; width: 100%;"/>
+<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+</tr></table>
   </div>
-  <div class="box-content"><div style="text-align: center;">
-    <img src="assets/img/acrlsd.png" style="display: block; margin: auto; width: 100%;"/>
+  </body>
+</html>
+<html>
+  <body>
+  <div class="accordion-container">
+  <nav class="accordion arrows">
+  <input type="radio" name="accordion" id="pred_lsds" />
+  <section class="box">
+  <label class="box-title" for="pred_lsds">Predicted LSDs</label>
+  <label class="box-close" for="acc-close"></label>
+  <div class="box-content"><div class="responsive-container">
+    <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%7D%2C%22position%22:%5B98.5%2C98.5%2C98.5%5D%2C%22crossSectionScale%22:1.0456762579315313%2C%22projectionOrientation%22:%5B-0.268303781747818%2C-0.36630383133888245%2C-0.03300556540489197%2C0.8903623819351196%5D%2C%22projectionScale%22:595.714724527316%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/pred_lsds_updated%22%2C%22transform%22:%7B%22matrix%22:%5B%5B1%2C0%2C0%2C0%2C52%5D%2C%5B0%2C1%2C0%2C0%2C52%5D%2C%5B0%2C0%2C1%2C0%2C52%5D%2C%5B0%2C0%2C0%2C1%2C0%5D%5D%2C%22outputDimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%2C%22d3%5E%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22annotationColor%22:%22#0088ff%22%2C%22opacity%22:0.85%2C%22shader%22:%22void%20main%28%29%20%7B%5Cn%20%20%20%20emitRGB%28%5Cn%20%20%20%20%20%20%20%20vec3%28%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%280%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%281%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%282%29%29%29%5Cn%20%20%20%20%20%20%20%20%29%3B%5Cn%7D%5Cn%22%2C%22channelDimensions%22:%7B%22d3%5E%22:%5B1%2C%22%22%5D%7D%2C%22name%22:%22LSD%5B0:3%5D%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/raw%22%2C%22tab%22:%22source%22%2C%22annotationColor%22:%22#e100ff%22%2C%22name%22:%22raw%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/pred_lsds_updated%22%2C%22transform%22:%7B%22matrix%22:%5B%5B1%2C0%2C0%2C0%2C52%5D%2C%5B0%2C1%2C0%2C0%2C52%5D%2C%5B0%2C0%2C1%2C0%2C52%5D%2C%5B0%2C0%2C0%2C1%2C0%5D%5D%2C%22outputDimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%2C%22d3%5E%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22annotationColor%22:%22#0088ff%22%2C%22opacity%22:0.85%2C%22shader%22:%22void%20main%28%29%20%7B%5Cn%20%20%20%20emitRGB%28%5Cn%20%20%20%20%20%20%20%20vec3%28%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%283%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%284%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%285%29%29%29%5Cn%20%20%20%20%20%20%20%20%29%3B%5Cn%7D%22%2C%22channelDimensions%22:%7B%22d3%5E%22:%5B1%2C%22%22%5D%7D%2C%22name%22:%22LSD%5B3:6%5D%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/pred_lsds_updated%22%2C%22transform%22:%7B%22matrix%22:%5B%5B1%2C0%2C0%2C0%2C52%5D%2C%5B0%2C1%2C0%2C0%2C52%5D%2C%5B0%2C0%2C1%2C0%2C52%5D%2C%5B0%2C0%2C0%2C1%2C0%5D%5D%2C%22outputDimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%2C%22d3%5E%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22annotationColor%22:%22#0088ff%22%2C%22opacity%22:0.85%2C%22shader%22:%22void%20main%28%29%20%7B%5Cn%20%20%20%20emitRGB%28%5Cn%20%20%20%20%20%20%20%20vec3%28%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%286%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%287%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%288%29%29%29%5Cn%20%20%20%20%20%20%20%20%29%3B%5Cn%7D%22%2C%22channelDimensions%22:%7B%22d3%5E%22:%5B1%2C%22%22%5D%7D%2C%22name%22:%22LSD%5B6:9%5D%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/pred_lsds_updated%22%2C%22transform%22:%7B%22matrix%22:%5B%5B1%2C0%2C0%2C0%2C52%5D%2C%5B0%2C1%2C0%2C0%2C52%5D%2C%5B0%2C0%2C1%2C0%2C52%5D%2C%5B0%2C0%2C0%2C1%2C0%5D%5D%2C%22outputDimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%2C%22d3%5E%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#0088ff%22%2C%22opacity%22:0.8%2C%22shader%22:%22void%20main%28%29%20%7B%5Cn%20%20%20%20float%20v%20=%20toNormalized%28getDataValue%289%29%29%3B%5Cn%20%20%20%20vec4%20rgba%20=%20vec4%280%2C0%2C0%2C0%29%3B%5Cn%20%20%20%20if%20%28v%20%21=%200.0%29%20%7B%5Cn%20%20%20%20%20%20%20%20rgba%20=%20vec4%28colormapJet%28v%29%2C%201.0%29%3B%5Cn%20%20%20%20%7D%5Cn%20%20%20%20emitRGBA%28rgba%29%3B%5Cn%7D%22%2C%22channelDimensions%22:%7B%22d3%5E%22:%5B1%2C%22%22%5D%7D%2C%22name%22:%22LSD%5B9:10%5D%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22LSD%5B9:10%5D%22%2C%22size%22:290%7D%2C%22layout%22:%7B%22type%22:%22row%22%2C%22children%22:%5B%7B%22type%22:%22column%22%2C%22children%22:%5B%7B%22type%22:%22viewer%22%2C%22layers%22:%5B%22raw%22%2C%22LSD%5B0:3%5D%22%5D%2C%22layout%22:%22yz%22%7D%2C%7B%22type%22:%22viewer%22%2C%22layers%22:%5B%22raw%22%2C%22LSD%5B6:9%5D%22%5D%2C%22layout%22:%22yz%22%7D%5D%7D%2C%7B%22type%22:%22column%22%2C%22children%22:%5B%7B%22type%22:%22viewer%22%2C%22layers%22:%5B%22raw%22%2C%22LSD%5B3:6%5D%22%5D%2C%22layout%22:%22yz%22%7D%2C%7B%22type%22:%22viewer%22%2C%22layers%22:%5B%22raw%22%2C%22LSD%5B9:10%5D%22%5D%2C%22layout%22:%22yz%22%7D%5D%7D%5D%7D%7D" "></iframe>
+  </div>
+  </div>
+  </section>
+  <input type="radio" name="accordion" id="acc-close" />
+  </nav>
+  </div>
+  </body>
+</html>
+<html>
+  <body>
+  <div class="accordion-container">
+  <nav class="accordion arrows">
+  <input type="radio" name="accordion" id="gt_vs_pred" />
+  <section class="box">
+  <label class="box-title" for="gt_vs_pred">Ground truth vs predicted offset
+  vectors</label>
+  <label class="box-close" for="acc-close"></label>
+  <div class="box-content"><div class="responsive-container">
+    <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%7D%2C%22position%22:%5B98.5%2C98.5%2C98.5%5D%2C%22crossSectionScale%22:0.6550553083112535%2C%22projectionOrientation%22:%5B-0.268303781747818%2C-0.36630383133888245%2C-0.03300556540489197%2C0.8903623819351196%5D%2C%22projectionScale%22:595.714724527316%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/gt_lsds_updated%22%2C%22transform%22:%7B%22matrix%22:%5B%5B1%2C0%2C0%2C0%2C52%5D%2C%5B0%2C1%2C0%2C0%2C52%5D%2C%5B0%2C0%2C1%2C0%2C52%5D%2C%5B0%2C0%2C0%2C1%2C0%5D%5D%2C%22outputDimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%2C%22d3%5E%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22tab%22:%22source%22%2C%22annotationColor%22:%22#0088ff%22%2C%22opacity%22:0.85%2C%22shader%22:%22void%20main%28%29%20%7B%5Cn%20%20%20%20emitRGB%28%5Cn%20%20%20%20%20%20%20%20vec3%28%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%280%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%281%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%282%29%29%29%5Cn%20%20%20%20%20%20%20%20%29%3B%5Cn%7D%5Cn%22%2C%22channelDimensions%22:%7B%22d3%5E%22:%5B1%2C%22%22%5D%7D%2C%22name%22:%22GT%20LSD%5B0:3%5D%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/raw%22%2C%22tab%22:%22source%22%2C%22annotationColor%22:%22#e100ff%22%2C%22name%22:%22raw%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/pred_lsds_updated%22%2C%22transform%22:%7B%22matrix%22:%5B%5B1%2C0%2C0%2C0%2C52%5D%2C%5B0%2C1%2C0%2C0%2C52%5D%2C%5B0%2C0%2C1%2C0%2C52%5D%2C%5B0%2C0%2C0%2C1%2C0%5D%5D%2C%22outputDimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%2C%22d3%5E%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22annotationColor%22:%22#0088ff%22%2C%22opacity%22:0.85%2C%22shader%22:%22void%20main%28%29%20%7B%5Cn%20%20%20%20emitRGB%28%5Cn%20%20%20%20%20%20%20%20vec3%28%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%280%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%281%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%282%29%29%29%5Cn%20%20%20%20%20%20%20%20%29%3B%5Cn%7D%22%2C%22channelDimensions%22:%7B%22d3%5E%22:%5B1%2C%22%22%5D%7D%2C%22name%22:%22Predicted%20LSD%5B0:3%5D%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22GT%20LSD%5B0:3%5D%22%2C%22size%22:290%7D%2C%22layout%22:%7B%22type%22:%22row%22%2C%22children%22:%5B%7B%22type%22:%22viewer%22%2C%22layers%22:%5B%22raw%22%2C%22GT%20LSD%5B0:3%5D%22%5D%2C%22layout%22:%22yz%22%7D%2C%7B%22type%22:%22viewer%22%2C%22layers%22:%5B%22raw%22%2C%22Predicted%20LSD%5B0:3%5D%22%5D%2C%22layout%22:%22yz%22%7D%5D%7D%7D" "></iframe>
   </div>
   </div>
   </section>
@@ -980,31 +1277,196 @@ data-src="assets/img/lsd_schematic_vertical.jpeg" style="display: block; margin:
 </html>
 <hr>
 <h2 id="results">Results</h2>
-<h3 id="networks">Networks</h3>
+<p>We conducted a large scale study comparing LSD-based methods against three
+previous affinity-based methods: (1) direct neighbor and (2) long-range
+affinities with mean squared error (MSE) loss, and (3) direct neighbor
+affinities with MALIS loss. We also include comparisons against single FFN
+segmentations<dt-cite key="januszewski_high-precision_2018"></dt-cite>. The LSD
+architectures are described <a href="#network_architectures">here</a>. For a
+more detailed overview, see section 3.1 in the paper.</p>
 <h3 id="metrics">Metrics</h3>
+<p>One challenge of neuron segmentation is finding an evaluation metric which
+accurately reflects the quality of a reconstruction. We used two established
+metrics: Variation of Information (VoI) and Expected Run-Length (ERL). We also
+propose a new metric, which we call the Min-Cut Metric (MCM).</p>
+<p><strong>Variation of Information (VoI)<dt-cite key="meila_comparing_2007"></dt-cite></strong> - An established metric which measures the amount of over-segmentation (false
+splits) and under-segmentation (false merges) between a proposed segmentation
+and ground truth. Taken together, they constitute the VoI Sum. The goal is to
+minimize the VoI; a perfect score would be zero, meaning a segmentation
+differs as little as possible from the ground truth.</p>
+<p><strong>Expected Run Length (ERL)<dt-cite
+key="januszewski_high-precision_2018"></dt-cite></strong> - A relatively new metric
+which measures the expected length of an error-free path along neurons in a
+volume. It is an appealing metric to both engineers and neuroscientists since it
+relates segmentation errors to neuron cable length.</p>
+<p><strong>Min-Cut Metric (MCM)</strong> - We propose a new metric designed to emulate a human
+annotator splitting and merging objects in a segmentation. Specifically, it
+gives an approximation of how many clicks are needed to get from a
+reconstruction to the correct ground truth (assuming ground truth in
+the form of skeletons is available). In a simple case
+we have two ground truth skeletons contained inside a falsely merged segment
+(1). We perform a min-cut (2), and separate the falsely merged segment into two segments (3).</p>
+<html>
+  <body>
+<div style="text-align: center;">
+  <img class="b-lazy"
+    id="neurons"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/mcm_easy_case.jpeg"
+    style="display: block; margin: auto; width: 100%;"/>
+  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  </tr></table>
+  </div>
+  </body>
+</html>
+<p>In a more complex case (1), a min-cut (2) splits the segment but one of the
+resulting segments still contains a false merge (3). Another min-cut is
+performed (4), resulting in three segments (5). This process is described in
+detail in Supplementary section B of the paper.</p>
+<html>
+  <body>
+<div style="text-align: center;">
+  <img class="b-lazy"
+    id="neurons"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/mcm_complex_case.jpeg"
+    style="display: block; margin: auto; width: 100%;"/>
+  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  </tr></table>
+  </div>
+  </body>
+</html>
 <h3 id="datasets">Datasets</h3>
+<p>We used three large and diverse EM datasets to evaluate all methods and compare
+metrics.</p>
+<p><strong>Zebrafinch:</strong> The main component of the study was a region taken from songbird
+neural tissue <dt-cite key="januszewski_high-precision_2018"></dt-cite>. The
+volume comprises ~10<sup>6</sup> cubic microns of raw data. It was imaged using
+SBFEM at 9x9x20 (xyx) nanometer resolution. 0.02% of the data was using for
+training (33 volumes containing ~200 cubic microns of labeled neurons). 12
+manually traced skeletons (13.5 millimeters) were used for network validation
+and 50 skeletons (97 millimeters) were used for evaluation. See below for a
+visualization:</p>
+<html>
+  <body>
+<div style="text-align: center;">
+  <img class="b-lazy"
+    id="neurons"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/zfinch_dataset.jpeg"
+    style="display: block; margin: auto; width: 100%;"/>
+  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  </tr></table>
+  </div>
+  </body>
+</html>
+<p>After training, we predicted in a slightly smaller testing region (~800,000
+cubic microns) which we refer to as the Benchmark ROI (region of interest). We created two sets of
+supervoxels, one without any masking, and one constrained to a neuropil mask.</p>
+<html>
+  <body>
+  <div class="accordion-container">
+  <nav class="accordion arrows">
+  <input type="radio" name="accordion" id="zfinch" />
+  <section class="box">
+  <label class="box-title" for="zfinch">Zebrafinch</label>
+  <label class="box-close" for="acc-close"></label>
+  <div class="box-content"><div class="responsive-container">
+    <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B2e-8%2C%22m%22%5D%2C%22y%22:%5B2e-8%2C%22m%22%5D%2C%22z%22:%5B2e-8%2C%22m%22%5D%7D%2C%22position%22:%5B2522.154052734375%2C2508.88134765625%2C2990.42919921875%5D%2C%22crossSectionScale%22:16.860758498545437%2C%22projectionOrientation%22:%5B-0.183084174990654%2C-0.3018076419830322%2C0.007873492315411568%2C0.935590922832489%5D%2C%22projectionScale%22:8192%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://j0126-nature-methods-data/GgwKmcKgrcoNxJccKuGIzRnQqfit9hnfK1ctZzNbnuU/rawdata_realigned%22%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#ff00f7%22%2C%22name%22:%22rawdata_realigned%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22precomputed://gs://j0126-nature-methods-data/GgwKmcKgrcoNxJccKuGIzRnQqfit9hnfK1ctZzNbnuU/tissue_classification%22%2C%22transform%22:%7B%22outputDimensions%22:%7B%22x%22:%5B2e-8%2C%22m%22%5D%2C%22y%22:%5B2e-8%2C%22m%22%5D%2C%22z%22:%5B2e-8%2C%22m%22%5D%2C%22c%27%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22tab%22:%22annotations%22%2C%22localDimensions%22:%7B%22c%27%22:%5B1%2C%22%22%5D%7D%2C%22localPosition%22:%5B4%5D%2C%22annotationColor%22:%22#d400ff%22%2C%22shader%22:%22#uicontrol%20vec3%20color%20color%28default=%5C%22magenta%5C%22%29%5Cnvoid%20main%28%29%20%7B%5Cn%20%20emitRGBA%28vec4%28color%2C%20toNormalized%28getDataValue%28%29%29%29%29%3B%5Cn%7D%5Cn%22%2C%22shaderControls%22:%7B%22color%22:%22#0088ff%22%7D%2C%22name%22:%22neuropil%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22neuropil%22%2C%22size%22:649%7D%2C%22layout%22:%224panel%22%7D" "></iframe>
+  </div>
+  </div>
+  </section>
+  <input type="radio" name="accordion" id="acc-close" />
+  </nav>
+  </div>
+  </body>
+</html>
+<p>For each affinity-based network, we created segmentations over a range of ROIs in order to assess performance with scale. We then evaluated VoI, ERL, and MCM.</p>
+<p><strong>Hemi-Brain:</strong> A volume taken from the <em>Drosophila melanogaster</em> central brain
+<dt-cite key="scheffer_connectome_2020"></dt-cite>. It was imaged with FIBSEM at
+8 nanometer isotropic resolution and contains a total of 26 teravoxels of image
+data. We restricted experiments to the Ellipsoid Body, a neuropil implicated in
+spatial navigation <dt-cite key="turner-evans_insect_2016"></dt-cite>. 0.002% of
+the data was used for training (~450 cubic microns of labeled neurons). We
+restricted segmentations to three ROIs and evaluated against a filtered list of
+neurons traced to completion (voxel-based rather than skeletons).</p>
+<html>
+  <body>
+<div style="text-align: center;">
+  <img class="b-lazy"
+    id="neurons"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/hemi_dataset.jpeg"
+    style="display: block; margin: auto; width: 100%;"/>
+  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  </tr></table>
+  </div>
+  </body>
+</html>
+<html>
+  <body>
+  <div class="accordion-container">
+  <nav class="accordion arrows">
+  <input type="radio" name="accordion" id="hemi" />
+  <section class="box">
+  <label class="box-title" for="hemi">Hemi-brain</label>
+  <label class="box-close" for="acc-close"></label>
+  <div class="box-content"><div class="responsive-container">
+    <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B8e-9%2C%22m%22%5D%2C%22y%22:%5B8e-9%2C%22m%22%5D%2C%22z%22:%5B8e-9%2C%22m%22%5D%7D%2C%22position%22:%5B25962.435546875%2C25359.71484375%2C20296.431640625%5D%2C%22crossSectionScale%22:47.72354919422505%2C%22crossSectionDepth%22:-37.62185354999912%2C%22projectionOrientation%22:%5B-0.008687195368111134%2C-0.7010441422462463%2C-0.7130189538002014%2C-0.008097930811345577%5D%2C%22projectionScale%22:21207.72950167948%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://neuroglancer-janelia-flyem-hemibrain/emdata/clahe_yz/jpeg%22%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#0091ff%22%2C%22name%22:%22emdata%22%7D%2C%7B%22type%22:%22segmentation%22%2C%22source%22:%7B%22url%22:%22precomputed://gs://neuroglancer-janelia-flyem-hemibrain/v1.0/rois%22%2C%22subsources%22:%7B%22default%22:true%2C%22properties%22:true%2C%22mesh%22:true%7D%2C%22enableDefaultSubsources%22:false%7D%2C%22pick%22:false%2C%22selectedAlpha%22:0.44%2C%22ignoreNullVisibleSet%22:false%2C%22meshSilhouetteRendering%22:1%2C%22colorSeed%22:2359850678%2C%22segments%22:%5B%2217%22%5D%2C%22segmentQuery%22:%22EB%22%2C%22name%22:%22roi%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22roi%22%2C%22size%22:290%7D%2C%22layout%22:%224panel%22%7D" "></iframe>
+  </div>
+  </div>
+  </section>
+  <input type="radio" name="accordion" id="acc-close" />
+  </nav>
+  </div>
+  </body>
+</html>
+<p><strong>FIB-25:</strong> An older dataset taken from the <em>Drosophila</em> visual system <dt-cite
+key="takemura_synaptic_2015"></dt-cite>. It contains ~346 gigavoxels of raw EM
+data and was imaged with FIBSEM at 8 nanometer resolution. Four volumes
+containing ~160 cubic microns of labeled data were used for training. We
+predicted inside the entire volume and then restricted supervoxels to an
+irregularly shaped neuropil mask. Segmentations were evaluated inside a 13.6
+gigavoxel region contained in the bottom half of the full ROI. Similar to the
+Hemi-brain, evaluations were done using a filtered list of completely traced
+neurons.</p>
+<html>
+  <body>
+<div style="text-align: center;">
+  <img class="b-lazy"
+    id="neurons"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/fib25_dataset.jpeg"
+    style="display: block; margin: auto; width: 100%;"/>
+  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  </tr></table>
+  </div>
+  </body>
+</html>
+<html>
+  <body>
+  <div class="accordion-container">
+  <nav class="accordion arrows">
+  <input type="radio" name="accordion" id="fib25" />
+  <section class="box">
+  <label class="box-title" for="fib25">FIB-25</label>
+  <label class="box-close" for="acc-close"></label>
+  <div class="box-content"><div class="responsive-container">
+    <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B8e-9%2C%22m%22%5D%2C%22y%22:%5B8e-9%2C%22m%22%5D%2C%22z%22:%5B8e-9%2C%22m%22%5D%7D%2C%22position%22:%5B3425.203857421875%2C2993.146240234375%2C3936.575927734375%5D%2C%22crossSectionScale%22:29.90334336415725%2C%22projectionOrientation%22:%5B-0.09087008237838745%2C0.8137544393539429%2C-0.4936932325363159%2C0.292939156293869%5D%2C%22projectionScale%22:11797.675238192334%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://neuroglancer-public-data/flyem_fib-25/image%22%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#007bff%22%2C%22name%22:%22image%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22image%22%7D%2C%22layout%22:%224panel%22%7D" "></iframe>
+  </div>
+  </div>
+  </section>
+  <input type="radio" name="accordion" id="acc-close" />
+  </nav>
+  </div>
+  </body>
+</html>
 <h3 id="accuracy">Accuracy</h3>
-<p>blah blah blah blah
-blah blah blah blah
-blah blah blah blah
-blah blah blah blah
-blah blah blah blah</p>
-<div class="plot-container">
-  <iframe
-    class="responsive-iframe"
-    src="../plots/test.html"
-    sandbox="allow-same-origin allow-scripts"
-    scrolling="no"
-    seamless="seamless"
-    frameborder="0">
-  </iframe>
-</div>
-<p>blah blah blah blah
-blah blah blah blah
-blah blah blah blah
-blah blah blah blah
-blah blah blah blah
-blah blah blah blah</p>
 <h3 id="throughput">Throughput</h3>
 <html>
   <body>
@@ -1012,21 +1474,45 @@ blah blah blah blah</p>
   <nav class="accordion arrows">
   <input type="radio" name="accordion" id="block" />
   <section class="box">
-  <label class="box-title" for="block">test</label>
+  <label class="box-title" for="block">Block-wise processing overview</label>
   <label class="box-close" for="acc-close"></label>
   <div class="box-content"><div>
-    <p> blah blah blah </p>
+  <p>Blockwise processing is necessary to process
+  such large volumes in a reasonable amount of time. The idea is to chunk up a
+  dataset into small blocks which easily fit in memory, and then distribute
+  these blocks over many workers (GPUs for prediction, CPUs for
+  post-processing). A little bit of context is required to read the input data
+  necessary to write the output data. Because of this, only blocks that do not
+  touch can be processed simultaneously. Once they finish processing, the next
+  set of blocks can begin, and so on until all blocks are complete. Consider
+  watershed for a single neuron:
+  </p>
   </div>
   <div class="box-content"><div style="text-align: center;">
     <img class="b-lazy"
-    src="assets/videos/watershed_separate_joined.gif" style="display: block; margin: auto; width: 100%;"/>
+    src="assets/videos/watershed_separate.gif" style="display: block; margin: auto; width: 100%;"/>
   </div>
   <div class="box-content"><div>
-    <p> blah blah blah </p>
+  <p>The blocks are processed in an alternating fashion ensuring that none touch. Piecing it together gives us the fragments required to generate a neuron:  </p>
   </div>
   <div class="box-content"><div style="text-align: center;">
     <img class="b-lazy"
-    src="assets/videos/agglom_separate_joined.gif" style="display: block; margin: auto; width: 100%;"/>
+    src="assets/videos/watershed_joined.gif" style="display: block; margin: auto; width: 100%;"/>
+  </div>
+  <div class="box-content"><div>
+  <p>The same logic can be used to stitch the fragments together based on
+  the underlying affinities. The result is an agglomerated neuron:</p>
+  </div>
+  <div class="box-content"><div style="text-align: center;">
+    <img class="b-lazy"
+    src="assets/videos/agglom_joined.gif" style="display: block; margin: auto; width: 100%;"/>
+  </div>
+  <div class="box-content"><div>
+  <p>This just shows what is happening on an example neuron. In reality every
+  object inside every block contained in the full volume is processed in
+  parallel. The result is a very efficient processing scheme. For example
+  predicting ~115,000 blocks distributed over 100 GPUs took under 2 hours to
+  complete (~800,000 total cubic microns). </p>
   </div>
   </div>
   </section>
@@ -1043,6 +1529,7 @@ blah blah blah blah</p>
 <h3 id="masking">Masking</h3>
 <hr>
 <h2 id="conclusions">Conclusions</h2>
+<p>foo</p>
 <hr>
 <h2 id="tldr">Tl;dr</h2>
 <ul>
@@ -1121,20 +1608,20 @@ approach.</p>
         url = {https://www.sciencedirect.com/science/article/pii/S0092867418307876}
 }
 @article{lee_superhuman_2017,
-	title = {Superhuman {Accuracy} on the {SNEMI}3D {Connectomics} {Challenge}},
+	title = {Superhuman Accuracy on the SNEMI3D Connectomics Challenge},
 	url = {http://arxiv.org/abs/1706.00120},
 	journal = {arXiv:1706.00120 [cs]},
 	author = {Lee, Kisuk and Zung, Jonathan and Li, Peter and Jain, Viren and Seung, H. Sebastian},
 	year = {2017},
 }
 @article{luther_learning_2019,
-	title = {Learning {Metric} {Graphs} for {Neuron} {Segmentation} {In} {Electron} {Microscopy} {Images}},
+	title = {Learning Metric Graphs for Neuron Segmentation In Electron Microscopy Images},
 	journal = {arXiv:1902.00100 [cs]},
 	author = {Luther, Kyle and Seung, H. Sebastian},
 	year = {2019},
 }
 @inproceedings{ronneberger_u-net:_2015,
-	title = {U-{Net}: {Convolutional} {Networks} for {Biomedical} {Image} {Segmentation}},
+	title = {U-Net: Convolutional Networks for Biomedical Image Segmentation},
 	doi = {10.1007/978-3-319-24574-4_28},
 	language = {en},
 	booktitle = {Medical {Image} {Computing} and {Computer}-{Assisted} {Intervention} – {MICCAI} 2015},
@@ -1164,14 +1651,14 @@ approach.</p>
   publisher={Nature Publishing Group}
 }
 @inproceedings{cicek_3d_2016,
-	title = {3D {U}-{Net}: {Learning} {Dense} {Volumetric} {Segmentation} from {Sparse} {Annotation}},
+	title = {3D U-Net: Learning Dense Volumetric Segmentation from Sparse Annotation},
 	booktitle = {Medical {Image} {Computing} and {Computer}-{Assisted} {Intervention} – {MICCAI} 2016},
 	author = {\c{C}i\c{c}ek, \"{O}zg\"{u}n and Abdulkadir, Ahmed and Lienkamp, Soeren S. and Brox, Thomas and Ronneberger, Olaf},
 	year = {2016},
 	pages = {424--432},
 }
 @article{funke_large_2019,
-	title = {Large {Scale} {Image} {Segmentation} with {Structured} {Loss} {Based} {Deep} {Learning} for {Connectome} {Reconstruction}},
+	title = {Large Scale Image Segmentation with Structured Loss Based Deep Learning for Connectome Reconstruction},
 	volume = {41},
 	number = {7},
 	journal = {IEEE Transactions on Pattern Analysis and Machine Intelligence},
@@ -1180,7 +1667,7 @@ approach.</p>
 	pages = {1669--1680},
 }
 @incollection{ciresan_deep_2012,
-	title = {Deep {Neural} {Networks} {Segment} {Neuronal} {Membranes} in {Electron} {Microscopy} {Images}},
+	title = {Deep Neural Networks Segment Neuronal Membranes in Electron Microscopy Images},
 	url = {http://papers.nips.cc/paper/4741-deep-neural-networks-segment-neuronal-membranes-in-electron-microscopy-images.pdf},
 	urldate = {2020-06-30},
 	booktitle = {Advances in {Neural} {Information} {Processing} {Systems} 25},
@@ -1191,7 +1678,7 @@ approach.</p>
 	pages = {2843--2851}
 }
 @article{turaga_convolutional_2010,
-	title = {Convolutional {Networks} {Can} {Learn} to {Generate} {Affinity} {Graphs} for {Image} {Segmentation}},
+	title = {Convolutional Networks Can Learn to Generate Affinity Graphs for Image Segmentation},
 	volume = {22},
 	issn = {0899-7667},
 	doi = {10.1162/neco.2009.10-08-881},
@@ -1204,7 +1691,7 @@ approach.</p>
 	pages = {511--538}
 }
 @inproceedings{bai_deep_2017,
-	title = {Deep {Watershed} {Transform} for {Instance} {Segmentation}},
+	title = {Deep Watershed Transform for Instance Segmentation},
 	url = {https://openaccess.thecvf.com/content_cvpr_2017/html/Bai_Deep_Watershed_Transform_CVPR_2017_paper.html},
 	urldate = {2020-06-30},
 	author = {Bai, Min and Urtasun, Raquel},
@@ -1212,7 +1699,7 @@ approach.</p>
 	pages = {5221--5229}
 }
 @article{takemura_synaptic_2015,
-	title = {Synaptic circuits and their variations within different columns in the visual system of {Drosophila}},
+	title = {Synaptic circuits and their variations within different columns in the visual system of Drosophila},
 	volume = {112},
 	issn = {0027-8424},
 	url = {https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4640747/},
@@ -1228,7 +1715,7 @@ approach.</p>
 	pages = {13711--13716},
 }
 @article{lee_learning_2019,
-	title = {Learning {Dense} {Voxel} {Embeddings} for {3D} {Neuron} {Reconstruction}},
+	title = {Learning Dense Voxel Embeddings for 3D Neuron Reconstruction},
 	url = {http://arxiv.org/abs/1909.09872},
 	urldate = {2020-09-02},
 	journal = {arXiv:1909.09872 [cs]},
@@ -1269,7 +1756,7 @@ approach.</p>
 }
 @incollection{ferrari_mutex_2018,
 	address = {Cham},
-	title = {The {Mutex} {Watershed}: {Efficient}, {Parameter}-{Free} {Image} {Partitioning}},
+	title = {The Mutex Watershed: Efficient, Parameter-Free Image Partitioning},
 	volume = {11208},
 	isbn = {978-3-030-01224-3 978-3-030-01225-0},
 	shorttitle = {The {Mutex} {Watershed}},
@@ -1286,7 +1773,7 @@ approach.</p>
 	pages = {571--587}
 }
 @article{li_automated_2019,
-	title = {Automated {Reconstruction} of a {Serial}-{Section} {EM} {Drosophila} {Brain} with {Flood}-{Filling} {Networks} and {Local} {Realignment}},
+	title = {Automated Reconstruction of a Serial-Section EM Drosophila Brain with Flood-Filling Networks and Local Realignment},
 	copyright = {© 2019, Posted by Cold Spring Harbor Laboratory. This pre-print is available under a Creative Commons License (Attribution-NonCommercial-NoDerivs 4.0 International), CC BY-NC-ND 4.0, as described at http://creativecommons.org/licenses/by-nc-nd/4.0/},
 	url = {https://www.biorxiv.org/content/10.1101/605634v1},
 	doi = {10.1101/605634},
@@ -1300,7 +1787,7 @@ approach.</p>
 	pages = {605634}
 }
 @article{abbott_mind_2020,
-	title = {The {Mind} of a {Mouse}},
+	title = {The Mind of a Mouse},
 	volume = {182},
 	issn = {0092-8674},
 	url = {http://www.sciencedirect.com/science/article/pii/S0092867420310011},
@@ -1315,7 +1802,7 @@ approach.</p>
 	pages = {1372--1376}
 }
 @article{turner-evans_neuroanatomical_2020,
-	title = {The {Neuroanatomical} {Ultrastructure} and {Function} of a {Biological} {Ring} {Attractor}},
+	title = {The Neuroanatomical Ultrastructure and Function of a Biological Ring Attractor},
 	volume = {0},
 	issn = {0896-6273},
 	url = {https://www.cell.com/neuron/abstract/S0896-6273(20)30613-9},
@@ -1332,7 +1819,7 @@ approach.</p>
 	keywords = {behavior, central complex, Drosophila, electron microscopy, head direction, navigation, network dynamics, neural circuit, RNA-seq, two-photon calcium imaging}
 }
 @article{bates_complete_2020,
-	title = {Complete {Connectomic} {Reconstruction} of {Olfactory} {Projection} {Neurons} in the {Fly} {Brain}},
+	title = {Complete Connectomic Reconstruction of Olfactory Projection Neurons in the Fly Brain},
 	volume = {30},
 	issn = {0960-9822},
 	url = {http://www.sciencedirect.com/science/article/pii/S0960982220308587},
@@ -1377,7 +1864,7 @@ approach.</p>
 	pages = {e16799}
 }
 @article{schneider-mizell_quantitative_2016,
-	title = {Quantitative neuroanatomy for connectomics in {Drosophila}},
+	title = {Quantitative neuroanatomy for connectomics in Drosophila},
 	volume = {5},
 	issn = {2050-084X},
 	url = {https://doi.org/10.7554/eLife.12059},
@@ -1423,7 +1910,7 @@ approach.</p>
 	pages = {2019.12.29.890319}
 }
 @article{maniates-selvin_reconstruction_2020,
-	title = {Reconstruction of motor control circuits in adult {Drosophila} using automated transmission electron microscopy},
+	title = {Reconstruction of motor control circuits in adult Drosophila using automated transmission electron microscopy},
 	copyright = {© 2020, Posted by Cold Spring Harbor Laboratory. This pre-print is available under a Creative Commons License (Attribution-NonCommercial-NoDerivs 4.0 International), CC BY-NC-ND 4.0, as described at http://creativecommons.org/licenses/by-nc-nd/4.0/},
 	url = {https://www.biorxiv.org/content/10.1101/2020.01.10.902478v1},
 	doi = {10.1101/2020.01.10.902478},
@@ -1437,7 +1924,7 @@ approach.</p>
 	pages = {2020.01.10.902478}
 }
 @article{heinrich_synaptic_2018,
-	title = {Synaptic {Cleft} {Segmentation} in {Non}-{Isotropic} {Volume} {Electron} {Microscopy} of the {Complete} {Drosophila} {Brain}},
+	title = {Synaptic Cleft Segmentation in Non-Isotropic Volume Electron Microscopy of the Complete Drosophila Brain},
 	url = {http://arxiv.org/abs/1805.02718},
 	urldate = {2020-09-17},
 	journal = {arXiv:1805.02718 [cs]},
@@ -1448,7 +1935,7 @@ approach.</p>
 	keywords = {Computer Science - Computer Vision and Pattern Recognition}
 }
 @article{scheffer_connectome_2020,
-	title = {A {Connectome} and {Analysis} of the {Adult} {Drosophila} {Central} {Brain}},
+	title = {A Connectome and Analysis of the Adult Drosophila Central Brain},
 	copyright = {© 2020, Posted by Cold Spring Harbor Laboratory. This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at http://creativecommons.org/licenses/by/4.0/},
 	url = {https://www.biorxiv.org/content/10.1101/2020.04.07.030213v1},
 	doi = {10.1101/2020.04.07.030213},
@@ -1465,7 +1952,7 @@ Section: New Results},
 @inproceedings{kreshuk_who_2015,
 	address = {Cham},
 	series = {Lecture {Notes} in {Computer} {Science}},
-	title = {Who {Is} {Talking} to {Whom}: {Synaptic} {Partner} {Detection} in {Anisotropic} {Volumes} of {Insect} {Brain}},
+	title = {Who Is Talking to Whom: Synaptic Partner Detection in Anisotropic Volumes of Insect Brain},
 	isbn = {978-3-319-24553-9},
 	shorttitle = {Who {Is} {Talking} to {Whom}},
 	doi = {10.1007/978-3-319-24553-9_81},
@@ -1490,7 +1977,7 @@ Section: New Results},
 	keywords = {Computer Science - Computer Vision and Pattern Recognition}
 }
 @article{buhmann_automatic_2020,
-	title = {Automatic {Detection} of {Synaptic} {Partners} in a {Whole}-{Brain} {Drosophila} {EM} {Dataset}},
+	title = {Automatic Detection of Synaptic Partners in a Whole-Brain Drosophila EM Dataset},
 	copyright = {© 2020, Posted by Cold Spring Harbor Laboratory. This pre-print is available under a Creative Commons License (Attribution-NonCommercial-NoDerivs 4.0 International), CC BY-NC-ND 4.0, as described at http://creativecommons.org/licenses/by-nc-nd/4.0/},
 	url = {https://www.biorxiv.org/content/10.1101/2019.12.12.874172v2},
 	doi = {10.1101/2019.12.12.874172},
@@ -1505,7 +1992,7 @@ Section: New Results},
 	pages = {2019.12.12.874172}
 }
 @article{huang_fully-automatic_2018,
-	title = {Fully-{Automatic} {Synapse} {Prediction} and {Validation} on a {Large} {Data} {Set}},
+	title = {Fully-Automatic Synapse Prediction and Validation on a Large Data Set},
 	volume = {12},
 	issn = {1662-5110},
 	url = {https://www.frontiersin.org/articles/10.3389/fncir.2018.00087/full},
@@ -1519,7 +2006,7 @@ Section: New Results},
 	keywords = {connectomics, deep learning, Drosophila, Evaluation, synapse prediction}
 }
 @article{plaza_analyzing_2018,
-	title = {Analyzing {Image} {Segmentation} for {Connectomics}},
+	title = {Analyzing Image Segmentation for Connectomics},
 	volume = {12},
 	issn = {1662-5110},
 	url = {https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6243088/},
@@ -1533,7 +2020,7 @@ Section: New Results},
 	pmcid = {PMC6243088}
 }
 @article{kornfeld_em_2017,
-	title = {{EM} connectomics reveals axonal target variation in a sequence-generating network},
+	title = {EM connectomics reveals axonal target variation in a sequence-generating network},
 	volume = {6},
 	issn = {2050-084X},
 	url = {https://doi.org/10.7554/eLife.24364},
@@ -1582,7 +2069,7 @@ Publisher: Nature Publishing Group},
 	pages = {4949}
 }
 @article{rand_objective_1971,
-	title = {Objective {Criteria} for the {Evaluation} of {Clustering} {Methods}},
+	title = {Objective Criteria for the Evaluation of Clustering Methods},
 	volume = {66},
 	issn = {0162-1459},
 	url = {https://www.jstor.org/stable/2284239},
@@ -1613,7 +2100,7 @@ Publisher: Nature Publishing Group},
 	file = {Turner-Evans and Jayaraman - 2016 - The insect central complex.pdf:/Users/ArloS/Zotero/storage/LR7BU6C3/Turner-Evans and Jayaraman - 2016 - The insect central complex.pdf:application/pdf}
 }
 @incollection{maitin-shepard_combinatorial_2016,
-	title = {Combinatorial {Energy} {Learning} for {Image} {Segmentation}},
+	title = {Combinatorial Energy Learning for Image Segmentation},
 	url = {http://papers.nips.cc/paper/6595-combinatorial-energy-learning-for-image-segmentation.pdf},
 	urldate = {2020-10-13},
 	booktitle = {Advances in {Neural} {Information} {Processing} {Systems} 29},
@@ -1632,7 +2119,7 @@ Publisher: Nature Publishing Group},
 }
 @article{funke_ted_2017,
 	series = {Image {Processing} for {Biologists}},
-	title = {{TED}: {A} {Tolerant} {Edit} {Distance} for segmentation evaluation},
+	title = {TED: A Tolerant Edit Distance for segmentation evaluation},
 	volume = {115},
 	issn = {1046-2023},
 	shorttitle = {{TED}},
@@ -1651,7 +2138,7 @@ Publisher: Nature Publishing Group},
 @inproceedings{plaza_focused_2016,
 	address = {Cham},
 	series = {Lecture {Notes} in {Computer} {Science}},
-	title = {Focused {Proofreading} to {Reconstruct} {Neural} {Connectomes} from {EM} {Images} at {Scale}},
+	title = {Focused Proofreading to Reconstruct Neural Connectomes from EM Images at Scale},
 	isbn = {978-3-319-46976-8},
 	doi = {10.1007/978-3-319-46976-8_26},
 	language = {en},
@@ -1701,7 +2188,7 @@ Publisher: Nature Publishing Group},
 	publisher={Oxford University Press}
 }
 @article{boergens_webknossos_2017,
-	title = {{webKnossos}: efficient online {3D} data annotation for connectomics},
+	title = {webKnossos: efficient online {3D} data annotation for connectomics},
 	volume = {14},
 	copyright = {2017 Nature Publishing Group, a division of Macmillan Publishers Limited. All Rights Reserved.},
 	issn = {1548-7105},
@@ -1721,7 +2208,8 @@ Publisher: Nature Publishing Group},
 	file = {Full Text PDF:/Users/ArloS/Zotero/storage/VDHQQKL2/Boergens et al. - 2017 - webKnossos efficient online 3D data annotation fo.pdf:application/pdf;Snapshot:/Users/ArloS/Zotero/storage/CQJI3QWJ/nmeth.html:text/html}
 }
 @article{berger_vast_2018,
-	title = {{VAST} ({Volume} {Annotation} and {Segmentation} {Tool}): {Efficient} {Manual} and {Semi}-{Automatic} {Labeling} of {Large} {3D} {Image} {Stacks}},
+	title = {VAST (Volume Annotation and Segmentation Tool): Efficient
+        Manual and Semi-Automatic Labeling of Large 3D Image Stacks},
 	volume = {12},
 	issn = {1662-5110},
 	shorttitle = {{VAST} ({Volume} {Annotation} and {Segmentation} {Tool})},
@@ -1737,7 +2225,7 @@ Publisher: Nature Publishing Group},
 	file = {Full Text PDF:/Users/ArloS/Zotero/storage/DBQWS7DN/Berger et al. - 2018 - VAST (Volume Annotation and Segmentation Tool) Ef.pdf:application/pdf}
 }
 @article{zhao_neutu_2018,
-	title = {{NeuTu}: {Software} for {Collaborative}, {Large}-{Scale}, {Segmentation}-{Based} {Connectome} {Reconstruction}},
+	title = {NeuTu: Software for Collaborative, Large-Scale, Segmentation-Based Connectome Reconstruction},
 	volume = {12},
 	issn = {1662-5110},
 	shorttitle = {{NeuTu}},

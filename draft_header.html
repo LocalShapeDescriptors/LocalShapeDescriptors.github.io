@@ -7,6 +7,8 @@
   <!-- roboto font -->
   <link href='https://fonts.googleapis.com/css?family=Roboto:300' rel='stylesheet' type='text/css'>
 
+  <link rel="icon" href="assets/img/aclsd.png" type="image/png">
+
   <meta name="theme-color" content="#ffffff" />
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -242,6 +244,30 @@ body {
   display: none;
 }
 
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 170px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
 .box {
   position: relative;
   background: white;
@@ -447,12 +473,20 @@ color: #3D5AFE;
   background-color: #aaa;
 }
 
+.popover{
+    max-width: 100% !important;
+}
+
 </style>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
 
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
 <script src="lib/mobile-detect.min.js"></script>
 <script src="lib/template.v1.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
 <script type="text/front-matter">
   title: "LSDs"
@@ -529,6 +563,10 @@ color: #3D5AFE;
 <button onclick="topFunction()" id="toc_scroll" title="Scroll to toc">Contents</button>
 
 <script>
+
+jQuery(document).ready(function($){
+    $('[data-toggle="popover"]').popover();
+});
 
 var md = new MobileDetect(window.navigator.userAgent);
 

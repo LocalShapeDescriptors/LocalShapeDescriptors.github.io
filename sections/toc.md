@@ -16,11 +16,10 @@
   </ul>
 <li><a href="#results">3. Results</a></li>
   <ul>
-    <li><a href="#networks">3.1 Networks</a></li>
-    <li><a href="#metrics">3.2 Metrics</a></li>
-    <li><a href="#datasets">3.3 Datasets</a></li>
-    <li><a href="#accuracy">3.4 Accuracy</a></li>
-    <li><a href="#throughput">3.5 Throughput</a></li>
+    <li><a href="#metrics">3.1 Metrics</a></li>
+    <li><a href="#datasets">3.2 Datasets</a></li>
+    <li><a href="#accuracy">3.3 Accuracy</a></li>
+    <li><a href="#throughput">3.4 Throughput</a></li>
   </ul>
 <li><a href="#discussion">4. Discussion</a></li>
   <ul>
