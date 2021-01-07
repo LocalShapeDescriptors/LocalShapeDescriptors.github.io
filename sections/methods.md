@@ -55,12 +55,17 @@ translates to the size of the process.
 
 <h3 id="network_architectures">Network Architectures</h3>
 
-<div>
-  <h3>Popover</h3>
-  <p>We implemented the LSDs using three network architectures. All three networks
-use a <a data-toggle="popover" data-html="true" data-placement="bottom" title="blah blah blah fooooooooooooooooooooooooooooooooooooooooooo dhhhhhhhhhhhhhhhhhh moveeeeeeeeeeeeeeeeeeeeeeee nnnnnnnnnnnn nnnnnnnnnnnnnnnnnnnn" data-content="<img src='assets/img/unet.jpeg' width='600' />">3D U-Net</a><dt-cite key="funke_large_2019"></dt-cite>. The first is a multitask approach (MtLSD) in which the LSDs are predicted along
-with affinities in a single pass, which is a similar approach to the Long Range
-affinities: </p></div>
+<!--<div>-->
+  <!--<h3>Popover</h3>-->
+  <!--<p>We implemented the LSDs using three network architectures. All three networks-->
+<!--use a <a data-toggle="popover" data-html="true" data-placement="bottom" title="blah blah blah fooooooooooooooooooooooooooooooooooooooooooo dhhhhhhhhhhhhhhhhhh moveeeeeeeeeeeeeeeeeeeeeeee nnnnnnnnnnnn nnnnnnnnnnnnnnnnnnnn" data-content="<img src='assets/img/unet.jpeg' width='600' />">3D U-Net</a><dt-cite key="funke_large_2019"></dt-cite>. The first is a multitask approach (MtLSD) in which the LSDs are predicted along-->
+<!--with affinities in a single pass, which is a similar approach to the Long Range-->
+<!--affinities: </p></div>-->
+
+We implemented the LSDs using three network architectures. All three networks
+use a 3D U-Net</a><dt-cite key="funke_large_2019"></dt-cite>. The first is a
+multitask approach (MtLSD) in which the LSDs are predicted along with affinities
+in a single pass, which is a similar approach to the Long Range affinities:
 
 <html>
   <body>
