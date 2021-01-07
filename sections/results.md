@@ -243,15 +243,12 @@ neurons.
   </div>
 
   <div class="box-content"><div style="text-align: center;">
-  <img class="b-lazy"
-  id="watershed_separate_large"
-  src="assets/gifs/watershed_separate.gif" style="display: block; margin: auto; width: 100%;"/>
-  </div>
-
-  <div class="box-content"><div style="text-align: center;">
-  <img class="b-lazy"
-  id="watershed_separate_small"
-  src="assets/gifs/watershed_separate_small.gif" style="display: block; margin: auto; width: 100%;"/>
+    <img class="b-lazy"
+      id="watershed_separate_large"
+      src="assets/gifs/watershed_separate.gif" style="margin: auto; width: 100%;">
+      <img class="b-lazy"
+        id="watershed_separate_small"
+        src="assets/gifs/watershed_separate_small.gif" style="margin: auto; width: 100%;"/>
   </div>
 
   <div class="box-content"><div>
@@ -293,16 +290,17 @@ neurons.
 <script>
 
 if (md.is('iPhone')){
-  console.log('foo');
+  console.log('device is iphone');
   document.getElementById('watershed_separate_large').style.display = 'none';
+  document.getElementById('watershed_separate_small').style.display = 'block';
 }
 else {
-  console.log('moo');
+  console.log('device is not iphone');
   document.getElementById('watershed_separate_small').style.display = 'none';
+  document.getElementById('watershed_separate_large').style.display = 'block';
 }
 
 </script>
-
 
 ---
 
