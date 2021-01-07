@@ -294,11 +294,11 @@ neurons.
 
 if (md.is('iPhone')){
   console.log('foo');
-  document.getElementById('watershed_separate_small').style.display = 'none';
+  document.getElementById('watershed_separate_large').style.display = 'none';
 }
 else {
   console.log('moo');
-  document.getElementById('watershed_separate_large').style.display = 'none';
+  document.getElementById('watershed_separate_small').style.display = 'none';
 }
 
 </script>
