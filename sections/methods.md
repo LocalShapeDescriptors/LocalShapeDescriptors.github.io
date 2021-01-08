@@ -63,9 +63,14 @@ translates to the size of the process.
 <!--affinities: </p></div>-->
 
 We implemented the LSDs using three network architectures. All three networks
-use a 3D U-Net</a><dt-cite key="funke_large_2019"></dt-cite>. The first is a
-multitask approach (MtLSD) in which the LSDs are predicted along with affinities
-in a single pass, which is a similar approach to the Long Range affinities:
+use a 3D U-Net <dt-fn>A type of <a class="name" target="_blank" rel="noopener
+noreferrer"
+href="https://towardsdatascience.com/the-most-intuitive-and-easiest-guide-for-convolutional-neural-network-3607be47480">Convolutional
+Neural Network (CNN)</a> which has both a downsampling and upsampling path
+(giving it the shape of a "U")</dt-fn></a><dt-cite
+key="funke_large_2019"></dt-cite>. The first is a multitask approach (MtLSD) in
+which the LSDs are predicted along with affinities in a single pass, which is a
+similar approach to the Long Range affinities:
 
 <html>
   <body>

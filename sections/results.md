@@ -15,23 +15,28 @@ accurately reflects the quality of a reconstruction. We used two established
 metrics: Variation of Information (VoI) and Expected Run-Length (ERL). We also
 propose a new metric, which we call the Min-Cut Metric (MCM).
 
-**Variation of Information (VoI)<dt-cite key="meila_comparing_2007"></dt-cite>** - An established metric which measures the amount of over-segmentation (false
-  splits) and under-segmentation (false merges) between a proposed segmentation
-  and ground truth. Taken together, they constitute the VoI Sum. The goal is to
-  minimize the VoI; a perfect score would be zero, meaning a segmentation
-  differs as little as possible from the ground truth.
+**Variation of Information (VoI)<dt-cite key="meila_comparing_2007"></dt-cite>**
+- An established metric which measures the amount of over-segmentation (false
+splits) and under-segmentation (false merges) between a proposed segmentation
+and ground truth. Taken together, they constitute the VoI Sum. The goal is to
+**minimize** the VoI; a perfect score would be zero, meaning a segmentation
+differs as little as possible from the ground truth.
 
 **Expected Run Length (ERL)<dt-cite
 key="januszewski_high-precision_2018"></dt-cite>** - A relatively new metric
 which measures the expected length of an error-free path along neurons in a
 volume. It is an appealing metric to both engineers and neuroscientists since it
-relates segmentation errors to neuron cable length.
+relates segmentation errors to neuron cable length. The goal is to **maximize**
+the ERL; we want to have as much error free cable length as possible.
 
 **Min-Cut Metric (MCM)** - We propose a new metric designed to emulate a human
 annotator splitting and merging objects in a segmentation. Specifically, it
 gives an approximation of how many clicks are needed to get from a
-reconstruction to the correct ground truth (assuming ground truth in
-the form of skeletons is available). In a simple case
+reconstruction to the correct ground truth (assuming ground truth in the form of
+skeletons is available). The goal is to **minimize** the MCM; the fewer splits
+and merges required to fix a segmentation, the better.
+
+In a simple case
 we have two ground truth skeletons contained inside a falsely merged segment
 (1). We perform a min-cut (2), and separate the falsely merged segment into two segments (3).
 
@@ -100,8 +105,11 @@ visualization:
 </html>
 
 After training, we predicted in a slightly smaller testing region (~800,000
-cubic microns) which we refer to as the Benchmark ROI (region of interest). We created two sets of
-supervoxels, one without any masking, and one constrained to a neuropil mask.
+cubic microns) which we refer to as the Benchmark ROI (region of interest). We
+created two sets of supervoxels, one without any masking, and one constrained to
+a neuropil mask. For each affinity-based network, we created segmentations over
+a range of ROIs in order to assess performance with scale. We then evaluated
+VoI, ERL, and MCM.
 
 
 <html>
@@ -110,7 +118,7 @@ supervoxels, one without any masking, and one constrained to a neuropil mask.
   <nav class="accordion arrows">
   <input type="radio" name="accordion" id="zfinch" />
   <section class="box">
-  <label class="box-title" for="zfinch">Zebrafinch</label>
+  <label class="box-title" for="zfinch">Zebrafinch raw data and neuropil mask</label>
   <label class="box-close" for="acc-close"></label>
   <div class="box-content"><div class="responsive-container">
     <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B2e-8%2C%22m%22%5D%2C%22y%22:%5B2e-8%2C%22m%22%5D%2C%22z%22:%5B2e-8%2C%22m%22%5D%7D%2C%22position%22:%5B2522.154052734375%2C2508.88134765625%2C2990.42919921875%5D%2C%22crossSectionScale%22:16.860758498545437%2C%22projectionOrientation%22:%5B-0.183084174990654%2C-0.3018076419830322%2C0.007873492315411568%2C0.935590922832489%5D%2C%22projectionScale%22:8192%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://j0126-nature-methods-data/GgwKmcKgrcoNxJccKuGIzRnQqfit9hnfK1ctZzNbnuU/rawdata_realigned%22%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#ff00f7%22%2C%22name%22:%22rawdata_realigned%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22precomputed://gs://j0126-nature-methods-data/GgwKmcKgrcoNxJccKuGIzRnQqfit9hnfK1ctZzNbnuU/tissue_classification%22%2C%22transform%22:%7B%22outputDimensions%22:%7B%22x%22:%5B2e-8%2C%22m%22%5D%2C%22y%22:%5B2e-8%2C%22m%22%5D%2C%22z%22:%5B2e-8%2C%22m%22%5D%2C%22c%27%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22tab%22:%22annotations%22%2C%22localDimensions%22:%7B%22c%27%22:%5B1%2C%22%22%5D%7D%2C%22localPosition%22:%5B4%5D%2C%22annotationColor%22:%22#d400ff%22%2C%22shader%22:%22#uicontrol%20vec3%20color%20color%28default=%5C%22magenta%5C%22%29%5Cnvoid%20main%28%29%20%7B%5Cn%20%20emitRGBA%28vec4%28color%2C%20toNormalized%28getDataValue%28%29%29%29%29%3B%5Cn%7D%5Cn%22%2C%22shaderControls%22:%7B%22color%22:%22#0088ff%22%7D%2C%22name%22:%22neuropil%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22neuropil%22%2C%22size%22:649%7D%2C%22layout%22:%224panel%22%7D" "></iframe>
@@ -122,8 +130,6 @@ supervoxels, one without any masking, and one constrained to a neuropil mask.
   </div>
   </body>
 </html>
-
-For each affinity-based network, we created segmentations over a range of ROIs in order to assess performance with scale. We then evaluated VoI, ERL, and MCM.
 
 **Hemi-Brain:** A volume taken from the *Drosophila melanogaster* central brain
 <dt-cite key="scheffer_connectome_2020"></dt-cite>. It was imaged with FIBSEM at
@@ -212,92 +218,266 @@ neurons.
   </body>
 </html>
 
-
 <h3 id="accuracy">Accuracy</h3>
 
+We found that the LSDs are beneficial for improving the accuracy of direct
+neighbor affinities and subsequently the resulting neuron segmentations. On the
+**Zebrafinch** dataset, we found that LSD architectures out-perform other
+affinity-based networks over a range of ROIs. Interestingly, auto-context does
+not seem to be necessary on smaller ROIs. The multitask network outperforms the
+auto-context network up until the 54 micron ROI. However, after that, the
+auto-context networks produce drastically better results, making the
+computational overhead justifiable. When considering segmentation performance
+restricted directly to neuropil, our best auto-context network (AcRLSD) performs
+on par with the current state of the art when considering VoI:
 
+<div style="text-align: center;">
+  <img class="b-lazy"
+    id="neurons"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/zfinch_voi_roi.png"
+    style="display: block; margin: auto; width: 75%;"/>
+  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  </tr></table>
+</div>
 
+We did not find this to be the case when evaluating ERL, which could be a direct
+result of asymmetric contributions of split and merge errors in the metric. We
+see that the ERL increases non-monotonically as scale increases (jumps up and
+down), rather than consistently decreasing or increasing (as is the case with
+VoI). This is likely due to the following: as scale increases, the chances for
+errors increases, which leads to a drop in ERL (especially with merge errors).
+At the same time, the total cable length of the ground-truth neurons increases,
+which leads to an increased ERL on correctly reconstructed neurons:
+
+<div style="text-align: center;">
+  <img class="b-lazy"
+    id="neurons"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/erl_roi.png"
+    style="display: block; margin: auto; width: 75%;"/>
+  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  </tr></table>
+</div>
+
+We designed the MCM to simulate the amount of human interactions (clicks) needed
+to split and merge neurons in a proposed segmentation. Since repeated min-cuts
+need to be made on large fragment graphs, the computational costs limited MCM
+calculations to the three smallest ROIs (the largest being ~16,000 cubic
+microns). We observed an expected linear increase in MCM with scale (more clicks
+required to resolve larger volumes). We also found VoI to serve as a reasonable
+proxy to the MCM, which suggests that VoI is a good metric to compare
+segmentation quality in the context of a proofreading workflow that allows
+annotators to split false merges using a min-cut on the fragment graph:
+
+<div style="text-align: center;">
+  <img class="b-lazy"
+    id="neurons"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/voi_mcm_rois.jpeg"
+    style="display: block; margin: auto; width: 100%;"/>
+  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  </tr></table>
+</div>
+
+<div class="accordion-container">
+<nav class="accordion arrows">
+<input type="radio" name="accordion" id="fib_results" />
+<section class="box">
+<label class="box-title" for="fib_results">Fib Results</label>
+<label class="box-close" for="acc-close"></label>
+
+<div class="box-content"><div>
+  <p> <b>Hemi-Brain - </b> We evaluated segmentations on three ROIs contained
+  within the Ellipsoid Body. Since the ground truth data was voxel-based (not
+  skeletons), we only considered VoI. We found LSD methods out-performed other
+  affinity-based methods and were on par with FFN. The multitask network
+  performs well on the smaller two ROIs but shows worse results on the largest
+  ROI (in comparison to AcLSD & AcrLSD), strengthening the argument for using
+  auto-context on larger volumes: </p>
+</div>
+
+<div class="box-content"><div style="text-align: center;">
+  <img id="hemi_voi" src="assets/img/hemi_rois.jpeg" style="display: block; margin: auto; width: 100%;"/>
+  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  </tr></table>
+</div>
+
+<div class="box-content"><div>
+  <p> <b>FIB-25 - </b>Similar to the Hemi-Brain, we only evaluated VoI since the
+  ground truth was voxel based. On the full testing RoI, we found that only one
+  LSD method (MtLSD) performed well. Interestingly, the auto-context methods
+  performed poorly here. Upon visual inspection, we found false merges occurring
+  outside of the testing RoI. We then cropped two volumes contained entirely
+  within dense neuropil and found auto-context results to improve, further
+  highlighting the importance of masking: </p>
+</div>
+
+<div class="box-content"><div style="text-align: center;">
+  <img id="fib25_voi" src="assets/img/fib25_rois.jpeg" style="display: block; margin: auto; width: 100%;"/>
+  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  </tr></table>
+</div>
+
+</div>
+</section>
+<input type="radio" name="accordion" id="acc-close" />
+</nav>
+</div>
 
 <h3 id="throughput">Throughput</h3>
 
-<html>
-  <body>
-  <div class="accordion-container">
-  <nav class="accordion arrows">
-  <input type="radio" name="accordion" id="block" />
-  <section class="box">
-  <label class="box-title" for="block">Block-wise processing overview</label>
-  <label class="box-close" for="acc-close"></label>
+As previously <a href="#scale_perspective">described</a>, the acquisition size of
+datasets is growing rapidly. Segmentation methods should complement this
+trajectory by being fast and computationally inexpensive. When considering
+computational costs in terms of floating point operations (FLOPs), we found that
+our best method (AcrLSD) is two orders of magnitude more efficient than the current
+state of the art, while producing segmentations of comparable quality:
 
-  <div class="box-content"><div>
-  <p>Blockwise processing is necessary to process
-  such large volumes in a reasonable amount of time. The idea is to chunk up a
-  dataset into small blocks which easily fit in memory, and then distribute
-  these blocks over many workers (GPUs for prediction, CPUs for
-  post-processing). A little bit of context is required to read the input data
-  necessary to write the output data. Because of this, only blocks that do not
-  touch can be processed simultaneously. Once they finish processing, the next
-  set of blocks can begin, and so on until all blocks are complete. Consider
-  watershed for a single neuron:
-  </p>
-  </div>
+<div style="text-align: center;">
+  <img class="b-lazy"
+    id="neurons"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/voi_tflops.png"
+    style="display: block; margin: auto; width: 75%;"/>
+  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  </tr></table>
+</div>
 
-  <div class="box-content"><div style="text-align: center;">
-    <img class="b-lazy"
-      id="watershed_separate_large"
-      src="assets/gifs/watershed_separate.gif" style="margin: auto; width: 100%;">
-      <img class="b-lazy"
-        id="watershed_separate_small"
-        src="assets/gifs/watershed_separate_small.gif" style="margin: auto; width: 100%;"/>
-  </div>
+All affinity-based methods (not just LSDs) can be parallelized efficiently using
+a modest amount of GPUs, resulting in higher throughput (cubic microns processed
+per GPU second):
 
-  <div class="box-content"><div>
-  <p>The blocks are processed in an alternating fashion ensuring that none touch. Piecing it together gives us the fragments required to generate a neuron:  </p>
-  </div>
+<div style="text-align: center;">
+  <img class="b-lazy"
+    id="neurons"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/inference_table.png"
+    style="display: block; margin: auto; width: 100%;"/>
+  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  </tr></table>
+</div>
 
-  <div class="box-content"><div style="text-align: center;">
-    <img class="b-lazy"
-    id="watershed_separate_large"
-    src="assets/gifs/watershed_joined.gif" style="display: block; margin: auto; width: 100%;"/>
-  </div>
+This is accomplished using a block-wise processing scheme in which a large
+volume is broken down into smaller chunks. The chunks can then be distributed
+over many workers in such a way that ensures non-neighboring blocks are
+processed simultaneously. As soon as a worker finishes processing a block it
+will start processing another valid block. This repeats until the entire volume
+is processed. Consider watershed as an example:
 
-  <div class="box-content"><div>
-  <p>The same logic can be used to stitch the fragments together based on
-  the underlying affinities. The result is an agglomerated neuron:</p>
-  </div>
+<div style="text-align: center;">
+  <img class="b-lazy"
+    id="blockwise_image"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/blockwise_processing_large.jpeg"
+    style="display: block; margin: auto; width: 100%;"/>
+  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  </tr></table>
+</div>
 
-  <div class="box-content"><div style="text-align: center;">
-    <img class="b-lazy"
-    src="assets/gifs/agglom_full.gif" style="display: block; margin: auto; width: 100%;"/>
-  </div>
+<div class="accordion-container">
+<nav class="accordion arrows">
+<input type="radio" name="accordion" id="block" />
+<section class="box">
+<label class="box-title" for="block">Block-wise processing overview</label>
+<label class="box-close" for="acc-close"></label>
 
-  <div class="box-content"><div>
-  <p>This just shows what is happening on an example neuron. In reality every
-  object inside every block contained in the full volume is processed in
-  parallel. The result is a very efficient processing scheme. For example
-  predicting ~115,000 blocks distributed over 100 GPUs took under 2 hours to
-  complete (~800,000 total cubic microns). </p>
-  </div>
+<div class="box-content"><div>
+<p>Blockwise processing is necessary to process
+such large volumes in a reasonable amount of time. The idea is to chunk up a
+dataset into small blocks which easily fit in memory, and then distribute
+these blocks over many workers (GPUs for prediction, CPUs for
+post-processing). A little bit of context is required to read the input data
+necessary to write the output data. Because of this, only blocks that do not
+touch can be processed simultaneously. Once they finish processing, the next
+set of blocks can begin, and so on until all blocks are complete. Consider
+watershed for a single neuron:
+</p>
+</div>
 
-  </div>
-  </section>
-  <input type="radio" name="accordion" id="acc-close" />
-  </nav>
-  </div>
-  </body>
-</html>
+<div class="box-content"><div style="text-align: center;">
+<img class="b-lazy"
+  id="watershed_separate_large"
+  src="assets/gifs/watershed_separate_large.gif" style="margin: auto; width: 100%;">
+<img class="b-lazy"
+  id="watershed_separate_medium"
+  src="assets/gifs/watershed_separate_medium.gif" style="margin: auto; width: 100%;"/>
+</div>
+
+<div class="box-content"><div>
+<p>The blocks are processed in an alternating fashion ensuring that none touch. Piecing it together gives us the fragments required to generate a neuron:  </p>
+</div>
+
+<div class="box-content"><div style="text-align: center;">
+<img class="b-lazy"
+  id="watershed_joined_large"
+  src="assets/gifs/watershed_joined_large.gif" style="margin: auto; width: 100%;">
+<img class="b-lazy"
+  id="watershed_joined_medium"
+  src="assets/gifs/watershed_joined_medium.gif" style="margin: auto; width: 100%;"/>
+</div>
+
+<div class="box-content"><div>
+<p>The same logic can be used to stitch the fragments together based on
+the underlying affinities. The result is an agglomerated neuron:</p>
+</div>
+
+<div class="box-content"><div style="text-align: center;">
+<img class="b-lazy"
+  id="agglom_joined_large"
+  src="assets/gifs/agglom_joined_large.gif" style="margin: auto; width: 100%;">
+<img class="b-lazy"
+  id="agglom_joined_medium"
+  src="assets/gifs/agglom_joined_medium.gif" style="margin: auto; width: 100%;"/>
+</div>
+
+<div class="box-content"><div>
+<p>This just shows what is happening on an example neuron. In reality every
+object inside every block contained in the full volume is processed in
+parallel. The result is a very efficient processing scheme. For example
+predicting ~115,000 blocks distributed over 100 GPUs took under 2 hours to
+complete (~800,000 total cubic microns). </p>
+</div>
+
+</div>
+</section>
+<input type="radio" name="accordion" id="acc-close" />
+</nav>
+</div>
 
 <script>
 
 if (md.is('iPhone')){
   console.log('device is iphone');
+
   document.getElementById('watershed_separate_large').style.display = 'none';
-  document.getElementById('watershed_separate_small').style.display = 'block';
+  document.getElementById('watershed_joined_large').style.display = 'none';
+  document.getElementById('agglom_joined_large').style.display = 'none';
+
+  document.getElementById('watershed_separate_medium').style.display = 'block';
+  document.getElementById('watershed_joined_medium').style.display = 'block';
+  document.getElementById('agglom_joined_medium').style.display = 'block';
+
 }
 else {
   console.log('device is not iphone');
-  document.getElementById('watershed_separate_small').style.display = 'none';
+
+  document.getElementById('watershed_separate_medium').style.display = 'none';
+  document.getElementById('watershed_joined_medium').style.display = 'none';
+  document.getElementById('agglom_joined_medium').style.display = 'none';
+
+
   document.getElementById('watershed_separate_large').style.display = 'block';
+  document.getElementById('watershed_joined_large').style.display = 'block';
+  document.getElementById('agglom_joined_large').style.display = 'block';
 }
 
 </script>

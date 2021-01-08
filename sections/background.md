@@ -55,6 +55,7 @@ Lisbon, and require the acquisition of 1 million terabytes of data.
   <body>
 <div style="text-align: center;">
 <img class="b-lazy"
+id="scale_perspective"
 src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 data-src="assets/img/scale.jpeg" style="display: block; margin: auto; width: 100%;"/>
 <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
@@ -70,29 +71,50 @@ target="_blank">Igor Siwanowicz</a></figcaption></td>
   </body>
 </html>
 
-Try navigating the fly brain in an interactive <a
-href="https://github.com/google/neuroglancer" target="_blank">Neuroglancer</a>
-viewer (click question mark for controls). Think, Google Earth for brains:
+<div class="accordion-container" id="fafb_div">
+  <nav class="accordion arrows">
+  <input type="radio" name="accordion" id="fafb" checked/>
+  <section class="box">
+  <label class="box-title" for="fafb">Full adult fly brain interactive viewer</label>
+  <label class="box-close" for="acc-open"></label>
+  <input type="radio" name="accordion" id="acc-open"/>
 
-<html>
-  <body>
-    <div class="accordion-container">
-      <nav class="accordion arrows">
-        <input type="radio" name="accordion" id="cb1" checked/>
-        <section class="box">
-          <label class="box-title" for="cb1">Full adult fly brain interactive viewer</label>
-          <label class="box-close" for="acc-open"></label>
-          <input type="radio" name="accordion" id="acc-open"/>
-          <div class="box-content">
-            <div class="responsive-container">
-              <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B8e-9%2C%22m%22%5D%2C%22y%22:%5B8e-9%2C%22m%22%5D%2C%22z%22:%5B4e-8%2C%22m%22%5D%7D%2C%22position%22:%5B63696.5703125%2C30152.005859375%2C3242.8369140625%5D%2C%22crossSectionScale%22:413.08059520030787%2C%22projectionOrientation%22:%5B-0.06840167939662933%2C-0.4631274342536926%2C-0.204045370221138%2C0.8597671985626221%5D%2C%22projectionScale%22:124585.76409043159%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://neuroglancer-fafb-data/fafb_v14/fafb_v14_clahe%22%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#0088ff%22%2C%22name%22:%22fafb_v14_clahe%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22fafb_v14_clahe%22%7D%2C%22layout%22:%224panel%22%2C%22partialViewport%22:%5B0%2C0%2C1%2C1%5D%7D" "></iframe>
-            </div>
-          </div>
-        </section>
-      </nav>
-    </div>
-  </body>
-</html>
+  <div class="box-content"><div><p>Try navigating the fly brain in an
+  interactive <a href="https://github.com/google/neuroglancer"
+  target="_blank">Neuroglancer</a> viewer (click question mark in top right
+  corner for controls).
+  Think, Google Earth for brains:</p> </div>
+
+  <div class="box-content">
+  <div class="responsive-container">
+  <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B8e-9%2C%22m%22%5D%2C%22y%22:%5B8e-9%2C%22m%22%5D%2C%22z%22:%5B4e-8%2C%22m%22%5D%7D%2C%22position%22:%5B63696.5703125%2C30152.005859375%2C3242.8369140625%5D%2C%22crossSectionScale%22:413.08059520030787%2C%22projectionOrientation%22:%5B-0.06840167939662933%2C-0.4631274342536926%2C-0.204045370221138%2C0.8597671985626221%5D%2C%22projectionScale%22:124585.76409043159%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://neuroglancer-fafb-data/fafb_v14/fafb_v14_clahe%22%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#0088ff%22%2C%22name%22:%22fafb_v14_clahe%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22fafb_v14_clahe%22%7D%2C%22layout%22:%224panel%22%2C%22partialViewport%22:%5B0%2C0%2C1%2C1%5D%7D">
+  </iframe>
+  </div>
+  </div>
+  </section>
+  </nav>
+</div>
+
+<script>
+
+if (!md.mobile() || !md.tablet()) {
+  if (browser.name == 'Chrome' && browser.version >= 51){
+    console.log('browser is chrome and version is >= than 51')
+  }
+  else if (browser.name == 'Firefox' && browser.version >= 46){
+    console.log('browser is firefox and >= than 46')
+  }
+  else {
+    console.log(browser)
+    document.getElementById('fafb_div').style.display = 'none';
+  }
+}
+else {
+  console.log('Device is not computer')
+  document.getElementById('fafb_div').style.display = 'none';
+}
+
+</script>
 
 Okay, now we have the data, so how do we create the wiring diagrams?
 
@@ -220,21 +242,6 @@ neurons span large distances. Due to the nature of neural networks, field of
 views are not large enough to account for downstream changes in a neuron such as
 branching and merging. Consequently, alternative approaches aim to solve the
 problem locally.
-
-<script>
-
-if (md.is('iPhone')){
-  console.log('foo');
-  document.getElementById('shoes_vertical').style.display = 'none';
-  document.getElementById('neurons_vertical').style.display = 'none';
-}
-else {
-  console.log('moo');
-  document.getElementById('shoes').style.display = 'none';
-  document.getElementById('neurons').style.display = 'none';
-}
-
-</script>
 
 <h3 id="related_work">Related Work</h3>
 
@@ -394,18 +401,6 @@ neurons (black squares).</figcaption></td>
       post-processing rather than the boundary labels <dt-fn>We assess boundary
       prediction in this paper and do not consider post-processing
       strategies.</dt-fn>.
-
-<!--<html>-->
-  <!--<body>-->
-<!--<div style="text-align: center;">-->
-<!--<img class="b-lazy"-->
-<!--src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==-->
-<!--data-src="assets/img/related_methods_vertical.jpeg" style="display: block; margin: auto; width: 100%;"/>-->
-<!--<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>-->
-<!--</tr></table>-->
-  <!--</div>-->
-  <!--</body>-->
-<!--</html>-->
 
 <h3 id="contributions">Contributions</h3>
 
