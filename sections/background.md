@@ -40,24 +40,26 @@ Sweet! Let's image a human brain and be done with it.
 Unfortunately, by imaging brains at such high resolution, the resulting data is
 massive. Let's consider the fruit fly example.  A full adult fruit fly brain
 (**FAFB**) imaged with ssTEM <dt-cite key="zheng_complete_2018"></dt-cite> at a
-pixel resolution of ~4 nanometers and ~40 nanometer thick sections, comprises
-~213 teravoxels of data (~50 teravoxels of actual brain tissue)<dt-cite
+pixel resolution of ~4 nanometers and ~40 nanometer thick sections, comprises ~50 teravoxels of data (neuropil)<dt-cite
 key="heinrich_synaptic_2018"></dt-cite>. For reference, a voxel is a volumetric
 pixel, and the "tera" prefix means 10<sup>12</sup>. So, one fly brain contains
-upwards of 213,000,000,000,000 volumetric pixels. To put that in perspective,
+upwards of 50,000,000,000,000 volumetric pixels. To put that in perspective,
 <dt-cite key="abbott_mind_2020">Abbott et al.</dt-cite> argue that, assuming a
 scale where 1000 cubic microns is equivalent to 1 centimeter, a fruit fly brain
 would comprise the length of 6 and a half Boeing 747 aeroplanes. This still
 pales in comparison to a mouse brain which would be the distance from Boston to
 Lisbon, and require the acquisition of 1 million terabytes of data.
 
-<html>
-  <body>
 <div style="text-align: center;">
 <img class="b-lazy"
-id="scale_perspective"
 src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-data-src="assets/img/scale.jpeg" style="display: block; margin: auto; width: 100%;"/>
+data-src="assets/img/small/scale_vertical.jpeg"
+srcset="assets/img/small/scale_vertical.jpeg 320w,
+assets/img/medium/scale_vertical.jpeg 800w,
+assets/img/large/scale.jpeg 1200w,
+assets/img/xlarge/scale.jpeg 1920w"
+sizes="100vw"
+alt="Scale perspective">
 <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
 <td width="50%"><figcaption style="text-align: center;">Scale perspective. A
 fruit fly brain imaged at synaptic resolution takes up 100's of terabytes of
@@ -67,9 +69,7 @@ mitochondria (orange arrow). 3D fruit fly model kindly provided by <a
 href="https://scholar.google.com/citations?user=ir1vhA8AAAAJ&hl=en"
 target="_blank">Igor Siwanowicz</a></figcaption></td>
 </tr></table>
-  </div>
-  </body>
-</html>
+</div>
 
 <div class="accordion-container" id="fafb_div">
   <nav class="accordion arrows">
@@ -167,7 +167,8 @@ the data without advanced tools.
   Consider the following example: each shoe in the image can be located (object
   detection), each pixel of each shoe can be assigned to a class indicating the
   type of shoe (semantic segmentation - soccer cleats, boots, sneakers), and
-  each pixel can be assigned a unique label indicating the specific shoe: </p>
+  each pixel can be assigned a unique label indicating the specific shoe
+  (instance segmentation): </p>
   </div>
 
   <div class="box-content"><div style="text-align: center;">

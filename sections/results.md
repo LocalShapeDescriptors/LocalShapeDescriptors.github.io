@@ -15,8 +15,7 @@ accurately reflects the quality of a reconstruction. We used two established
 metrics: Variation of Information (VoI) and Expected Run-Length (ERL). We also
 propose a new metric, which we call the Min-Cut Metric (MCM).
 
-**Variation of Information (VoI)<dt-cite key="meila_comparing_2007"></dt-cite>**
-- An established metric which measures the amount of over-segmentation (false
+**Variation of Information (VoI)<dt-cite key="meila_comparing_2007"></dt-cite>** - An established metric which measures the amount of over-segmentation (false
 splits) and under-segmentation (false merges) between a proposed segmentation
 and ground truth. Taken together, they constitute the VoI Sum. The goal is to
 **minimize** the VoI; a perfect score would be zero, meaning a segmentation
@@ -86,8 +85,7 @@ volume comprises ~10<sup>6</sup> cubic microns of raw data. It was imaged using
 SBFEM at 9x9x20 (xyx) nanometer resolution. 0.02% of the data was using for
 training (33 volumes containing ~200 cubic microns of labeled neurons). 12
 manually traced skeletons (13.5 millimeters) were used for network validation
-and 50 skeletons (97 millimeters) were used for evaluation. See below for a
-visualization:
+and 50 skeletons (97 millimeters) were used for evaluation:
 
 <html>
   <body>
@@ -228,7 +226,7 @@ not seem to be necessary on smaller ROIs. The multitask network outperforms the
 auto-context network up until the 54 micron ROI. However, after that, the
 auto-context networks produce drastically better results, making the
 computational overhead justifiable. When considering segmentation performance
-restricted directly to neuropil, our best auto-context network (AcRLSD) performs
+restricted directly to neuropil, our best auto-context network (AcrLSD) performs
 on par with the current state of the art when considering VoI:
 
 <div style="text-align: center;">
@@ -244,19 +242,19 @@ on par with the current state of the art when considering VoI:
 
 We did not find this to be the case when evaluating ERL, which could be a direct
 result of asymmetric contributions of split and merge errors in the metric. We
-see that the ERL increases non-monotonically as scale increases (jumps up and
-down), rather than consistently decreasing or increasing (as is the case with
-VoI). This is likely due to the following: as scale increases, the chances for
-errors increases, which leads to a drop in ERL (especially with merge errors).
-At the same time, the total cable length of the ground-truth neurons increases,
-which leads to an increased ERL on correctly reconstructed neurons:
+see that the ERL increases non-monotonically (jumps up and down) as scale
+increases, rather than consistently decreasing or increasing (as is the case
+with VoI). This is likely due to the following: as scale increases, the chances
+for errors increases, which leads to a drop in ERL (especially with merge
+errors). At the same time, the total cable length of the ground-truth neurons
+increases, which leads to an increased ERL on correctly reconstructed neurons:
 
 <div style="text-align: center;">
   <img class="b-lazy"
     id="neurons"
     src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
     data-src="assets/img/erl_roi.png"
-    style="display: block; margin: auto; width: 75%;"/>
+    style="display: block; margin: auto; width: 90%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
   <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
   </tr></table>
@@ -344,7 +342,7 @@ state of the art, while producing segmentations of comparable quality:
     id="neurons"
     src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
     data-src="assets/img/voi_tflops.png"
-    style="display: block; margin: auto; width: 75%;"/>
+    style="display: block; margin: auto; width: 90%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
   <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
   </tr></table>

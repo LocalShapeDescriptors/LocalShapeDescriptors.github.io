@@ -747,23 +747,25 @@ Figure 1.</p>
 <p>Unfortunately, by imaging brains at such high resolution, the resulting data is
 massive. Let's consider the fruit fly example.  A full adult fruit fly brain
 (<strong>FAFB</strong>) imaged with ssTEM <dt-cite key="zheng_complete_2018"></dt-cite> at a
-pixel resolution of ~4 nanometers and ~40 nanometer thick sections, comprises
-~213 teravoxels of data (~50 teravoxels of actual brain tissue)<dt-cite
+pixel resolution of ~4 nanometers and ~40 nanometer thick sections, comprises ~50 teravoxels of data (neuropil)<dt-cite
 key="heinrich_synaptic_2018"></dt-cite>. For reference, a voxel is a volumetric
 pixel, and the &quot;tera&quot; prefix means 10<sup>12</sup>. So, one fly brain contains
-upwards of 213,000,000,000,000 volumetric pixels. To put that in perspective,
+upwards of 50,000,000,000,000 volumetric pixels. To put that in perspective,
 <dt-cite key="abbott_mind_2020">Abbott et al.</dt-cite> argue that, assuming a
 scale where 1000 cubic microns is equivalent to 1 centimeter, a fruit fly brain
 would comprise the length of 6 and a half Boeing 747 aeroplanes. This still
 pales in comparison to a mouse brain which would be the distance from Boston to
 Lisbon, and require the acquisition of 1 million terabytes of data.</p>
-<html>
-  <body>
 <div style="text-align: center;">
 <img class="b-lazy"
-id="scale_perspective"
 src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-data-src="assets/img/scale.jpeg" style="display: block; margin: auto; width: 100%;"/>
+data-src="assets/img/small/scale_vertical.jpeg"
+srcset="assets/img/small/scale_vertical.jpeg 320w,
+assets/img/medium/scale_vertical.jpeg 800w,
+assets/img/large/scale.jpeg 1200w,
+assets/img/xlarge/scale.jpeg 1920w"
+sizes="100vw"
+alt="Scale perspective">
 <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
 <td width="50%"><figcaption style="text-align: center;">Scale perspective. A
 fruit fly brain imaged at synaptic resolution takes up 100's of terabytes of
@@ -773,9 +775,7 @@ mitochondria (orange arrow). 3D fruit fly model kindly provided by <a
 href="https://scholar.google.com/citations?user=ir1vhA8AAAAJ&hl=en"
 target="_blank">Igor Siwanowicz</a></figcaption></td>
 </tr></table>
-  </div>
-  </body>
-</html>
+</div>
 <div class="accordion-container" id="fafb_div">
   <nav class="accordion arrows">
   <input type="radio" name="accordion" id="fafb" checked/>
@@ -862,7 +862,8 @@ the data without advanced tools.</p>
   Consider the following example: each shoe in the image can be located (object
   detection), each pixel of each shoe can be assigned to a class indicating the
   type of shoe (semantic segmentation - soccer cleats, boots, sneakers), and
-  each pixel can be assigned a unique label indicating the specific shoe: </p>
+  each pixel can be assigned a unique label indicating the specific shoe
+  (instance segmentation): </p>
   </div>
   <div class="box-content"><div style="text-align: center;">
     <img id="shoes" src="assets/img/detection_vs_segmentation_shoes.jpeg" style="display: block; margin: auto; width: 100%;"/>
@@ -1305,14 +1306,11 @@ more detailed overview, see section 3.1 in the paper.</p>
 accurately reflects the quality of a reconstruction. We used two established
 metrics: Variation of Information (VoI) and Expected Run-Length (ERL). We also
 propose a new metric, which we call the Min-Cut Metric (MCM).</p>
-<p><strong>Variation of Information (VoI)<dt-cite key="meila_comparing_2007"></dt-cite></strong></p>
-<ul>
-<li>An established metric which measures the amount of over-segmentation (false
+<p><strong>Variation of Information (VoI)<dt-cite key="meila_comparing_2007"></dt-cite></strong> - An established metric which measures the amount of over-segmentation (false
 splits) and under-segmentation (false merges) between a proposed segmentation
 and ground truth. Taken together, they constitute the VoI Sum. The goal is to
 <strong>minimize</strong> the VoI; a perfect score would be zero, meaning a segmentation
-differs as little as possible from the ground truth.</li>
-</ul>
+differs as little as possible from the ground truth.</p>
 <p><strong>Expected Run Length (ERL)<dt-cite
 key="januszewski_high-precision_2018"></dt-cite></strong> - A relatively new metric
 which measures the expected length of an error-free path along neurons in a
@@ -1369,8 +1367,7 @@ volume comprises ~10<sup>6</sup> cubic microns of raw data. It was imaged using
 SBFEM at 9x9x20 (xyx) nanometer resolution. 0.02% of the data was using for
 training (33 volumes containing ~200 cubic microns of labeled neurons). 12
 manually traced skeletons (13.5 millimeters) were used for network validation
-and 50 skeletons (97 millimeters) were used for evaluation. See below for a
-visualization:</p>
+and 50 skeletons (97 millimeters) were used for evaluation:</p>
 <html>
   <body>
 <div style="text-align: center;">
@@ -1499,7 +1496,7 @@ not seem to be necessary on smaller ROIs. The multitask network outperforms the
 auto-context network up until the 54 micron ROI. However, after that, the
 auto-context networks produce drastically better results, making the
 computational overhead justifiable. When considering segmentation performance
-restricted directly to neuropil, our best auto-context network (AcRLSD) performs
+restricted directly to neuropil, our best auto-context network (AcrLSD) performs
 on par with the current state of the art when considering VoI:</p>
 <div style="text-align: center;">
   <img class="b-lazy"
@@ -1513,18 +1510,18 @@ on par with the current state of the art when considering VoI:</p>
 </div>
 <p>We did not find this to be the case when evaluating ERL, which could be a direct
 result of asymmetric contributions of split and merge errors in the metric. We
-see that the ERL increases non-monotonically as scale increases (jumps up and
-down), rather than consistently decreasing or increasing (as is the case with
-VoI). This is likely due to the following: as scale increases, the chances for
-errors increases, which leads to a drop in ERL (especially with merge errors).
-At the same time, the total cable length of the ground-truth neurons increases,
-which leads to an increased ERL on correctly reconstructed neurons:</p>
+see that the ERL increases non-monotonically (jumps up and down) as scale
+increases, rather than consistently decreasing or increasing (as is the case
+with VoI). This is likely due to the following: as scale increases, the chances
+for errors increases, which leads to a drop in ERL (especially with merge
+errors). At the same time, the total cable length of the ground-truth neurons
+increases, which leads to an increased ERL on correctly reconstructed neurons:</p>
 <div style="text-align: center;">
   <img class="b-lazy"
     id="neurons"
     src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
     data-src="assets/img/erl_roi.png"
-    style="display: block; margin: auto; width: 75%;"/>
+    style="display: block; margin: auto; width: 90%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
   <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
   </tr></table>
@@ -1601,7 +1598,7 @@ state of the art, while producing segmentations of comparable quality:</p>
     id="neurons"
     src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
     data-src="assets/img/voi_tflops.png"
-    style="display: block; margin: auto; width: 75%;"/>
+    style="display: block; margin: auto; width: 90%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
   <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
   </tr></table>
@@ -1784,7 +1781,7 @@ no significant difference in accuracy:</p>
     id="neurons"
     src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
     data-src="assets/img/zfinch_auto.png"
-    style="display: block; margin: auto; width: 75%;"/>
+    style="display: block; margin: auto; width: 90%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
   <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
   </tr></table>
@@ -1796,18 +1793,36 @@ predicting affinities from LSDs forces the network to incorporate features from
 the LSDs in the second pass. This improves the final boundary predictions which
 results in better segmentations.</p>
 <h3 id="masking">Masking</h3>
-<p>One of the most important takeaways we found was how important masking becomes when
-processing large volumes.</p>
+<p>A big takeaway we found was how important masking becomes when processing large
+volumes. For reference, binary masks are often used to ignore certain parts of
+the data (i.e background, artifacts). When segmenting neurons, networks often
+fail in areas which do not reflect their accuracy on the target task. For
+example, objects that are underrepresented in the training data (e.g myelin
+sheaths), or objects that are much larger than the field of view of a network
+(e.g cell bodies), can lead to false merges in a segmentation. Evaluating
+performance on neuropil, should be independent of performance on these types of
+structures (since these objects can be separately predicted and then later
+merged with a neuron segmentation). This is not a new strategy; recent work on
+processing large volumes have also included masking at various points in the
+pipeline<dt-cite
+key="januszewski_high-precision_2018,li_automated_2019,dorkenwald_binary_2019,scheffer_connectome_2020"></dt-cite>.
+What was surprising, however, was the extent of accuracy degradation in the
+absence of masks when scaling to larger datasets:</p>
 <div style="text-align: center;">
   <img class="b-lazy"
     id="neurons"
     src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
     data-src="assets/img/zfinch_mask_delta_voi.png"
-    style="display: block; margin: auto; width: 75%;"/>
+    style="display: block; margin: auto; width: 90%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
   <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
   </tr></table>
 </div>
+<p>Aside from using masks during post-processing, masks can also be incorporated
+directly into training. On the zebrafinch, we found that when masking glia out
+during training, networks that succeeded in learning to mask these areas out
+(Baseline, MtLSD, AcLSD, AcrLSD) produced better results than those that did not
+(MALIS, LR).</p>
 <hr>
 <h2 id="conclusions">Conclusions</h2>
 <p>foo</p>

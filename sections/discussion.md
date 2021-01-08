@@ -69,7 +69,7 @@ no significant difference in accuracy:
     id="neurons"
     src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
     data-src="assets/img/zfinch_auto.png"
-    style="display: block; margin: auto; width: 75%;"/>
+    style="display: block; margin: auto; width: 90%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
   <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
   </tr></table>
@@ -84,18 +84,37 @@ results in better segmentations.
 
 <h3 id="masking">Masking</h3>
 
-One of the most important takeaways we found was how important masking becomes when
-processing large volumes. 
+A big takeaway we found was how important masking becomes when processing large
+volumes. For reference, binary masks are often used to ignore certain parts of
+the data (i.e background, artifacts). When segmenting neurons, networks often
+fail in areas which do not reflect their accuracy on the target task. For
+example, objects that are underrepresented in the training data (e.g myelin
+sheaths), or objects that are much larger than the field of view of a network
+(e.g cell bodies), can lead to false merges in a segmentation. Evaluating
+performance on neuropil, should be independent of performance on these types of
+structures (since these objects can be separately predicted and then later
+merged with a neuron segmentation). This is not a new strategy; recent work on
+processing large volumes have also included masking at various points in the
+pipeline<dt-cite
+key="januszewski_high-precision_2018,li_automated_2019,dorkenwald_binary_2019,scheffer_connectome_2020"></dt-cite>.
+What was surprising, however, was the extent of accuracy degradation in the
+absence of masks when scaling to larger datasets:
 
 <div style="text-align: center;">
   <img class="b-lazy"
     id="neurons"
     src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
     data-src="assets/img/zfinch_mask_delta_voi.png"
-    style="display: block; margin: auto; width: 75%;"/>
+    style="display: block; margin: auto; width: 90%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
   <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
   </tr></table>
 </div>
+
+Aside from using masks during post-processing, masks can also be incorporated
+directly into training. On the zebrafinch, we found that when masking glia out
+during training, networks that succeeded in learning to mask these areas out
+(Baseline, MtLSD, AcLSD, AcrLSD) produced better results than those that did not
+(MALIS, LR).
 
 ---
