@@ -51,15 +51,14 @@ pales in comparison to a mouse brain which would be the distance from Boston to
 Lisbon, and require the acquisition of 1 million terabytes of data.
 
 <div style="text-align: center;">
-<img class="b-lazy"
-src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-data-src="assets/img/small/scale_vertical.jpeg"
-srcset="assets/img/small/scale_vertical.jpeg 320w,
-assets/img/medium/scale_vertical.jpeg 800w,
-assets/img/large/scale.jpeg 1200w,
-assets/img/xlarge/scale.jpeg 1920w"
-sizes="100vw"
-alt="Scale perspective">
+  <img class="b-lazy"
+  id="scale_large"
+  src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+  data-src="assets/img/large/scale.jpeg" style="margin: auto; width: 100%;"/>
+  <img class="b-lazy"
+  id="scale_vertical"
+  src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+  data-src="assets/img/medium/scale_vertical.jpeg" style="margin: auto; width: 100%;"/>
 <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
 <td width="50%"><figcaption style="text-align: center;">Scale perspective. A
 fruit fly brain imaged at synaptic resolution takes up 100's of terabytes of
@@ -69,7 +68,19 @@ mitochondria (orange arrow). 3D fruit fly model kindly provided by <a
 href="https://scholar.google.com/citations?user=ir1vhA8AAAAJ&hl=en"
 target="_blank">Igor Siwanowicz</a></figcaption></td>
 </tr></table>
-</div>
+  </div>
+
+<script>
+if (md.is('iPhone')){
+    document.getElementById('scale_large').style.display = 'none';
+    document.getElementById('scale_vertical').style.display = 'block';
+}
+else {
+  document.getElementById('scale_vertical').style.display = 'none';
+  document.getElementById('scale_large').style.display = 'block';
+}
+</script>
+
 
 <div class="accordion-container" id="fafb_div">
   <nav class="accordion arrows">
