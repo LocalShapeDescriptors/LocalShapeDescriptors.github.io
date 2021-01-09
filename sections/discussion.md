@@ -69,7 +69,7 @@ no significant difference in accuracy:
     id="neurons"
     src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
     data-src="assets/img/zfinch_auto.png"
-    style="display: block; margin: auto; width: 90%;"/>
+    style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
   <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
   </tr></table>
@@ -105,7 +105,7 @@ absence of masks when scaling to larger datasets:
     id="neurons"
     src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
     data-src="assets/img/zfinch_mask_delta_voi.png"
-    style="display: block; margin: auto; width: 90%;"/>
+    style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
   <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
   </tr></table>

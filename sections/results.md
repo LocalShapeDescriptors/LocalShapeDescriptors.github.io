@@ -87,20 +87,21 @@ training (33 volumes containing ~200 cubic microns of labeled neurons). 12
 manually traced skeletons (13.5 millimeters) were used for network validation
 and 50 skeletons (97 millimeters) were used for evaluation:
 
-<html>
-  <body>
 <div style="text-align: center;">
   <img class="b-lazy"
-    id="neurons"
+    id="zfinch_dataset"
     src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-    data-src="assets/img/zfinch_dataset.jpeg"
-    style="display: block; margin: auto; width: 100%;"/>
+    data-src="assets/img/zfinch_dataset_large.jpeg"
+    style="margin: auto; width: 100%;"/>
+  <img class="b-lazy"
+    id="zfinch_dataset_vertical"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/zfinch_dataset_vertical_medium.jpeg"
+    style="margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
   <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
   </tr></table>
-  </div>
-  </body>
-</html>
+</div>
 
 After training, we predicted in a slightly smaller testing region (~800,000
 cubic microns) which we refer to as the Benchmark ROI (region of interest). We
@@ -109,25 +110,20 @@ a neuropil mask. For each affinity-based network, we created segmentations over
 a range of ROIs in order to assess performance with scale. We then evaluated
 VoI, ERL, and MCM.
 
-
-<html>
-  <body>
-  <div class="accordion-container">
-  <nav class="accordion arrows">
-  <input type="radio" name="accordion" id="zfinch" />
-  <section class="box">
-  <label class="box-title" for="zfinch">Zebrafinch raw data and neuropil mask</label>
-  <label class="box-close" for="acc-close"></label>
-  <div class="box-content"><div class="responsive-container">
-    <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B2e-8%2C%22m%22%5D%2C%22y%22:%5B2e-8%2C%22m%22%5D%2C%22z%22:%5B2e-8%2C%22m%22%5D%7D%2C%22position%22:%5B2522.154052734375%2C2508.88134765625%2C2990.42919921875%5D%2C%22crossSectionScale%22:16.860758498545437%2C%22projectionOrientation%22:%5B-0.183084174990654%2C-0.3018076419830322%2C0.007873492315411568%2C0.935590922832489%5D%2C%22projectionScale%22:8192%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://j0126-nature-methods-data/GgwKmcKgrcoNxJccKuGIzRnQqfit9hnfK1ctZzNbnuU/rawdata_realigned%22%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#ff00f7%22%2C%22name%22:%22rawdata_realigned%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22precomputed://gs://j0126-nature-methods-data/GgwKmcKgrcoNxJccKuGIzRnQqfit9hnfK1ctZzNbnuU/tissue_classification%22%2C%22transform%22:%7B%22outputDimensions%22:%7B%22x%22:%5B2e-8%2C%22m%22%5D%2C%22y%22:%5B2e-8%2C%22m%22%5D%2C%22z%22:%5B2e-8%2C%22m%22%5D%2C%22c%27%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22tab%22:%22annotations%22%2C%22localDimensions%22:%7B%22c%27%22:%5B1%2C%22%22%5D%7D%2C%22localPosition%22:%5B4%5D%2C%22annotationColor%22:%22#d400ff%22%2C%22shader%22:%22#uicontrol%20vec3%20color%20color%28default=%5C%22magenta%5C%22%29%5Cnvoid%20main%28%29%20%7B%5Cn%20%20emitRGBA%28vec4%28color%2C%20toNormalized%28getDataValue%28%29%29%29%29%3B%5Cn%7D%5Cn%22%2C%22shaderControls%22:%7B%22color%22:%22#0088ff%22%7D%2C%22name%22:%22neuropil%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22neuropil%22%2C%22size%22:649%7D%2C%22layout%22:%224panel%22%7D" "></iframe>
-  </div>
-  </div>
-  </section>
-  <input type="radio" name="accordion" id="acc-close" />
-  </nav>
-  </div>
-  </body>
-</html>
+<div class="accordion-container" id="zfinch_div">
+<nav class="accordion arrows">
+<input type="radio" name="accordion" id="zfinch" />
+<section class="box">
+<label class="box-title" for="zfinch">Zebrafinch raw data and neuropil mask</label>
+<label class="box-close" for="acc-close"></label>
+<div class="box-content"><div class="responsive-container">
+  <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B2e-8%2C%22m%22%5D%2C%22y%22:%5B2e-8%2C%22m%22%5D%2C%22z%22:%5B2e-8%2C%22m%22%5D%7D%2C%22position%22:%5B2522.154052734375%2C2508.88134765625%2C2990.42919921875%5D%2C%22crossSectionScale%22:16.860758498545437%2C%22projectionOrientation%22:%5B-0.183084174990654%2C-0.3018076419830322%2C0.007873492315411568%2C0.935590922832489%5D%2C%22projectionScale%22:8192%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://j0126-nature-methods-data/GgwKmcKgrcoNxJccKuGIzRnQqfit9hnfK1ctZzNbnuU/rawdata_realigned%22%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#ff00f7%22%2C%22name%22:%22rawdata_realigned%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22precomputed://gs://j0126-nature-methods-data/GgwKmcKgrcoNxJccKuGIzRnQqfit9hnfK1ctZzNbnuU/tissue_classification%22%2C%22transform%22:%7B%22outputDimensions%22:%7B%22x%22:%5B2e-8%2C%22m%22%5D%2C%22y%22:%5B2e-8%2C%22m%22%5D%2C%22z%22:%5B2e-8%2C%22m%22%5D%2C%22c%27%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22tab%22:%22annotations%22%2C%22localDimensions%22:%7B%22c%27%22:%5B1%2C%22%22%5D%7D%2C%22localPosition%22:%5B4%5D%2C%22annotationColor%22:%22#d400ff%22%2C%22shader%22:%22#uicontrol%20vec3%20color%20color%28default=%5C%22magenta%5C%22%29%5Cnvoid%20main%28%29%20%7B%5Cn%20%20emitRGBA%28vec4%28color%2C%20toNormalized%28getDataValue%28%29%29%29%29%3B%5Cn%7D%5Cn%22%2C%22shaderControls%22:%7B%22color%22:%22#0088ff%22%7D%2C%22name%22:%22neuropil%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22neuropil%22%2C%22size%22:649%7D%2C%22layout%22:%224panel%22%7D"></iframe>
+</div>
+</div>
+</section>
+<input type="radio" name="accordion" id="acc-close" />
+</nav>
+</div>
 
 **Hemi-Brain:** A volume taken from the *Drosophila melanogaster* central brain
 <dt-cite key="scheffer_connectome_2020"></dt-cite>. It was imaged with FIBSEM at
@@ -138,39 +134,36 @@ the data was used for training (~450 cubic microns of labeled neurons). We
 restricted segmentations to three ROIs and evaluated against a filtered list of
 neurons traced to completion (voxel-based rather than skeletons).
 
-<html>
-  <body>
 <div style="text-align: center;">
   <img class="b-lazy"
-    id="neurons"
+    id="hemi_dataset"
     src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-    data-src="assets/img/hemi_dataset.jpeg"
-    style="display: block; margin: auto; width: 100%;"/>
+    data-src="assets/img/hemi_dataset_large.jpeg"
+    style="margin: auto; width: 100%;"/>
+  <img class="b-lazy"
+    id="hemi_dataset_vertical"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/hemi_dataset_vertical_medium.jpeg"
+    style="margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
   <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
   </tr></table>
-  </div>
-  </body>
-</html>
+</div>
 
-<html>
-  <body>
-  <div class="accordion-container">
-  <nav class="accordion arrows">
-  <input type="radio" name="accordion" id="hemi" />
-  <section class="box">
-  <label class="box-title" for="hemi">Hemi-brain</label>
-  <label class="box-close" for="acc-close"></label>
-  <div class="box-content"><div class="responsive-container">
-    <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B8e-9%2C%22m%22%5D%2C%22y%22:%5B8e-9%2C%22m%22%5D%2C%22z%22:%5B8e-9%2C%22m%22%5D%7D%2C%22position%22:%5B25962.435546875%2C25359.71484375%2C20296.431640625%5D%2C%22crossSectionScale%22:47.72354919422505%2C%22crossSectionDepth%22:-37.62185354999912%2C%22projectionOrientation%22:%5B-0.008687195368111134%2C-0.7010441422462463%2C-0.7130189538002014%2C-0.008097930811345577%5D%2C%22projectionScale%22:21207.72950167948%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://neuroglancer-janelia-flyem-hemibrain/emdata/clahe_yz/jpeg%22%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#0091ff%22%2C%22name%22:%22emdata%22%7D%2C%7B%22type%22:%22segmentation%22%2C%22source%22:%7B%22url%22:%22precomputed://gs://neuroglancer-janelia-flyem-hemibrain/v1.0/rois%22%2C%22subsources%22:%7B%22default%22:true%2C%22properties%22:true%2C%22mesh%22:true%7D%2C%22enableDefaultSubsources%22:false%7D%2C%22pick%22:false%2C%22selectedAlpha%22:0.44%2C%22ignoreNullVisibleSet%22:false%2C%22meshSilhouetteRendering%22:1%2C%22colorSeed%22:2359850678%2C%22segments%22:%5B%2217%22%5D%2C%22segmentQuery%22:%22EB%22%2C%22name%22:%22roi%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22roi%22%2C%22size%22:290%7D%2C%22layout%22:%224panel%22%7D" "></iframe>
-  </div>
-  </div>
-  </section>
-  <input type="radio" name="accordion" id="acc-close" />
-  </nav>
-  </div>
-  </body>
-</html>
+<div class="accordion-container" id="hemi_div">
+<nav class="accordion arrows">
+<input type="radio" name="accordion" id="hemi" />
+<section class="box">
+<label class="box-title" for="hemi">Hemi-brain</label>
+<label class="box-close" for="acc-close"></label>
+<div class="box-content"><div class="responsive-container">
+  <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B8e-9%2C%22m%22%5D%2C%22y%22:%5B8e-9%2C%22m%22%5D%2C%22z%22:%5B8e-9%2C%22m%22%5D%7D%2C%22position%22:%5B25962.435546875%2C25359.71484375%2C20296.431640625%5D%2C%22crossSectionScale%22:47.72354919422505%2C%22crossSectionDepth%22:-37.62185354999912%2C%22projectionOrientation%22:%5B-0.008687195368111134%2C-0.7010441422462463%2C-0.7130189538002014%2C-0.008097930811345577%5D%2C%22projectionScale%22:21207.72950167948%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://neuroglancer-janelia-flyem-hemibrain/emdata/clahe_yz/jpeg%22%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#0091ff%22%2C%22name%22:%22emdata%22%7D%2C%7B%22type%22:%22segmentation%22%2C%22source%22:%7B%22url%22:%22precomputed://gs://neuroglancer-janelia-flyem-hemibrain/v1.0/rois%22%2C%22subsources%22:%7B%22default%22:true%2C%22properties%22:true%2C%22mesh%22:true%7D%2C%22enableDefaultSubsources%22:false%7D%2C%22pick%22:false%2C%22selectedAlpha%22:0.44%2C%22ignoreNullVisibleSet%22:false%2C%22meshSilhouetteRendering%22:1%2C%22colorSeed%22:2359850678%2C%22segments%22:%5B%2217%22%5D%2C%22segmentQuery%22:%22EB%22%2C%22name%22:%22roi%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22roi%22%2C%22size%22:290%7D%2C%22layout%22:%224panel%22%7D"></iframe>
+</div>
+</div>
+</section>
+<input type="radio" name="accordion" id="acc-close" />
+</nav>
+</div>
 
 **FIB-25:** An older dataset taken from the *Drosophila* visual system <dt-cite
 key="takemura_synaptic_2015"></dt-cite>. It contains ~346 gigavoxels of raw EM
@@ -182,39 +175,36 @@ gigavoxel region contained in the bottom half of the full ROI. Similar to the
 Hemi-brain, evaluations were done using a filtered list of completely traced
 neurons.
 
-<html>
-  <body>
 <div style="text-align: center;">
   <img class="b-lazy"
-    id="neurons"
+    id="fib25_dataset"
     src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-    data-src="assets/img/fib25_dataset.jpeg"
-    style="display: block; margin: auto; width: 100%;"/>
+    data-src="assets/img/fib25_dataset_large.jpeg"
+    style="margin: auto; width: 100%;"/>
+  <img class="b-lazy"
+    id="fib25_dataset_vertical"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/fib25_dataset_vertical_medium.jpeg"
+    style="margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
   <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
   </tr></table>
-  </div>
-  </body>
-</html>
+</div>
 
-<html>
-  <body>
-  <div class="accordion-container">
-  <nav class="accordion arrows">
-  <input type="radio" name="accordion" id="fib25" />
-  <section class="box">
-  <label class="box-title" for="fib25">FIB-25</label>
-  <label class="box-close" for="acc-close"></label>
-  <div class="box-content"><div class="responsive-container">
-    <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B8e-9%2C%22m%22%5D%2C%22y%22:%5B8e-9%2C%22m%22%5D%2C%22z%22:%5B8e-9%2C%22m%22%5D%7D%2C%22position%22:%5B3425.203857421875%2C2993.146240234375%2C3936.575927734375%5D%2C%22crossSectionScale%22:29.90334336415725%2C%22projectionOrientation%22:%5B-0.09087008237838745%2C0.8137544393539429%2C-0.4936932325363159%2C0.292939156293869%5D%2C%22projectionScale%22:11797.675238192334%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://neuroglancer-public-data/flyem_fib-25/image%22%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#007bff%22%2C%22name%22:%22image%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22image%22%7D%2C%22layout%22:%224panel%22%7D" "></iframe>
-  </div>
-  </div>
-  </section>
-  <input type="radio" name="accordion" id="acc-close" />
-  </nav>
-  </div>
-  </body>
-</html>
+<div class="accordion-container" id="fib25_div">
+<nav class="accordion arrows">
+<input type="radio" name="accordion" id="fib25" />
+<section class="box">
+<label class="box-title" for="fib25">FIB-25</label>
+<label class="box-close" for="acc-close"></label>
+<div class="box-content"><div class="responsive-container">
+  <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B8e-9%2C%22m%22%5D%2C%22y%22:%5B8e-9%2C%22m%22%5D%2C%22z%22:%5B8e-9%2C%22m%22%5D%7D%2C%22position%22:%5B3425.203857421875%2C2993.146240234375%2C3936.575927734375%5D%2C%22crossSectionScale%22:29.90334336415725%2C%22projectionOrientation%22:%5B-0.09087008237838745%2C0.8137544393539429%2C-0.4936932325363159%2C0.292939156293869%5D%2C%22projectionScale%22:11797.675238192334%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://neuroglancer-public-data/flyem_fib-25/image%22%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#007bff%22%2C%22name%22:%22image%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22image%22%7D%2C%22layout%22:%224panel%22%7D"></iframe>
+</div>
+</div>
+</section>
+<input type="radio" name="accordion" id="acc-close" />
+</nav>
+</div>
 
 <h3 id="accuracy">Accuracy</h3>
 
@@ -234,7 +224,7 @@ on par with the current state of the art when considering VoI:
     id="neurons"
     src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
     data-src="assets/img/zfinch_voi_roi.png"
-    style="display: block; margin: auto; width: 75%;"/>
+    style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
   <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
   </tr></table>
@@ -254,7 +244,7 @@ increases, which leads to an increased ERL on correctly reconstructed neurons:
     id="neurons"
     src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
     data-src="assets/img/erl_roi.png"
-    style="display: block; margin: auto; width: 90%;"/>
+    style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
   <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
   </tr></table>
@@ -272,10 +262,15 @@ annotators to split false merges using a min-cut on the fragment graph:
 
 <div style="text-align: center;">
   <img class="b-lazy"
-    id="neurons"
+    id="voi_mcm"
     src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
     data-src="assets/img/voi_mcm_rois.jpeg"
-    style="display: block; margin: auto; width: 100%;"/>
+    style="margin: auto; width: 100%;"/>
+  <img class="b-lazy"
+    id="voi_mcm_vertical"
+    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+    data-src="assets/img/voi_mcm_rois_vertical.jpeg"
+    style="margin: auto; width: 80%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
   <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
   </tr></table>
@@ -299,7 +294,14 @@ annotators to split false merges using a min-cut on the fragment graph:
 </div>
 
 <div class="box-content"><div style="text-align: center;">
-  <img id="hemi_voi" src="assets/img/hemi_rois.jpeg" style="display: block; margin: auto; width: 100%;"/>
+  <img
+  id="hemi_voi"
+  src="assets/img/hemi_rois.jpeg"
+  style="margin: auto; width: 100%;"/>
+  <img
+  id="hemi_voi_vertical"
+  src="assets/img/hemi_rois_vertical.jpeg"
+  style="margin: auto; width: 60%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
   <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
   </tr></table>
@@ -316,7 +318,14 @@ annotators to split false merges using a min-cut on the fragment graph:
 </div>
 
 <div class="box-content"><div style="text-align: center;">
-  <img id="fib25_voi" src="assets/img/fib25_rois.jpeg" style="display: block; margin: auto; width: 100%;"/>
+  <img
+  id="fib25_voi"
+  src="assets/img/fib25_rois.jpeg"
+  style="margin: auto; width: 100%;"/>
+  <img
+  id="fib25_voi_vertical"
+  src="assets/img/fib25_rois_vertical.jpeg"
+  style="margin: auto; width: 60%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
   <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
   </tr></table>
@@ -330,19 +339,19 @@ annotators to split false merges using a min-cut on the fragment graph:
 
 <h3 id="throughput">Throughput</h3>
 
-As previously <a href="#scale_perspective">described</a>, the acquisition size of
-datasets is growing rapidly. Segmentation methods should complement this
-trajectory by being fast and computationally inexpensive. When considering
-computational costs in terms of floating point operations (FLOPs), we found that
-our best method (AcrLSD) is two orders of magnitude more efficient than the current
-state of the art, while producing segmentations of comparable quality:
+As described previously, the acquisition size of datasets is growing rapidly.
+Segmentation methods should complement this trajectory by being fast and
+computationally inexpensive. When considering computational costs in terms of
+floating point operations (FLOPs), we found that our best method (AcrLSD) is two
+orders of magnitude more efficient than the current state of the art, while
+producing segmentations of comparable quality:
 
 <div style="text-align: center;">
   <img class="b-lazy"
     id="neurons"
     src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
     data-src="assets/img/voi_tflops.png"
-    style="display: block; margin: auto; width: 90%;"/>
+    style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
   <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
   </tr></table>
@@ -450,35 +459,6 @@ complete (~800,000 total cubic microns). </p>
 <input type="radio" name="accordion" id="acc-close" />
 </nav>
 </div>
-
-<script>
-
-if (md.is('iPhone')){
-  console.log('device is iphone');
-
-  document.getElementById('watershed_separate_large').style.display = 'none';
-  document.getElementById('watershed_joined_large').style.display = 'none';
-  document.getElementById('agglom_joined_large').style.display = 'none';
-
-  document.getElementById('watershed_separate_medium').style.display = 'block';
-  document.getElementById('watershed_joined_medium').style.display = 'block';
-  document.getElementById('agglom_joined_medium').style.display = 'block';
-
-}
-else {
-  console.log('device is not iphone');
-
-  document.getElementById('watershed_separate_medium').style.display = 'none';
-  document.getElementById('watershed_joined_medium').style.display = 'none';
-  document.getElementById('agglom_joined_medium').style.display = 'none';
-
-
-  document.getElementById('watershed_separate_large').style.display = 'block';
-  document.getElementById('watershed_joined_large').style.display = 'block';
-  document.getElementById('agglom_joined_large').style.display = 'block';
-}
-
-</script>
 
 ---
 

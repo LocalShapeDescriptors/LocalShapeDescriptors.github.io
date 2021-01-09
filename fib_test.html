@@ -1,0 +1,380 @@
+<html>
+
+  <head>
+
+        <title>test</title>
+
+        <style>
+                body { margin: 0; }
+                canvas { display: block; }
+        </style>
+
+  </head>
+
+  <body>
+
+        <script src="node_modules/three/build/three.js"></script>
+        <script src="node_modules/three/examples/js/controls/OrbitControls.js"></script>
+        <script src="node_modules/stats.js/build/stats.min.js"></script>
+
+        <script type="module">
+
+                import { GUI } from '/node_modules/dat.gui/build/dat.gui.module.js';
+
+                var container, stats;
+                var camera, controls, scene, raycaster, renderer;
+                var ambient_light, point_light, dl, dl2, dl3;
+                var mouse = new THREE.Vector2();
+                var INTERSECTED;
+                var geometry, material, mesh, matrix, axes;
+                var gui = new GUI();
+                var d, amount;
+                var fib25_center
+                var fib25_cam_pos
+                var r,g,b,avg
+
+                var data = {
+                  'LSD[0:3]': 'assets/csvs/fib_offsets.csv',
+                  'LSD[3:6]': 'assets/csvs/fib_ortho.csv',
+                  'LSD[6:9]': 'assets/csvs/fib_diag.csv',
+                  'LSD[9:10]': 'assets/csvs/fib_size.csv'
+                }
+
+                var params = {
+                  Channel: 'assets/csvs/fib_ortho.csv'
+                }
+
+                init();
+                animate();
+
+                function init() {
+
+                    container = document.createElement( 'div' );
+                    document.body.appendChild( container );
+
+                    scene = new THREE.Scene();
+                    scene.background = new THREE.Color(0xffffff);
+
+                    camera = new THREE.PerspectiveCamera(
+                                        25,
+                                        window.innerWidth / window.innerHeight,
+                                        0.001,
+                                        100000
+                                );
+
+
+                    gui.add(params, 'Channel', data).onChange(function(){
+                      loadData();
+                    });
+
+                    fib25_center = [10.02, 4.45, 5.73]
+                    fib25_cam_pos = [11.542, 15.383, 5.4276]
+
+                    camera.position.set(
+                      fib25_cam_pos[0],
+                      fib25_cam_pos[1],
+                      fib25_cam_pos[2]
+                    );
+
+                    camera.lookAt(
+                      fib25_center[0],
+                      fib25_center[1],
+                      fib25_center[2]
+                    );
+
+                    renderer = new THREE.WebGLRenderer();
+                    controls = new THREE.OrbitControls(camera, renderer.domElement) ;
+                    controls.target.set(
+                      fib25_center[0],
+                      fib25_center[1],
+                      fib25_center[2]
+                    );
+
+                    renderer.setSize( window.innerWidth, window.innerHeight );
+                    container.appendChild( renderer.domElement );
+
+                    ambient_light = new THREE.AmbientLight( 0x404040, 4);
+                    ambient_light.intensity = 2.5;
+                    scene.add( ambient_light );
+
+                    dl = new THREE.DirectionalLight(0xffffff, 0x000088);
+                    dl.position.set(-1,1.5,1);
+                    dl.intensity=0.5;
+                    scene.add(dl);
+
+                    dl2 = new THREE.DirectionalLight(0xffffff, 0x000088);
+                    dl2.position.set(-1,-1.5,-1);
+                    dl2.intensity=0.5;
+                    scene.add(dl2);
+
+                    dl3 = new THREE.DirectionalLight(0xffffff, 0x000088);
+                    dl3.position.set(1,-1.5,1);
+                    dl3.intensity=0.5;
+                    scene.add(dl3);
+
+                    raycaster = new THREE.Raycaster();
+
+                    stats = new Stats();
+                    container.appendChild( stats.dom );
+
+                    scene.add(axes);
+
+                    document.addEventListener(
+                      'mousemove',
+                      onDocumentMouseMove,
+                      false
+                    );
+
+                    window.addEventListener(
+                      'resize',
+                      onWindowResize,
+                      false
+                    );
+
+                    loadData();
+
+                }
+
+                function loadData() {
+
+                  if (mesh != undefined) {
+                    scene.remove(mesh);
+                    gui.remove(amount);
+                  };
+
+                  var promise = [];
+                  var locations = [];
+                  var channel_data = [];
+
+                  var loader = new THREE.FileLoader();
+
+                  loader.load(
+                    params.Channel,
+
+                    function( data ) {
+                      var lines = data.split('\n');
+
+                      var count = lines.length
+
+                      geometry = new THREE.SphereGeometry(.012);
+                      material = new THREE.MeshPhongMaterial();
+
+                      mesh = new THREE.InstancedMesh(
+                                    geometry,
+                                    material,
+                                    count);
+
+                      matrix = new THREE.Matrix4();
+
+                      for(var i = 0; i < count -1; i++){
+
+                        var line = lines[i].split(",");
+
+                        if (params.Channel == 'assets/csvs/fib_size.csv'){
+
+                          d = parseInt(line[3])
+
+                        }
+
+                        else {
+
+                          d = [
+                            parseInt(line[3]),
+                            parseInt(line[4]),
+                            parseInt(line[5])
+                          ]
+                        }
+
+                        var temp = {
+                          loc: [
+                                parseFloat(line[0]),
+                                parseFloat(line[1]),
+                                parseFloat(line[2])
+                              ],
+                          data: d
+                        };
+
+                        locations.push(temp['loc'])
+                        channel_data.push(temp['data'])
+
+                        promise.push(
+                          create_promise(temp,mesh,matrix,i)
+                          );
+                      }
+
+                      Promise.all(promise).then(function(values) {
+
+                        values.forEach(function(object){
+
+                        });
+
+                      },
+
+                      function ( xhr ) {
+                      },
+
+                      function ( err ) {
+
+                        console.error('An error happened');
+
+                      });
+
+                      scene.add(mesh);
+                      amount = gui.add(mesh, 'count', 0, 50000).name("Count");
+                      amount.setValue(25000);
+
+                    }
+                  );
+                }
+
+                function create_promise(data,mesh,matrix,i) {
+
+
+                  return new Promise(function(resolve, reject) {
+
+                    matrix.setPosition(data['loc'][0],data['loc'][1],data['loc'][2])
+                    mesh.setMatrixAt(i,matrix);
+
+                    if (data['data'].length == 3) {
+
+                      r = data['data'][0]
+                      g = data['data'][1]
+                      b = data['data'][2]
+
+                      avg = (r+g+b)/3
+
+                      if (avg < 70) {
+
+                        r = r + 150
+                        g = g + 150
+                        b = b + 150
+
+                      }
+
+                    }
+
+                    else {
+
+                      avg = data['data'];
+
+                      if (0 < avg && avg < 32) {
+
+                        r = 14
+                        g = 0
+                        b = 204
+
+                      }
+
+                      else if (32 < avg && avg < 64) {
+
+                        r = 0
+                        g = 48
+                        b = 204
+
+                      }
+
+                      else if (64 < avg && avg < 96) {
+
+                        r = 0
+                        g = 139
+                        b = 204
+
+                      }
+
+                      else if (96 < avg && avg < 128) {
+
+                        r = 0
+                        g = 237
+                        b = 150
+
+                      }
+
+                      else if (128 < avg && avg < 160) {
+
+                        r = 237
+                        g = 233
+                        b = 0
+
+                      }
+
+                      else if (160 < avg && avg < 192) {
+
+                        r = 247
+                        g = 167
+                        b = 5
+
+                      }
+
+                      else if (192 < avg && avg < 224) {
+
+                        r = 247
+                        g = 51
+                        b = 5
+
+                      }
+
+                      else {
+                        r = 148
+                        g = 15
+                        b = 15
+
+                      }
+
+                    }
+
+                    var color = new THREE.Color(
+                                      'rgb(' + r +',' + g + ',' + b +')'
+                                    )
+
+                    mesh.setColorAt(i, color);
+
+                  });
+
+                }
+
+                function onWindowResize() {
+
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize( window.innerWidth, window.innerHeight );
+
+                }
+
+                function onDocumentMouseMove( event ) {
+
+                    event.preventDefault();
+
+                    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+                    mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+                }
+
+                function animate() {
+
+                    requestAnimationFrame( animate );
+
+                    render();
+                    stats.update();
+
+                }
+
+                function render() {
+
+                    camera.lookAt( scene.position );
+
+                    camera.updateMatrixWorld();
+
+                    controls.update();
+
+                    raycaster.setFromCamera( mouse, camera );
+
+                    renderer.render( scene, camera );
+
+                }
+
+
+        </script>
+
+  </body>
+
+</html>

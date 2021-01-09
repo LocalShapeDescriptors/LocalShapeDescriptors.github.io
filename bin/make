@@ -5,14 +5,15 @@
 ./bin/markdown-it sections/results.md > results.html
 ./bin/markdown-it sections/discussion.md > discussion.html
 ./bin/markdown-it sections/conclusions.md > conclusions.html
+./bin/markdown-it sections/cleanup.md > cleanup.html
 ./bin/markdown-it sections/tldr.md > tldr.html
 ./bin/markdown-it sections/appendix.md > appendix.html
 
 
-cat draft_header.html abstract.html toc.html background.html methods.html results.html discussion.html conclusions.html tldr.html appendix_start appendix.html appendix_end draft_bib.html > draft.html
+cat draft_header.html abstract.html toc.html background.html methods.html results.html discussion.html conclusions.html cleanup.html tldr.html appendix_start appendix.html appendix_end draft_bib.html > draft.html
 
 cp draft.html index.html
 
-rm {draft,abstract,toc,background,methods,results,discussion,conclusions,tldr,appendix}.html
+rm {draft,abstract,toc,background,methods,results,discussion,conclusions,cleanup,tldr,appendix}.html
 
 echo "Compiled markdown."
