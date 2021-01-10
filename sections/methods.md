@@ -99,14 +99,14 @@ translates to the size of the process.
   </tr></table>
 </div>
 
-<div class="accordion-container" id="meh_div">
+<div class="accordion-container" id="three_div">
 <nav class="accordion arrows">
-<input type="radio" name="accordion" id="meh" />
+<input type="radio" name="accordion" id="three" />
 <section class="box">
-<label class="box-title" for="meh">meh</label>
+<label class="box-title" for="three">Test 3d viewer</label>
 <label class="box-close" for="acc-close"></label>
 
-<div class="box-content"><div><p>meh</p> </div>
+<div class="box-content"><div><p>Test 3d viewer</p> </div>
 
 <div class="box-content" id="test_div"> <div class="responsive-container">
   <iframe class="responsive-iframe" src="fib_test.html"></iframe>
