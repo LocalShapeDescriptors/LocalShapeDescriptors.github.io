@@ -13,25 +13,25 @@
 
   <body>
 
-        <script src="node_modules/three/build/three.js"></script>
-        <script src="node_modules/three/examples/js/controls/OrbitControls.js"></script>
-        <script src="node_modules/stats.js/build/stats.min.js"></script>
+        <script src="lib/three.js"></script>
+        <script src="lib/OrbitControls.js"></script>
+        <script src="lib/stats.min.js"></script>
 
         <script type="module">
 
-                import { GUI } from '/node_modules/dat.gui/build/dat.gui.module.js';
+                import { GUI } from '/lib/dat.gui.module.js';
 
                 var container, stats;
-                var camera, controls, scene, raycaster, renderer;
+                var camera, controls, scene, renderer;
                 var ambient_light, point_light, dl, dl2, dl3;
                 var mouse = new THREE.Vector2();
                 var INTERSECTED;
                 var geometry, material, mesh, matrix, axes;
                 var gui = new GUI();
                 var d, amount;
-                var fib25_center
-                var fib25_cam_pos
-                var r,g,b,avg
+                var center;
+                var cam_pos;
+                var r,g,b,avg,rgb;
 
                 var data = {
                   'LSD[0:3]': 'assets/csvs/fib_offsets.csv',
@@ -67,27 +67,27 @@
                       loadData();
                     });
 
-                    fib25_center = [10.02, 4.45, 5.73]
-                    fib25_cam_pos = [11.542, 15.383, 5.4276]
+                    center = [10.02, 4.45, 5.73]
+                    cam_pos = [11.542, 15.383, 5.4276]
 
                     camera.position.set(
-                      fib25_cam_pos[0],
-                      fib25_cam_pos[1],
-                      fib25_cam_pos[2]
+                      cam_pos[0],
+                      cam_pos[1],
+                      cam_pos[2]
                     );
 
                     camera.lookAt(
-                      fib25_center[0],
-                      fib25_center[1],
-                      fib25_center[2]
+                      center[0],
+                      center[1],
+                      center[2]
                     );
 
                     renderer = new THREE.WebGLRenderer();
                     controls = new THREE.OrbitControls(camera, renderer.domElement) ;
                     controls.target.set(
-                      fib25_center[0],
-                      fib25_center[1],
-                      fib25_center[2]
+                      center[0],
+                      center[1],
+                      center[2]
                     );
 
                     renderer.setSize( window.innerWidth, window.innerHeight );
@@ -111,8 +111,6 @@
                     dl3.position.set(1,-1.5,1);
                     dl3.intensity=0.5;
                     scene.add(dl3);
-
-                    raycaster = new THREE.Raycaster();
 
                     stats = new Stats();
                     container.appendChild( stats.dom );
@@ -220,15 +218,48 @@
                       });
 
                       scene.add(mesh);
-                      amount = gui.add(mesh, 'count', 0, 50000).name("Count");
-                      amount.setValue(25000);
+                      amount = gui.add(mesh, 'count', 0, 40000).name("Count");
+                      amount.setValue(20000);
 
                     }
                   );
                 }
 
-                function create_promise(data,mesh,matrix,i) {
+                var color_mapping = [
+                  { pct: 0.0, color: { r: 14, g: 0, b: 204} },
+                  { pct: 0.125, color: { r: 14, g: 0, b: 204} },
+                  { pct: 0.25, color: { r: 0, g: 48, b: 204} },
+                  { pct: 0.375, color: { r: 0, g: 139, b: 204}},
+                  { pct: 0.5, color: { r: 0, g: 237, b: 150}},
+                  { pct: 0.625, color: { r: 237, g: 233, b: 0}},
+                  { pct: 0.75, color: { r: 247, g: 167, b: 5}},
+                  { pct: 0.875, color: { r: 247, g: 51, b: 5}},
+                  { pct: 1.0, color: { r: 148, g: 15, b: 25}}
+                ];
 
+                var getColorForPercentage = function(pct) {
+                    for (var i = 1; i < color_mapping.length; i++) {
+                        if (pct < color_mapping[i].pct) {
+                            break;
+                        }
+
+                    }
+                    var lower = color_mapping[i - 1];
+                    var upper = color_mapping[i];
+                    var range = upper.pct - lower.pct;
+                    var rangePct = (pct - lower.pct) / range;
+                    var pctLower = 1 - rangePct;
+                    var pctUpper = rangePct;
+                    var color = {
+                        r: Math.floor(lower.color.r * pctLower + upper.color.r * pctUpper),
+                        g: Math.floor(lower.color.g * pctLower + upper.color.g * pctUpper),
+                        b: Math.floor(lower.color.b * pctLower + upper.color.b * pctUpper)
+                    };
+
+                    return 'rgb(' + [color.r, color.g, color.b].join(',') + ')';
+                };
+
+                function create_promise(data,mesh,matrix,i) {
 
                   return new Promise(function(resolve, reject) {
 
@@ -251,82 +282,19 @@
 
                       }
 
+                      rgb = 'rgb(' + r +',' + g + ',' + b +')'
+
                     }
 
                     else {
 
-                      avg = data['data'];
-
-                      if (0 < avg && avg < 32) {
-
-                        r = 14
-                        g = 0
-                        b = 204
-
-                      }
-
-                      else if (32 < avg && avg < 64) {
-
-                        r = 0
-                        g = 48
-                        b = 204
-
-                      }
-
-                      else if (64 < avg && avg < 96) {
-
-                        r = 0
-                        g = 139
-                        b = 204
-
-                      }
-
-                      else if (96 < avg && avg < 128) {
-
-                        r = 0
-                        g = 237
-                        b = 150
-
-                      }
-
-                      else if (128 < avg && avg < 160) {
-
-                        r = 237
-                        g = 233
-                        b = 0
-
-                      }
-
-                      else if (160 < avg && avg < 192) {
-
-                        r = 247
-                        g = 167
-                        b = 5
-
-                      }
-
-                      else if (192 < avg && avg < 224) {
-
-                        r = 247
-                        g = 51
-                        b = 5
-
-                      }
-
-                      else {
-                        r = 148
-                        g = 15
-                        b = 15
-
-                      }
+                      rgb = getColorForPercentage(
+                              data['data'] / 256
+                      );
 
                     }
 
-                    var color = new THREE.Color(
-                                      'rgb(' + r +',' + g + ',' + b +')'
-                                    )
-
-                    mesh.setColorAt(i, color);
+                    mesh.setColorAt(i, new THREE.Color(rgb));
 
                   });
 
@@ -366,12 +334,9 @@
 
                     controls.update();
 
-                    raycaster.setFromCamera( mouse, camera );
-
                     renderer.render( scene, camera );
 
                 }
-
 
         </script>
 
