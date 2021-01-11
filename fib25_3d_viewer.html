@@ -15,13 +15,14 @@
 
         <script src="lib/three.js"></script>
         <script src="lib/OrbitControls.js"></script>
-        <script src="lib/stats.min.js"></script>
+        <!--<script src="lib/stats.min.js"></script>-->
 
         <script type="module">
 
                 import { GUI } from '/lib/dat.gui.module.js';
 
-                var container, stats;
+                var container
+                //var stats;
                 var camera, controls, scene, renderer;
                 var ambient_light, point_light, dl, dl2, dl3;
                 var mouse = new THREE.Vector2();
@@ -112,8 +113,8 @@
                     dl3.intensity=0.5;
                     scene.add(dl3);
 
-                    stats = new Stats();
-                    container.appendChild( stats.dom );
+                    //stats = new Stats();
+                    //container.appendChild( stats.dom );
 
                     scene.add(axes);
 
@@ -218,8 +219,8 @@
                       });
 
                       scene.add(mesh);
-                      amount = gui.add(mesh, 'count', 0, 40000).name("Count");
-                      amount.setValue(20000);
+                      amount = gui.add(mesh, 'count', 0, 30000).name("Count");
+                      amount.setValue(15000);
 
                     }
                   );
@@ -322,7 +323,7 @@
                     requestAnimationFrame( animate );
 
                     render();
-                    stats.update();
+                    //stats.update();
 
                 }
 
