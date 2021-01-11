@@ -22,7 +22,8 @@
   for boundary detection.
 
 * We find that the LSDs help improve boundaries and subsequent neuron
-  reconstructions in several large and diverse datasets.
+  reconstructions in several large and diverse datasets and are competitive with
+  the current state of the art, albeit two orders of magnitude faster.
 
-* They are also two orders of magnitude faster than the current state of the art
-  approach.
+* We also propose a new evaluation metric, designed to provide insight into how
+  many clicks are required by a user to proofread a segmentation.
