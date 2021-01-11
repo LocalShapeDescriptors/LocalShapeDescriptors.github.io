@@ -872,7 +872,7 @@ then passed into a neural network</p> </div>
 <input type="radio" name="accordion" id="acc-close" />
 </nav>
 </div>
-<p>It would be ideal to directly predict unique labels (neurons) in a dataset.
+<p>It would be ideal to directly predict unique labels (i.e neurons) in a dataset.
 Unfortunately this requires global information which is difficult because
 neurons span large distances. Due to the nature of neural networks, field of
 views are not large enough to account for downstream changes in a neuron such as
@@ -1041,10 +1041,12 @@ strategies.</dt-fn>.</li>
 <h3 id="contributions">Contributions</h3>
 <ul>
 <li>
-<p><strong>Local Shape Descriptors (LSDs)</strong> - We introduce LSDs, a 10-Dimensional embedding for each voxel which encodes
-local object shape. We train several neural
-networks to predict LSDs as an auxiliary learning objective along with
-direct neighbor affinity predictions <dt-fn>Similar to Long Range
+<p><strong>Local Shape Descriptors (LSDs)</strong> - We introduce LSDs, a 10-Dimensional <a
+class="name" target="_blank" rel="noopener noreferrer"
+href="https://developers.google.com/machine-learning/crash-course/embeddings/video-lecture">embedding</a>
+for each voxel which encodes local object shape. We train several neural
+networks to predict LSDs as an auxiliary learning objective along with direct
+neighbor affinity predictions <dt-fn>Similar to Long Range
 affinities.</dt-fn>. We engineered LSDs to describe important features that
 could be leveraged to improve boundary detection. They consist of three
 components: size (1-D), offset to center of mass (3-D), and directionality
@@ -1361,6 +1363,9 @@ VoI, ERL, and MCM.</p>
 <section class="box">
 <label class="box-title" for="zfinch">Zebrafinch raw data and neuropil mask</label>
 <label class="box-close" for="acc-close"></label>
+<div class="box-content"><div><p>The raw data and mask used to restrict
+predictions to the neuropil (blue). Cell bodies, blood vessels, myelin and
+background voxels were ignored.</p> </div>
 <div class="box-content"><div class="responsive-container">
   <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B2e-8%2C%22m%22%5D%2C%22y%22:%5B2e-8%2C%22m%22%5D%2C%22z%22:%5B2e-8%2C%22m%22%5D%7D%2C%22position%22:%5B2522.154052734375%2C2508.88134765625%2C2990.42919921875%5D%2C%22crossSectionScale%22:16.860758498545437%2C%22projectionOrientation%22:%5B-0.183084174990654%2C-0.3018076419830322%2C0.007873492315411568%2C0.935590922832489%5D%2C%22projectionScale%22:8192%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://j0126-nature-methods-data/GgwKmcKgrcoNxJccKuGIzRnQqfit9hnfK1ctZzNbnuU/rawdata_realigned%22%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#ff00f7%22%2C%22name%22:%22rawdata_realigned%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22precomputed://gs://j0126-nature-methods-data/GgwKmcKgrcoNxJccKuGIzRnQqfit9hnfK1ctZzNbnuU/tissue_classification%22%2C%22transform%22:%7B%22outputDimensions%22:%7B%22x%22:%5B2e-8%2C%22m%22%5D%2C%22y%22:%5B2e-8%2C%22m%22%5D%2C%22z%22:%5B2e-8%2C%22m%22%5D%2C%22c%27%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22tab%22:%22annotations%22%2C%22localDimensions%22:%7B%22c%27%22:%5B1%2C%22%22%5D%7D%2C%22localPosition%22:%5B4%5D%2C%22annotationColor%22:%22#d400ff%22%2C%22shader%22:%22#uicontrol%20vec3%20color%20color%28default=%5C%22magenta%5C%22%29%5Cnvoid%20main%28%29%20%7B%5Cn%20%20emitRGBA%28vec4%28color%2C%20toNormalized%28getDataValue%28%29%29%29%29%3B%5Cn%7D%5Cn%22%2C%22shaderControls%22:%7B%22color%22:%22#0088ff%22%7D%2C%22name%22:%22neuropil%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22neuropil%22%2C%22size%22:649%7D%2C%22layout%22:%224panel%22%7D"></iframe>
 </div>
@@ -1416,7 +1421,7 @@ neurons traced to completion (voxel-based rather than skeletons).</p>
 <nav class="accordion arrows">
 <input type="radio" name="accordion" id="hemi" />
 <section class="box">
-<label class="box-title" for="hemi">Hemi-brain</label>
+<label class="box-title" for="hemi">Hemi-brain and EB mask</label>
 <label class="box-close" for="acc-close"></label>
 <div class="box-content"><div class="responsive-container">
   <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B8e-9%2C%22m%22%5D%2C%22y%22:%5B8e-9%2C%22m%22%5D%2C%22z%22:%5B8e-9%2C%22m%22%5D%7D%2C%22position%22:%5B25962.435546875%2C25359.71484375%2C20296.431640625%5D%2C%22crossSectionScale%22:47.72354919422505%2C%22crossSectionDepth%22:-37.62185354999912%2C%22projectionOrientation%22:%5B-0.008687195368111134%2C-0.7010441422462463%2C-0.7130189538002014%2C-0.008097930811345577%5D%2C%22projectionScale%22:21207.72950167948%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://neuroglancer-janelia-flyem-hemibrain/emdata/clahe_yz/jpeg%22%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#0091ff%22%2C%22name%22:%22emdata%22%7D%2C%7B%22type%22:%22segmentation%22%2C%22source%22:%7B%22url%22:%22precomputed://gs://neuroglancer-janelia-flyem-hemibrain/v1.0/rois%22%2C%22subsources%22:%7B%22default%22:true%2C%22properties%22:true%2C%22mesh%22:true%7D%2C%22enableDefaultSubsources%22:false%7D%2C%22pick%22:false%2C%22selectedAlpha%22:0.44%2C%22ignoreNullVisibleSet%22:false%2C%22meshSilhouetteRendering%22:1%2C%22colorSeed%22:2359850678%2C%22segments%22:%5B%2217%22%5D%2C%22segmentQuery%22:%22EB%22%2C%22name%22:%22roi%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22roi%22%2C%22size%22:290%7D%2C%22layout%22:%224panel%22%7D"></iframe>

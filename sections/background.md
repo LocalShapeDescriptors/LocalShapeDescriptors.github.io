@@ -206,7 +206,7 @@ then passed into a neural network</p> </div>
 </nav>
 </div>
 
-It would be ideal to directly predict unique labels (neurons) in a dataset.
+It would be ideal to directly predict unique labels (i.e neurons) in a dataset.
 Unfortunately this requires global information which is difficult because
 neurons span large distances. Due to the nature of neural networks, field of
 views are not large enough to account for downstream changes in a neuron such as
@@ -352,14 +352,16 @@ neurons (black squares).</figcaption></td>
 
 <h3 id="contributions">Contributions</h3>
 
-* **Local Shape Descriptors (LSDs)** - We introduce LSDs, a 10-Dimensional embedding for each voxel which encodes
-    local object shape. We train several neural
-    networks to predict LSDs as an auxiliary learning objective along with
-    direct neighbor affinity predictions <dt-fn>Similar to Long Range
-    affinities.</dt-fn>. We engineered LSDs to describe important features that
-    could be leveraged to improve boundary detection. They consist of three
-    components: size (1-D), offset to center of mass (3-D), and directionality
-    (6-D).
+* **Local Shape Descriptors (LSDs)** - We introduce LSDs, a 10-Dimensional <a
+  class="name" target="_blank" rel="noopener noreferrer"
+  href="https://developers.google.com/machine-learning/crash-course/embeddings/video-lecture">embedding</a>
+  for each voxel which encodes local object shape. We train several neural
+  networks to predict LSDs as an auxiliary learning objective along with direct
+  neighbor affinity predictions <dt-fn>Similar to Long Range
+  affinities.</dt-fn>. We engineered LSDs to describe important features that
+  could be leveraged to improve boundary detection. They consist of three
+  components: size (1-D), offset to center of mass (3-D), and directionality
+  (6-D).
 
 * **Large scale study** - We conducted a large scale comparative study of competing algorithms on
     three large and diverse EM datasets. We demonstate competitive results with
