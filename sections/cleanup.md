@@ -33,7 +33,7 @@ var browser=get_browser();
 
 if (!md.mobile() && !md.tablet()) {
 
-  console.log('Device seems to be computer')
+  console.log('Device is computer')
 
   // images
 

@@ -196,7 +196,7 @@ style="margin: auto; width: 80%;"/>
 <table id="gt_vs_pred_lsds_caption" style="width: 100%;" cellspacing="0" cellpadding="0"><tr> <td
 width="100%"><figcaption style="text-align: center;">Ground truth LSDs (left),
 and predicted LSDs (right). Label boundaries were slightly eroded to produce
-gaps in the ground truth LSDs between objects. This forced the network to guess
+gaps in the ground truth LSDs between objects. This forces the network to guess
 what to predict in these regions.</figcaption></td>
   </tr></table>
 </div>
