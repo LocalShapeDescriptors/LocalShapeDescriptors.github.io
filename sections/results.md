@@ -33,14 +33,8 @@ annotator splitting and merging objects in a segmentation. Specifically, it
 gives an approximation of how many clicks are needed to get from a
 reconstruction to the correct ground truth (assuming ground truth in the form of
 skeletons is available). The goal is to **minimize** the MCM; the fewer splits
-and merges required to fix a segmentation, the better.
+and merges required to fix a segmentation, the better. Consider the following cases:
 
-In a simple case
-we have two ground truth skeletons contained inside a falsely merged segment
-(1). We perform a min-cut (2), and separate the falsely merged segment into two segments (3).
-
-<html>
-  <body>
 <div style="text-align: center;">
   <img class="b-lazy"
     id="neurons"
@@ -48,19 +42,14 @@ we have two ground truth skeletons contained inside a falsely merged segment
     data-src="assets/img/mcm_easy_case.jpeg"
     style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+<td width="100%"><figcaption style="text-align: center;">Simple case. Two ground-truth <span style="color:#017100">skeletons</span> are contained inside an erroneously merged <span style="color:#9313C6">segment</span>. Dashed lines represent supervoxel boundaries and the closest skeleton <span style="color:#B51700">nodes</span> need to be split to resolve the merge (1). A <span style="color:#FF9300">min-cut</span> is performed (2), resulting in a new <span style="color:#00A2FF">segment</span> (3). </figcaption></td>
   </tr></table>
   </div>
-  </body>
-</html>
 
-In a more complex case (1), a min-cut (2) splits the segment but one of the
-resulting segments still contains a false merge (3). Another min-cut is
-performed (4), resulting in three segments (5). This process is described in
-detail in Supplementary section B of the paper.
+Sometimes a min-cut can fail to separate all nodes of the merged skeletons with
+a single cut from two selected nodes. In this case, the procedure is repeated
+until all skeletons are separated, leading to additional split errors:
 
-<html>
-  <body>
 <div style="text-align: center;">
   <img class="b-lazy"
     id="neurons"
@@ -68,11 +57,18 @@ detail in Supplementary section B of the paper.
     data-src="assets/img/mcm_complex_case.jpeg"
     style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">Complex case. Two
+  <span style="color:#017100">skeletons</span> are contained in a falsely merged
+  <span style="color:#9313C6">segment</span> as before (1), but the supervoxels
+  are more fragmented. A <span style="color:#FF9300">min-cut</span> is performed
+  (2), resulting in a new <span style="color:#00A2FF">segment</span> (3).
+  However, two <span style="color:#B51700">nodes</span> contained within the
+  original <span style="color:#9313C6">segment</span> need to be split. A second
+  <span style="color:#FF9300">min-cut</span> is performed (4), which produces
+  another <span style="color:#EF5FA7">segment</span> (5). This results in an
+  additional split error caused by the original cut.</figcaption></td>
   </tr></table>
   </div>
-  </body>
-</html>
 
 <h3 id="datasets">Datasets</h3>
 
@@ -99,7 +95,11 @@ and 50 skeletons (97 millimeters) were used for evaluation:
     data-src="assets/img/zfinch_dataset_vertical_medium.jpeg"
     style="margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">Zebrafinch dataset
+  overview. 1. 33 gound truth volumes were used for training. 2. Full raw
+  dataset, scale bar = 15 μm. 3. Single section shows ground-truth skeletons,
+  zoom in scale bar = 500 nm. 4. Validation skeletons (n=12, 13.5 mm). 5.
+  Testing skeletons (n=50, 97mm)</figcaption></td>
   </tr></table>
 </div>
 
@@ -146,7 +146,27 @@ neurons traced to completion (voxel-based rather than skeletons).
     data-src="assets/img/hemi_dataset_vertical_medium.jpeg"
     style="margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%">
+  <figcaption
+  id="hemi_caption"
+  style="text-align: center;">
+  Hemi-Brain dataset overview. 1. 8 ground-truth volumes were used for training.
+  2. Full Hemi-brain volume, scale bar = 30 μm. Experiments were restricted to
+  Ellipsoid Body (circled region). 3. Volumes used for testing. 4. Example
+  sparse ground-truth testing data, scale bar = 2.5 μm. 5. Zoom-in, scale bar =
+  800 nm. 6. Example 3D renderings of selected neurons.
+  </figcaption>
+  <figcaption
+  id="hemi_caption_vertical"
+  style="text-align: center;">
+  Hemi-Brain dataset overview.
+  1. Full Hemi-brain volume, scale bar = 30 μm. Experiments were restricted to
+     Ellipsoid Body (circled region). 2. 8 ground-truth volumes were used for
+     training. 3. Volumes used for testing. 4. Example sparse ground-truth
+     testing data, scale bar = 2.5 μm. 5. Zoom-in, scale bar = 800 nm. 6.
+     Example 3D renderings of selected neurons.
+  </figcaption>
+  </td>
   </tr></table>
 </div>
 
@@ -187,7 +207,12 @@ neurons.
     data-src="assets/img/fib25_dataset_vertical_medium.jpeg"
     style="margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">FIB-25 dataset
+  overview. 1. 4 ground-truth volumes were used for training. 2. Full volume
+  with cutout showing testing region, scale bar = 5 μm. 3. Cross section with
+  sparsely labeled testing ground-truth. 4. Zoom-in, scale bar = 750 nm. 5.
+  Sub-volume corresponding to zoomed-in plane. 6. Subset of full RoI testing
+  neurons. Small volume shown for context.</figcaption></td>
   </tr></table>
 </div>
 
@@ -226,7 +251,10 @@ on par with the current state of the art when considering VoI:
     data-src="assets/img/zfinch_voi_roi.png"
     style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">VoI Sum vs ROI size.
+  Each point corresponds to an ROI size. It is ideal to minimize VoI Sum. As we
+  scale up, VoI increases because the number of errors increase. The best LSD
+  network (AcRLSD - orange) is competitive with FFN (black).</figcaption></td>
   </tr></table>
 </div>
 
@@ -246,7 +274,11 @@ increases, which leads to an increased ERL on correctly reconstructed neurons:
     data-src="assets/img/erl_roi.png"
     style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">ERL (nanometers) vs
+  ROI size. As we scale up, we observe varying ERLs across all networks from
+  cutting the ground truth skeletons. This makes it hard to deduce network
+  accuracy from this metric when evaluating on cropped volumes.
+  </figcaption></td>
   </tr></table>
 </div>
 
@@ -272,7 +304,11 @@ annotators to split false merges using a min-cut on the fragment graph:
     data-src="assets/img/voi_mcm_rois_vertical.jpeg"
     style="margin: auto; width: 80%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">Comparison of VoI and
+  MCM on first three ROIs (up to ~16k cubic microns). As expected, the number of
+  splits and merges needed to fix a segmentation increases linearly with scale.
+  The same network order is seen in VoI, suggesting that it might be a
+  reasonable to MCM on larger volumes.</figcaption></td>
   </tr></table>
 </div>
 
@@ -301,9 +337,12 @@ annotators to split false merges using a min-cut on the fragment graph:
   <img
   id="hemi_voi_vertical"
   src="assets/img/hemi_rois_vertical.jpeg"
-  style="margin: auto; width: 60%;"/>
+  style="margin: auto; width: 70%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">VoI split/merge
+  curves (lines) across thresholds, for each of the three investigated ROIs.
+  Points indicate the threshold at which VoI Sum is minimized. LSDs maintain
+  competitiveness with FFN on larger two ROIs.</figcaption></td>
   </tr></table>
 </div>
 
@@ -325,9 +364,13 @@ annotators to split false merges using a min-cut on the fragment graph:
   <img
   id="fib25_voi_vertical"
   src="assets/img/fib25_rois_vertical.jpeg"
-  style="margin: auto; width: 60%;"/>
+  style="margin: auto; width: 70%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">VoI split/merge
+  curves (lines) across thresholds on investigated ROIs. On the Full ROI,
+  auto-context methods did not perform well. This was likely caused by
+  peripheral merges. Evaluation on two sub ROIs showed results consistent with
+  what was seen on the other datasets.</figcaption></td>
   </tr></table>
 </div>
 
@@ -353,13 +396,16 @@ producing segmentations of comparable quality:
     data-src="assets/img/voi_tflops.png"
     style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">Accuracy vs
+  computational costs. Over a range of ROIs (points) affinity-based methods
+  require significantly less teraFLOPs (floating point operations) than FFN.
+  Auto-context networks (green/orange) are also accurate enough to make their
+  slight computational overhead justifiable.</figcaption></td>
   </tr></table>
 </div>
 
-All affinity-based methods (not just LSDs) can be parallelized efficiently using
-a modest amount of GPUs, resulting in higher throughput (cubic microns processed
-per GPU second):
+All affinity-based methods can be parallelized efficiently using
+a modest amount of GPUs, resulting in higher throughput:
 
 <div style="text-align: center;">
   <img class="b-lazy"
@@ -368,7 +414,9 @@ per GPU second):
     data-src="assets/img/inference_table.png"
     style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">Inference costs on
+  Zebrafinch benchmark ROI (~800k cubic microns). Predicting LSDs, for example,
+  took 2 hours using 100 GPUs.</figcaption></td>
   </tr></table>
 </div>
 
@@ -386,9 +434,18 @@ is processed. Consider watershed as an example:
     data-src="assets/img/blockwise_processing_large.jpeg"
     style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">Overview of block-wise
+  processing scheme. Example 32 μm RoI showing total block grid (A) and required
+  blocks to process example neuron (B). Scale bar = ∼ 6μm. Corrsponding
+  orthographic view highlights supervoxels generated during watershed (C). Block
+  size = 3.6 μm. Inset shows respective raw data inside single block (scale bar
+  = ∼ 1μm). Supervoxels are then agglomerated to obtain a resulting segment (D).
+  Note: While this example shows processing of a single neuron, in reality all
+  neurons are processed simultaneosuly.</figcaption></td>
   </tr></table>
 </div>
+
+For a more complete explanation of the block-wise processing sheme, see below:
 
 <div class="accordion-container">
 <nav class="accordion arrows">

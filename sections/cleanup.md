@@ -31,22 +31,6 @@ function get_browser() {
 
 var browser=get_browser();
 
-//function isScrolledIntoView(el) {
-//    var rect = el.getBoundingClientRect();
-//    var elemTop = rect.top;
-//    var elemBottom = rect.bottom;
-
-    // Only completely visible elements return true:
-//    var isVisible = (elemTop >= 0) && (elemBottom <= window.innerHeight);
-    // Partially visible elements return true:
-    //isVisible = elemTop < window.innerHeight && elemBottom >= 0;
-//    return isVisible;
-//}
-
-//var test = document.getElementById("gt_lsds_div");
-
-//console.log(isScrolledIntoView("gt_lsds_div"));
-
 if (!md.mobile() && !md.tablet()) {
 
   console.log('Device seems to be computer')
@@ -71,6 +55,15 @@ if (!md.mobile() && !md.tablet()) {
 
   //lsd components
   document.getElementById('lsd_components_vertical').style.display = 'none';
+  document.getElementById('lsd_components_caption').style.display = 'none';
+
+  //lsd mesh
+  document.getElementById('3d_lsds_mesh_vertical').style.display = 'none';
+  document.getElementById('3d_lsds_mesh').style.display = 'block';
+
+  //gt vs pred
+  document.getElementById('gt_vs_pred_lsds').style.display = 'none';
+  document.getElementById('gt_vs_pred_lsds_caption').style.display = 'none';
 
   //zfinch
   document.getElementById('zfinch_dataset_vertical').style.display = 'none';
@@ -78,6 +71,7 @@ if (!md.mobile() && !md.tablet()) {
 
   //hemi
   document.getElementById('hemi_dataset_vertical').style.display = 'none';
+  document.getElementById('hemi_caption_vertical').style.display = 'none';
   document.getElementById('hemi_dataset').style.display = 'block';
 
   //fib25
@@ -118,7 +112,6 @@ if (!md.mobile() && !md.tablet()) {
     document.getElementById('fafb_div').style.display = 'none';
     document.getElementById('labels_div').style.display = 'none';
     document.getElementById('gt_lsds_div').style.display = 'none';
-    document.getElementById('pred_lsds_div').style.display = 'none';
     document.getElementById('gt_vs_pred_div').style.display = 'none';
     document.getElementById('zfinch_div').style.display = 'none';
     document.getElementById('hemi_div').style.display = 'none';
@@ -151,12 +144,20 @@ else {
   //lsd components
   document.getElementById('lsd_components_vertical').style.display = 'block';
 
+  //lsd mesh
+  document.getElementById('3d_lsds_mesh').style.display = 'none';
+  document.getElementById('3d_lsds_mesh_vertical').style.display = 'block';
+
+  //gt vs pred
+  document.getElementById('gt_vs_pred_lsds').style.display = 'block';
+
   //zfinch
   document.getElementById('zfinch_dataset').style.display = 'none';
   document.getElementById('zfinch_dataset_vertical').style.display = 'block';
 
   //hemi
   document.getElementById('hemi_dataset').style.display = 'none';
+  document.getElementById('hemi_caption').style.display = 'none';
   document.getElementById('hemi_dataset_vertical').style.display = 'block';
 
   //fib25
@@ -188,7 +189,6 @@ else {
   document.getElementById('fafb_div').style.display = 'none';
   document.getElementById('labels_div').style.display = 'none';
   document.getElementById('gt_lsds_div').style.display = 'none';
-  document.getElementById('pred_lsds_div').style.display = 'none';
   document.getElementById('gt_vs_pred_div').style.display = 'none';
   document.getElementById('zfinch_div').style.display = 'none';
   document.getElementById('hemi_div').style.display = 'none';

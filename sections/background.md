@@ -40,15 +40,16 @@ Sweet! Let's image a human brain and be done with it.
 Unfortunately, by imaging brains at such high resolution, the resulting data is
 massive. Let's consider the fruit fly example.  A full adult fruit fly brain
 (**FAFB**) imaged with ssTEM <dt-cite key="zheng_complete_2018"></dt-cite> at a
-pixel resolution of ~4 nanometers and ~40 nanometer thick sections, comprises ~50 teravoxels of data (neuropil)<dt-cite
+pixel resolution of ~4 nanometers and ~40 nanometer thick sections, comprises
+~50 teravoxels of data (neuropil)<dt-cite
 key="heinrich_synaptic_2018"></dt-cite>. For reference, a voxel is a volumetric
 pixel, and the "tera" prefix means 10<sup>12</sup>. So, one fly brain contains
 upwards of 50,000,000,000,000 volumetric pixels. To put that in perspective,
 <dt-cite key="abbott_mind_2020">Abbott et al.</dt-cite> argue that, assuming a
 scale where 1000 cubic microns is equivalent to 1 centimeter, a fruit fly brain
 would comprise the length of 6 and a half Boeing 747 aeroplanes. This still
-pales in comparison to a mouse brain which would be the distance from Boston to
-Lisbon, and require the acquisition of 1 million terabytes of data.
+pales in comparison to a mouse brain which would require the acquisition of 1
+million terabytes of data.
 
 <div style="text-align: center;">
   <img class="b-lazy"

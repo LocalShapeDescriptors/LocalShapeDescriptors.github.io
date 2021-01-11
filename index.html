@@ -725,15 +725,16 @@ Figure 1.</p>
 <p>Unfortunately, by imaging brains at such high resolution, the resulting data is
 massive. Let's consider the fruit fly example.  A full adult fruit fly brain
 (<strong>FAFB</strong>) imaged with ssTEM <dt-cite key="zheng_complete_2018"></dt-cite> at a
-pixel resolution of ~4 nanometers and ~40 nanometer thick sections, comprises ~50 teravoxels of data (neuropil)<dt-cite
+pixel resolution of ~4 nanometers and ~40 nanometer thick sections, comprises
+~50 teravoxels of data (neuropil)<dt-cite
 key="heinrich_synaptic_2018"></dt-cite>. For reference, a voxel is a volumetric
 pixel, and the &quot;tera&quot; prefix means 10<sup>12</sup>. So, one fly brain contains
 upwards of 50,000,000,000,000 volumetric pixels. To put that in perspective,
 <dt-cite key="abbott_mind_2020">Abbott et al.</dt-cite> argue that, assuming a
 scale where 1000 cubic microns is equivalent to 1 centimeter, a fruit fly brain
 would comprise the length of 6 and a half Boeing 747 aeroplanes. This still
-pales in comparison to a mouse brain which would be the distance from Boston to
-Lisbon, and require the acquisition of 1 million terabytes of data.</p>
+pales in comparison to a mouse brain which would require the acquisition of 1
+million terabytes of data.</p>
 <div style="text-align: center;">
   <img class="b-lazy"
   id="scale_large"
@@ -1084,14 +1085,14 @@ object boundaries.</p>
   style="margin: auto; width: 100%;"/>
 <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
 <td width="100%"><figcaption style="text-align: center;">Given raw data and
-ground truth labels we can compute ground truth LSDs. The general idea is to
-grow a gaussian around each voxel and intersect it with the underlying label.
-The center of mass of the intersected region is calculated, and statistics
-between the voxel and center of mass are computed. Here we see the first
-component of the LSDs, the mean offset to center of mass. At object boundaries,
-vectors are sharply contrasted in opposing directions. As we get closer to the
-center of objects, the difference between the selected voxel and center of mass
-decreases, which results in a smoother gradient.</figcaption></td>
+ground truth labels we can compute LSDs. The general idea is to grow a gaussian
+around each voxel and intersect it with the underlying label. The center of mass
+of the intersected region is calculated, and statistics between the voxel and
+center of mass are computed. Here we see the first component of the LSDs, the
+mean offset to center of mass. At object boundaries, vectors are sharply
+contrasted in opposing directions. As we get closer to the center of objects,
+the difference between the selected voxel and center of mass decreases, which
+results in a smoother gradient.</figcaption></td>
 </tr></table>
 </div>
 <p>Additionally, we calculate two statistics describing the directionality of
@@ -1105,13 +1106,13 @@ translates to the size of the process.</p>
     src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
     data-src="assets/img/lsd_components_vertical.jpeg"
     style="margin: auto; width: 100%;"/>
-  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
+  <table id="lsd_components_caption" style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
   <td width="100%"><figcaption style="text-align: center;">The components of the
   LSDs, offset to center of mass ([0:3]), covariance ([3:6]), Pearson's
   correlation coefficient ([6:9]), and voxel count ([9:10]). The covariance
   describes neuron orientation (blue = x direction, green = y direction, red = z
   direction), Pearson's describes elongation (or changes in the orientation),
-  and voxel count describes the size of the object (blue = small, red = big)
+  and voxel count describes the size of the object (blue = small, red = big).
   </figcaption></td>
   </tr></table>
 </div>
@@ -1121,6 +1122,13 @@ translates to the size of the process.</p>
 <section class="box">
 <label class="box-title" for="gt_lsds">LSD components</label>
 <label class="box-close" for="acc-close"></label>
+<div class="box-content"><div><p>The components of the LSDs, offset to center of
+mass ([0:3]), covariance ([3:6]), Pearson's correlation coefficient ([6:9]), and
+voxel count ([9:10]). The covariance describes neuron orientation (blue = x
+direction, green = y direction, red = z direction), Pearson's describes
+elongation (or changes in the orientation), and voxel count describes the size
+of the object (blue = small, red = big). These are ground truth LSDs, calculated
+on the unique labels.</p> </div>
 <div class="box-content"><div class="responsive-container">
   <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%7D%2C%22position%22:%5B98.5%2C98.5%2C98.5%5D%2C%22crossSectionScale%22:1.0456762579315313%2C%22projectionOrientation%22:%5B-0.268303781747818%2C-0.36630383133888245%2C-0.03300556540489197%2C0.8903623819351196%5D%2C%22projectionScale%22:595.714724527316%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/gt_lsds_updated%22%2C%22transform%22:%7B%22matrix%22:%5B%5B1%2C0%2C0%2C0%2C52%5D%2C%5B0%2C1%2C0%2C0%2C52%5D%2C%5B0%2C0%2C1%2C0%2C52%5D%2C%5B0%2C0%2C0%2C1%2C0%5D%5D%2C%22outputDimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%2C%22d3%5E%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22tab%22:%22source%22%2C%22annotationColor%22:%22#0088ff%22%2C%22opacity%22:0.85%2C%22shader%22:%22void%20main%28%29%20%7B%5Cn%20%20%20%20emitRGB%28%5Cn%20%20%20%20%20%20%20%20vec3%28%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%280%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%281%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%282%29%29%29%5Cn%20%20%20%20%20%20%20%20%29%3B%5Cn%7D%5Cn%22%2C%22channelDimensions%22:%7B%22d3%5E%22:%5B1%2C%22%22%5D%7D%2C%22name%22:%22LSD%5B0:3%5D%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/raw%22%2C%22tab%22:%22source%22%2C%22annotationColor%22:%22#e100ff%22%2C%22name%22:%22raw%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/gt_lsds_updated%22%2C%22transform%22:%7B%22matrix%22:%5B%5B1%2C0%2C0%2C0%2C52%5D%2C%5B0%2C1%2C0%2C0%2C52%5D%2C%5B0%2C0%2C1%2C0%2C52%5D%2C%5B0%2C0%2C0%2C1%2C0%5D%5D%2C%22outputDimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%2C%22d3%5E%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22tab%22:%22source%22%2C%22annotationColor%22:%22#0088ff%22%2C%22opacity%22:0.85%2C%22shader%22:%22void%20main%28%29%20%7B%5Cn%20%20%20%20emitRGB%28%5Cn%20%20%20%20%20%20%20%20vec3%28%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%283%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%284%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%285%29%29%29%5Cn%20%20%20%20%20%20%20%20%29%3B%5Cn%7D%22%2C%22channelDimensions%22:%7B%22d3%5E%22:%5B1%2C%22%22%5D%7D%2C%22name%22:%22LSD%5B3:6%5D%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/gt_lsds_updated%22%2C%22transform%22:%7B%22matrix%22:%5B%5B1%2C0%2C0%2C0%2C52%5D%2C%5B0%2C1%2C0%2C0%2C52%5D%2C%5B0%2C0%2C1%2C0%2C52%5D%2C%5B0%2C0%2C0%2C1%2C0%5D%5D%2C%22outputDimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%2C%22d3%5E%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22tab%22:%22source%22%2C%22annotationColor%22:%22#0088ff%22%2C%22opacity%22:0.85%2C%22shader%22:%22void%20main%28%29%20%7B%5Cn%20%20%20%20emitRGB%28%5Cn%20%20%20%20%20%20%20%20vec3%28%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%286%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%287%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%288%29%29%29%5Cn%20%20%20%20%20%20%20%20%29%3B%5Cn%7D%22%2C%22channelDimensions%22:%7B%22d3%5E%22:%5B1%2C%22%22%5D%7D%2C%22name%22:%22LSD%5B6:9%5D%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/gt_lsds_updated%22%2C%22transform%22:%7B%22matrix%22:%5B%5B1%2C0%2C0%2C0%2C52%5D%2C%5B0%2C1%2C0%2C0%2C52%5D%2C%5B0%2C0%2C1%2C0%2C52%5D%2C%5B0%2C0%2C0%2C1%2C0%5D%5D%2C%22outputDimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%2C%22d3%5E%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22tab%22:%22source%22%2C%22annotationColor%22:%22#0088ff%22%2C%22opacity%22:0.8%2C%22shader%22:%22void%20main%28%29%20%7B%5Cn%20%20%20%20float%20v%20=%20toNormalized%28getDataValue%289%29%29%3B%5Cn%20%20%20%20vec4%20rgba%20=%20vec4%280%2C0%2C0%2C0%29%3B%5Cn%20%20%20%20if%20%28v%20%21=%200.0%29%20%7B%5Cn%20%20%20%20%20%20%20%20rgba%20=%20vec4%28colormapJet%28v%29%2C%201.0%29%3B%5Cn%20%20%20%20%7D%5Cn%20%20%20%20emitRGBA%28rgba%29%3B%5Cn%7D%22%2C%22channelDimensions%22:%7B%22d3%5E%22:%5B1%2C%22%22%5D%7D%2C%22name%22:%22LSD%5B9:10%5D%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22LSD%5B9:10%5D%22%2C%22size%22:290%7D%2C%22layout%22:%7B%22type%22:%22row%22%2C%22children%22:%5B%7B%22type%22:%22column%22%2C%22children%22:%5B%7B%22type%22:%22viewer%22%2C%22layers%22:%5B%22raw%22%2C%22LSD%5B0:3%5D%22%5D%2C%22layout%22:%22yz%22%7D%2C%7B%22type%22:%22viewer%22%2C%22layers%22:%5B%22raw%22%2C%22LSD%5B6:9%5D%22%5D%2C%22layout%22:%22yz%22%7D%5D%7D%2C%7B%22type%22:%22column%22%2C%22children%22:%5B%7B%22type%22:%22viewer%22%2C%22layers%22:%5B%22raw%22%2C%22LSD%5B3:6%5D%22%5D%2C%22layout%22:%22yz%22%7D%2C%7B%22type%22:%22viewer%22%2C%22layers%22:%5B%22raw%22%2C%22LSD%5B9:10%5D%22%5D%2C%22layout%22:%22yz%22%7D%5D%7D%5D%7D%7D"></iframe>
 </div>
@@ -1129,41 +1137,45 @@ translates to the size of the process.</p>
 <input type="radio" name="accordion" id="acc-close" />
 </nav>
 </div>
+<p>Since the LSDs are predicted in three dimensional space, it can be more
+intuitive to visualize how they map to a reconstructed neuron. For example, the
+following shows a 3D mesh reconstruction of a neuron alongside the orientation
+component of the LSDs (LSDs[3:6]):</p>
 <div style="text-align: center;">
   <img class="b-lazy"
     id="3d_lsds_mesh"
     src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-    data-src="assets/img/3d_lsds_mesh.jpeg"
-    style="display: block; margin: auto; width: 80%;"/>
-  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
-  </tr></table>
-</div>
-<div style="text-align: center;">
+    data-src="assets/img/3d_mesh_vect.jpeg"
+    style="margin: auto; width: 100%;"/>
   <img class="b-lazy"
-    id="3d_lsds_vect"
+    id="3d_lsds_mesh_vertical"
     src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-    data-src="assets/img/3d_lsds_vect.jpeg"
-    style="display: block; margin: auto; width: 80%;"/>
+    data-src="assets/img/3d_mesh_vect_vertical.jpeg"
+    style="margin: auto; width: 80%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">3D reconstruction of
+  a segmented neuron (blue mesh), with the corresponding LSD direction vectors.
+  The orientation of the neuron is directly mapped to RGB space. If the neuron
+  is moving in the Z direction, it is visualized as red. The Y direction
+  (vertical) is mapped to green, and the X direction is mapped to blue.
+  Intermediate directions are mapped to intermediate colors.</figcaption></td>
   </tr></table>
 </div>
-<div class="accordion-container" id="three_div">
-<nav class="accordion arrows">
-<input type="radio" name="accordion" id="three" />
-<section class="box">
-<label class="box-title" for="three">Test 3d viewer</label>
-<label class="box-close" for="acc-close"></label>
-<div class="box-content"><div><p>Test 3d viewer</p> </div>
-<div class="box-content" id="test_div"> <div class="responsive-container">
-  <iframe class="responsive-iframe" src="fib_test.html"></iframe>
-</div>
-</div>
-</section>
-<input type="radio" name="accordion" id="acc-close" />
-</nav>
-</div>
+<!--<div class="accordion-container" id="three_div">-->
+<!--<nav class="accordion arrows">-->
+<!--<input type="radio" name="accordion" id="three" />-->
+<!--<section class="box">-->
+<!--<label class="box-title" for="three">Test 3d viewer</label>-->
+<!--<label class="box-close" for="acc-close"></label>-->
+<!--<div class="box-content"><div><p>Test 3d viewer</p> </div>-->
+<!--<div class="box-content" id="test_div"> <div class="responsive-container">-->
+  <!--<iframe class="responsive-iframe" src="fib25_3d_viewer.html"></iframe>-->
+<!--</div>-->
+<!--</div>-->
+<!--</section>-->
+<!--<input type="radio" name="accordion" id="acc-close" />-->
+<!--</nav>-->
+<!--</div>-->
 <h3 id="network_architectures">Network Architectures</h3>
 <p>We implemented the LSDs using three network architectures. All three networks
 use a 3D U-Net <dt-fn>A type of <a class="name" target="_blank" rel="noopener
@@ -1209,34 +1221,41 @@ data-src="assets/img/acrlsd.png" style="display: block; margin: auto; width: 100
 <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
 </tr></table>
 </div>
-<div class="accordion-container" id="pred_lsds_div">
-<nav class="accordion arrows">
-<input type="radio" name="accordion" id="pred_lsds" />
-<section class="box">
-<label class="box-title" for="pred_lsds">Predicted LSDs</label>
-<label class="box-close" for="acc-close"></label>
-<div class="box-content"><div class="responsive-container">
-  <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%7D%2C%22position%22:%5B98.5%2C98.5%2C98.5%5D%2C%22crossSectionScale%22:1.0456762579315313%2C%22projectionOrientation%22:%5B-0.268303781747818%2C-0.36630383133888245%2C-0.03300556540489197%2C0.8903623819351196%5D%2C%22projectionScale%22:595.714724527316%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/pred_lsds_updated%22%2C%22transform%22:%7B%22matrix%22:%5B%5B1%2C0%2C0%2C0%2C52%5D%2C%5B0%2C1%2C0%2C0%2C52%5D%2C%5B0%2C0%2C1%2C0%2C52%5D%2C%5B0%2C0%2C0%2C1%2C0%5D%5D%2C%22outputDimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%2C%22d3%5E%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22annotationColor%22:%22#0088ff%22%2C%22opacity%22:0.85%2C%22shader%22:%22void%20main%28%29%20%7B%5Cn%20%20%20%20emitRGB%28%5Cn%20%20%20%20%20%20%20%20vec3%28%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%280%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%281%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%282%29%29%29%5Cn%20%20%20%20%20%20%20%20%29%3B%5Cn%7D%5Cn%22%2C%22channelDimensions%22:%7B%22d3%5E%22:%5B1%2C%22%22%5D%7D%2C%22name%22:%22LSD%5B0:3%5D%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/raw%22%2C%22tab%22:%22source%22%2C%22annotationColor%22:%22#e100ff%22%2C%22name%22:%22raw%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/pred_lsds_updated%22%2C%22transform%22:%7B%22matrix%22:%5B%5B1%2C0%2C0%2C0%2C52%5D%2C%5B0%2C1%2C0%2C0%2C52%5D%2C%5B0%2C0%2C1%2C0%2C52%5D%2C%5B0%2C0%2C0%2C1%2C0%5D%5D%2C%22outputDimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%2C%22d3%5E%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22annotationColor%22:%22#0088ff%22%2C%22opacity%22:0.85%2C%22shader%22:%22void%20main%28%29%20%7B%5Cn%20%20%20%20emitRGB%28%5Cn%20%20%20%20%20%20%20%20vec3%28%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%283%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%284%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%285%29%29%29%5Cn%20%20%20%20%20%20%20%20%29%3B%5Cn%7D%22%2C%22channelDimensions%22:%7B%22d3%5E%22:%5B1%2C%22%22%5D%7D%2C%22name%22:%22LSD%5B3:6%5D%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/pred_lsds_updated%22%2C%22transform%22:%7B%22matrix%22:%5B%5B1%2C0%2C0%2C0%2C52%5D%2C%5B0%2C1%2C0%2C0%2C52%5D%2C%5B0%2C0%2C1%2C0%2C52%5D%2C%5B0%2C0%2C0%2C1%2C0%5D%5D%2C%22outputDimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%2C%22d3%5E%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22annotationColor%22:%22#0088ff%22%2C%22opacity%22:0.85%2C%22shader%22:%22void%20main%28%29%20%7B%5Cn%20%20%20%20emitRGB%28%5Cn%20%20%20%20%20%20%20%20vec3%28%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%286%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%287%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%288%29%29%29%5Cn%20%20%20%20%20%20%20%20%29%3B%5Cn%7D%22%2C%22channelDimensions%22:%7B%22d3%5E%22:%5B1%2C%22%22%5D%7D%2C%22name%22:%22LSD%5B6:9%5D%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/pred_lsds_updated%22%2C%22transform%22:%7B%22matrix%22:%5B%5B1%2C0%2C0%2C0%2C52%5D%2C%5B0%2C1%2C0%2C0%2C52%5D%2C%5B0%2C0%2C1%2C0%2C52%5D%2C%5B0%2C0%2C0%2C1%2C0%5D%5D%2C%22outputDimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%2C%22d3%5E%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#0088ff%22%2C%22opacity%22:0.8%2C%22shader%22:%22void%20main%28%29%20%7B%5Cn%20%20%20%20float%20v%20=%20toNormalized%28getDataValue%289%29%29%3B%5Cn%20%20%20%20vec4%20rgba%20=%20vec4%280%2C0%2C0%2C0%29%3B%5Cn%20%20%20%20if%20%28v%20%21=%200.0%29%20%7B%5Cn%20%20%20%20%20%20%20%20rgba%20=%20vec4%28colormapJet%28v%29%2C%201.0%29%3B%5Cn%20%20%20%20%7D%5Cn%20%20%20%20emitRGBA%28rgba%29%3B%5Cn%7D%22%2C%22channelDimensions%22:%7B%22d3%5E%22:%5B1%2C%22%22%5D%7D%2C%22name%22:%22LSD%5B9:10%5D%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22LSD%5B9:10%5D%22%2C%22size%22:290%7D%2C%22layout%22:%7B%22type%22:%22row%22%2C%22children%22:%5B%7B%22type%22:%22column%22%2C%22children%22:%5B%7B%22type%22:%22viewer%22%2C%22layers%22:%5B%22raw%22%2C%22LSD%5B0:3%5D%22%5D%2C%22layout%22:%22yz%22%7D%2C%7B%22type%22:%22viewer%22%2C%22layers%22:%5B%22raw%22%2C%22LSD%5B6:9%5D%22%5D%2C%22layout%22:%22yz%22%7D%5D%7D%2C%7B%22type%22:%22column%22%2C%22children%22:%5B%7B%22type%22:%22viewer%22%2C%22layers%22:%5B%22raw%22%2C%22LSD%5B3:6%5D%22%5D%2C%22layout%22:%22yz%22%7D%2C%7B%22type%22:%22viewer%22%2C%22layers%22:%5B%22raw%22%2C%22LSD%5B9:10%5D%22%5D%2C%22layout%22:%22yz%22%7D%5D%7D%5D%7D%7D"></iframe>
-</div>
-</div>
-</section>
-<input type="radio" name="accordion" id="acc-close" />
-</nav>
+<p>After training the networks for a number of iterations (usually several hundred thousand), the predicted LSDs start to
+resemble the ground truth LSDs. For example, when considering the offset vectors, we can see sharp contrasts at object boundaries, and smooth gradients within objects:</p>
+<div style="text-align: center;">
+<img class="b-lazy"
+id="gt_vs_pred_lsds"
+src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+data-src="assets/img/gt_vs_pred_lsds.jpeg"
+style="margin: auto; width: 80%;"/>
+<table id="gt_vs_pred_lsds_caption" style="width: 100%;" cellspacing="0" cellpadding="0"><tr> <td
+width="100%"><figcaption style="text-align: center;">Ground truth LSDs (left),
+and predicted LSDs (right). Label boundaries were slightly eroded to produce
+gaps in the ground truth LSDs between objects. This forced the network to guess
+what to predict in these regions.</figcaption></td>
+  </tr></table>
 </div>
 <div class="accordion-container" id="gt_vs_pred_div">
-<nav class="accordion arrows">
-<input type="radio" name="accordion" id="gt_vs_pred" />
-<section class="box">
-<label class="box-title" for="gt_vs_pred">Ground truth vs predicted offset
+  <nav class="accordion arrows">
+  <input type="radio" name="accordion" id="gt_vs_pred" checked/>
+  <section class="box">
+  <label class="box-title" for="gt_vs_pred">Ground truth vs predicted offset
 vectors</label>
-<label class="box-close" for="acc-close"></label>
-<div class="box-content"><div class="responsive-container">
+  <label class="box-close" for="acc-open"></label>
+  <input type="radio" name="accordion" id="acc-open"/>
+  <div class="box-content"><div><p>Ground truth LSDs (left), and predicted LSDs
+  (right). Label boundaries were slightly eroded to produce gaps in the ground
+  truth LSDs between objects. This forced the network to guess what to predict
+  in these regions.</p> </div>
+  <div class="box-content">
+  <div class="responsive-container">
   <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%7D%2C%22position%22:%5B98.5%2C98.5%2C98.5%5D%2C%22crossSectionScale%22:0.6550553083112535%2C%22projectionOrientation%22:%5B-0.268303781747818%2C-0.36630383133888245%2C-0.03300556540489197%2C0.8903623819351196%5D%2C%22projectionScale%22:595.714724527316%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/gt_lsds_updated%22%2C%22transform%22:%7B%22matrix%22:%5B%5B1%2C0%2C0%2C0%2C52%5D%2C%5B0%2C1%2C0%2C0%2C52%5D%2C%5B0%2C0%2C1%2C0%2C52%5D%2C%5B0%2C0%2C0%2C1%2C0%5D%5D%2C%22outputDimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%2C%22d3%5E%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22tab%22:%22source%22%2C%22annotationColor%22:%22#0088ff%22%2C%22opacity%22:0.85%2C%22shader%22:%22void%20main%28%29%20%7B%5Cn%20%20%20%20emitRGB%28%5Cn%20%20%20%20%20%20%20%20vec3%28%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%280%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%281%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%282%29%29%29%5Cn%20%20%20%20%20%20%20%20%29%3B%5Cn%7D%5Cn%22%2C%22channelDimensions%22:%7B%22d3%5E%22:%5B1%2C%22%22%5D%7D%2C%22name%22:%22GT%20LSD%5B0:3%5D%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/raw%22%2C%22tab%22:%22source%22%2C%22annotationColor%22:%22#e100ff%22%2C%22name%22:%22raw%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22zarr://https://raw.githubusercontent.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/draft/assets/zarrs/fib.zarr/pred_lsds_updated%22%2C%22transform%22:%7B%22matrix%22:%5B%5B1%2C0%2C0%2C0%2C52%5D%2C%5B0%2C1%2C0%2C0%2C52%5D%2C%5B0%2C0%2C1%2C0%2C52%5D%2C%5B0%2C0%2C0%2C1%2C0%5D%5D%2C%22outputDimensions%22:%7B%22d0%22:%5B1%2C%22%22%5D%2C%22d1%22:%5B1%2C%22%22%5D%2C%22d2%22:%5B1%2C%22%22%5D%2C%22d3%5E%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22annotationColor%22:%22#0088ff%22%2C%22opacity%22:0.85%2C%22shader%22:%22void%20main%28%29%20%7B%5Cn%20%20%20%20emitRGB%28%5Cn%20%20%20%20%20%20%20%20vec3%28%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%280%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%281%29%29%2C%5Cn%20%20%20%20%20%20%20%20%20%20%20%20toNormalized%28getDataValue%282%29%29%29%5Cn%20%20%20%20%20%20%20%20%29%3B%5Cn%7D%22%2C%22channelDimensions%22:%7B%22d3%5E%22:%5B1%2C%22%22%5D%7D%2C%22name%22:%22Predicted%20LSD%5B0:3%5D%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22GT%20LSD%5B0:3%5D%22%2C%22size%22:290%7D%2C%22layout%22:%7B%22type%22:%22row%22%2C%22children%22:%5B%7B%22type%22:%22viewer%22%2C%22layers%22:%5B%22raw%22%2C%22GT%20LSD%5B0:3%5D%22%5D%2C%22layout%22:%22yz%22%7D%2C%7B%22type%22:%22viewer%22%2C%22layers%22:%5B%22raw%22%2C%22Predicted%20LSD%5B0:3%5D%22%5D%2C%22layout%22:%22yz%22%7D%5D%7D%7D"></iframe>
-</div>
-</div>
-</section>
-<input type="radio" name="accordion" id="acc-close" />
-</nav>
+  </iframe>
+  </div>
+  </div>
+  </section>
+  </nav>
 </div>
 <hr>
 <h2 id="results">Results</h2>
@@ -1268,12 +1287,7 @@ annotator splitting and merging objects in a segmentation. Specifically, it
 gives an approximation of how many clicks are needed to get from a
 reconstruction to the correct ground truth (assuming ground truth in the form of
 skeletons is available). The goal is to <strong>minimize</strong> the MCM; the fewer splits
-and merges required to fix a segmentation, the better.</p>
-<p>In a simple case
-we have two ground truth skeletons contained inside a falsely merged segment
-(1). We perform a min-cut (2), and separate the falsely merged segment into two segments (3).</p>
-<html>
-  <body>
+and merges required to fix a segmentation, the better. Consider the following cases:</p>
 <div style="text-align: center;">
   <img class="b-lazy"
     id="neurons"
@@ -1281,17 +1295,12 @@ we have two ground truth skeletons contained inside a falsely merged segment
     data-src="assets/img/mcm_easy_case.jpeg"
     style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+<td width="100%"><figcaption style="text-align: center;">Simple case. Two ground-truth <span style="color:#017100">skeletons</span> are contained inside an erroneously merged <span style="color:#9313C6">segment</span>. Dashed lines represent supervoxel boundaries and the closest skeleton <span style="color:#B51700">nodes</span> need to be split to resolve the merge (1). A <span style="color:#FF9300">min-cut</span> is performed (2), resulting in a new <span style="color:#00A2FF">segment</span> (3). </figcaption></td>
   </tr></table>
   </div>
-  </body>
-</html>
-<p>In a more complex case (1), a min-cut (2) splits the segment but one of the
-resulting segments still contains a false merge (3). Another min-cut is
-performed (4), resulting in three segments (5). This process is described in
-detail in Supplementary section B of the paper.</p>
-<html>
-  <body>
+<p>Sometimes a min-cut can fail to separate all nodes of the merged skeletons with
+a single cut from two selected nodes. In this case, the procedure is repeated
+until all skeletons are separated, leading to additional split errors:</p>
 <div style="text-align: center;">
   <img class="b-lazy"
     id="neurons"
@@ -1299,11 +1308,18 @@ detail in Supplementary section B of the paper.</p>
     data-src="assets/img/mcm_complex_case.jpeg"
     style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">Complex case. Two
+  <span style="color:#017100">skeletons</span> are contained in a falsely merged
+  <span style="color:#9313C6">segment</span> as before (1), but the supervoxels
+  are more fragmented. A <span style="color:#FF9300">min-cut</span> is performed
+  (2), resulting in a new <span style="color:#00A2FF">segment</span> (3).
+  However, two <span style="color:#B51700">nodes</span> contained within the
+  original <span style="color:#9313C6">segment</span> need to be split. A second
+  <span style="color:#FF9300">min-cut</span> is performed (4), which produces
+  another <span style="color:#EF5FA7">segment</span> (5). This results in an
+  additional split error caused by the original cut.</figcaption></td>
   </tr></table>
   </div>
-  </body>
-</html>
 <h3 id="datasets">Datasets</h3>
 <p>We used three large and diverse EM datasets to evaluate all methods and compare
 metrics.</p>
@@ -1326,7 +1342,11 @@ and 50 skeletons (97 millimeters) were used for evaluation:</p>
     data-src="assets/img/zfinch_dataset_vertical_medium.jpeg"
     style="margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">Zebrafinch dataset
+  overview. 1. 33 gound truth volumes were used for training. 2. Full raw
+  dataset, scale bar = 15 μm. 3. Single section shows ground-truth skeletons,
+  zoom in scale bar = 500 nm. 4. Validation skeletons (n=12, 13.5 mm). 5.
+  Testing skeletons (n=50, 97mm)</figcaption></td>
   </tr></table>
 </div>
 <p>After training, we predicted in a slightly smaller testing region (~800,000
@@ -1369,7 +1389,27 @@ neurons traced to completion (voxel-based rather than skeletons).</p>
     data-src="assets/img/hemi_dataset_vertical_medium.jpeg"
     style="margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%">
+  <figcaption
+  id="hemi_caption"
+  style="text-align: center;">
+  Hemi-Brain dataset overview. 1. 8 ground-truth volumes were used for training.
+  2. Full Hemi-brain volume, scale bar = 30 μm. Experiments were restricted to
+  Ellipsoid Body (circled region). 3. Volumes used for testing. 4. Example
+  sparse ground-truth testing data, scale bar = 2.5 μm. 5. Zoom-in, scale bar =
+  800 nm. 6. Example 3D renderings of selected neurons.
+  </figcaption>
+  <figcaption
+  id="hemi_caption_vertical"
+  style="text-align: center;">
+  Hemi-Brain dataset overview.
+  1. Full Hemi-brain volume, scale bar = 30 μm. Experiments were restricted to
+     Ellipsoid Body (circled region). 2. 8 ground-truth volumes were used for
+     training. 3. Volumes used for testing. 4. Example sparse ground-truth
+     testing data, scale bar = 2.5 μm. 5. Zoom-in, scale bar = 800 nm. 6.
+     Example 3D renderings of selected neurons.
+  </figcaption>
+  </td>
   </tr></table>
 </div>
 <div class="accordion-container" id="hemi_div">
@@ -1407,7 +1447,12 @@ neurons.</p>
     data-src="assets/img/fib25_dataset_vertical_medium.jpeg"
     style="margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">FIB-25 dataset
+  overview. 1. 4 ground-truth volumes were used for training. 2. Full volume
+  with cutout showing testing region, scale bar = 5 μm. 3. Cross section with
+  sparsely labeled testing ground-truth. 4. Zoom-in, scale bar = 750 nm. 5.
+  Sub-volume corresponding to zoomed-in plane. 6. Subset of full RoI testing
+  neurons. Small volume shown for context.</figcaption></td>
   </tr></table>
 </div>
 <div class="accordion-container" id="fib25_div">
@@ -1442,7 +1487,10 @@ on par with the current state of the art when considering VoI:</p>
     data-src="assets/img/zfinch_voi_roi.png"
     style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">VoI Sum vs ROI size.
+  Each point corresponds to an ROI size. It is ideal to minimize VoI Sum. As we
+  scale up, VoI increases because the number of errors increase. The best LSD
+  network (AcRLSD - orange) is competitive with FFN (black).</figcaption></td>
   </tr></table>
 </div>
 <p>We did not find this to be the case when evaluating ERL, which could be a direct
@@ -1460,7 +1508,11 @@ increases, which leads to an increased ERL on correctly reconstructed neurons:</
     data-src="assets/img/erl_roi.png"
     style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">ERL (nanometers) vs
+  ROI size. As we scale up, we observe varying ERLs across all networks from
+  cutting the ground truth skeletons. This makes it hard to deduce network
+  accuracy from this metric when evaluating on cropped volumes.
+  </figcaption></td>
   </tr></table>
 </div>
 <p>We designed the MCM to simulate the amount of human interactions (clicks) needed
@@ -1484,7 +1536,11 @@ annotators to split false merges using a min-cut on the fragment graph:</p>
     data-src="assets/img/voi_mcm_rois_vertical.jpeg"
     style="margin: auto; width: 80%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">Comparison of VoI and
+  MCM on first three ROIs (up to ~16k cubic microns). As expected, the number of
+  splits and merges needed to fix a segmentation increases linearly with scale.
+  The same network order is seen in VoI, suggesting that it might be a
+  reasonable to MCM on larger volumes.</figcaption></td>
   </tr></table>
 </div>
 <div class="accordion-container">
@@ -1510,9 +1566,12 @@ annotators to split false merges using a min-cut on the fragment graph:</p>
   <img
   id="hemi_voi_vertical"
   src="assets/img/hemi_rois_vertical.jpeg"
-  style="margin: auto; width: 60%;"/>
+  style="margin: auto; width: 70%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">VoI split/merge
+  curves (lines) across thresholds, for each of the three investigated ROIs.
+  Points indicate the threshold at which VoI Sum is minimized. LSDs maintain
+  competitiveness with FFN on larger two ROIs.</figcaption></td>
   </tr></table>
 </div>
 <div class="box-content"><div>
@@ -1532,9 +1591,13 @@ annotators to split false merges using a min-cut on the fragment graph:</p>
   <img
   id="fib25_voi_vertical"
   src="assets/img/fib25_rois_vertical.jpeg"
-  style="margin: auto; width: 60%;"/>
+  style="margin: auto; width: 70%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">VoI split/merge
+  curves (lines) across thresholds on investigated ROIs. On the Full ROI,
+  auto-context methods did not perform well. This was likely caused by
+  peripheral merges. Evaluation on two sub ROIs showed results consistent with
+  what was seen on the other datasets.</figcaption></td>
   </tr></table>
 </div>
 </div>
@@ -1556,12 +1619,15 @@ producing segmentations of comparable quality:</p>
     data-src="assets/img/voi_tflops.png"
     style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">Accuracy vs
+  computational costs. Over a range of ROIs (points) affinity-based methods
+  require significantly less teraFLOPs (floating point operations) than FFN.
+  Auto-context networks (green/orange) are also accurate enough to make their
+  slight computational overhead justifiable.</figcaption></td>
   </tr></table>
 </div>
-<p>All affinity-based methods (not just LSDs) can be parallelized efficiently using
-a modest amount of GPUs, resulting in higher throughput (cubic microns processed
-per GPU second):</p>
+<p>All affinity-based methods can be parallelized efficiently using
+a modest amount of GPUs, resulting in higher throughput:</p>
 <div style="text-align: center;">
   <img class="b-lazy"
     id="neurons"
@@ -1569,7 +1635,9 @@ per GPU second):</p>
     data-src="assets/img/inference_table.png"
     style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">Inference costs on
+  Zebrafinch benchmark ROI (~800k cubic microns). Predicting LSDs, for example,
+  took 2 hours using 100 GPUs.</figcaption></td>
   </tr></table>
 </div>
 <p>This is accomplished using a block-wise processing scheme in which a large
@@ -1585,9 +1653,17 @@ is processed. Consider watershed as an example:</p>
     data-src="assets/img/blockwise_processing_large.jpeg"
     style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">Overview of block-wise
+  processing scheme. Example 32 μm RoI showing total block grid (A) and required
+  blocks to process example neuron (B). Scale bar = ∼ 6μm. Corrsponding
+  orthographic view highlights supervoxels generated during watershed (C). Block
+  size = 3.6 μm. Inset shows respective raw data inside single block (scale bar
+  = ∼ 1μm). Supervoxels are then agglomerated to obtain a resulting segment (D).
+  Note: While this example shows processing of a single neuron, in reality all
+  neurons are processed simultaneosuly.</figcaption></td>
   </tr></table>
 </div>
+<p>For a more complete explanation of the block-wise processing sheme, see below:</p>
 <div class="accordion-container">
 <nav class="accordion arrows">
 <input type="radio" name="accordion" id="block" />
@@ -1711,7 +1787,11 @@ no significant difference in accuracy:</p>
     data-src="assets/img/zfinch_auto.png"
     style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">Auto-context
+  comparison. A vanilla auto-context network (dashed green line) does not
+  improve affinity accuracy (blue line). Using the LSDs in an auto-context setup
+  (dashed orange line), improves multi-task LSD accuracy (red
+  line).</figcaption></td>
   </tr></table>
 </div>
 <p>Predicting affinities from affinities is likely too similar to predicting
@@ -1743,7 +1823,10 @@ absence of masks when scaling to larger datasets:</p>
     data-src="assets/img/zfinch_mask_delta_voi.png"
     style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">Masking improves
+  accuracy on the Zebrafinch. As we scale up, the accuracy decreases drastically
+  without using a neuropil mask (the change in VoI sum gets larger between
+  non-masked and masked predictions as ROI increases).</figcaption></td>
   </tr></table>
 </div>
 <p>Aside from using masks during post-processing, masks can also be incorporated
@@ -1762,7 +1845,9 @@ only implemented as an auxiliary learning task for affinity prediction. An
 interesting direction would be to agglomerate directly from the LSDs and remove
 the need for affinities entirely.</p>
 <p>Aside from aiding boundary detection, LSDs could also be used in other ways. For example, they could be incorporated to provide a secondary source of information for
-identifying errors in a segmentation:</p>
+identifying errors in a segmentation. Specifically, after generating a segmentation, LSDs could be calculated on the
+labels and then compared with the initial LSD predictions. The difference
+between the two would likely highlight regions containing errors:</p>
 <div style="text-align: center;">
   <img class="b-lazy"
     id="error_detection"
@@ -1770,12 +1855,9 @@ identifying errors in a segmentation:</p>
     data-src="assets/img/error_detection.jpeg"
     style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">Example predicted LSDs between two neurons (1). If the resulting segmentation is correct (2), segmentation LSDs do not differ from predicted LSDs. If the resulting segmentation is incorrect (3), segmentation LSDs (4) might differ from the predicted LSDs. The difference (5) could expose errors in a segmentation.</figcaption></td>
   </tr></table>
 </div>
-<p>Specifically, after generating a segmentation, LSDs could be calculated on the
-labels and then compared with the initial LSD predictions. The difference
-between the two would likely highlight regions containing errors.</p>
 <p>We've also seen promising results when using the LSDs for other segmentation
 problems. For example, LSDs have been successful in generating segmentations of
 cell bodies:</p>
@@ -1786,10 +1868,14 @@ cell bodies:</p>
     data-src="assets/img/zfinch.jpeg"
     style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">Nuclei segmentation
+  on full zebrafish brain<dt-cite key="hildebrand_whole-brain_2017"></dt-cite>.
+  Columns from left to right: raw, LSD offset vectors, LSD direction vectors
+  (covariance), LSD direction vectors (Pearson’s), size, resulting segmentation.
+  Scale bars from top to bottom: ∼ 150μm, 20μm, 5μm.</figcaption></td>
   </tr></table>
 </div>
-<p>and mitochondria:</p>
+<p>The LSDs also produce nice segmentations on mitochondria:</p>
 <div style="text-align: center;">
   <img class="b-lazy"
     id="mito"
@@ -1797,7 +1883,11 @@ cell bodies:</p>
     data-src="assets/img/mito.jpeg"
     style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">Mitochondria
+  segmentation on cropout from FIB-25. Inset shows LSD predictions and
+  corresponding segmentation. Right image shows 3D reconstructions of a random
+  sample (n=1000) in predicted ROI. Scale bars from left to right: ∼ 3μm, 750nm,
+  4μm.</figcaption></td>
   </tr></table>
 </div>
 <p>Additionally, LSDs have been used for Golgi apparatus and endoplasmic reticulum
@@ -1840,22 +1930,6 @@ function get_browser() {
 
 var browser=get_browser();
 
-//function isScrolledIntoView(el) {
-//    var rect = el.getBoundingClientRect();
-//    var elemTop = rect.top;
-//    var elemBottom = rect.bottom;
-
-    // Only completely visible elements return true:
-//    var isVisible = (elemTop >= 0) && (elemBottom <= window.innerHeight);
-    // Partially visible elements return true:
-    //isVisible = elemTop < window.innerHeight && elemBottom >= 0;
-//    return isVisible;
-//}
-
-//var test = document.getElementById("gt_lsds_div");
-
-//console.log(isScrolledIntoView("gt_lsds_div"));
-
 if (!md.mobile() && !md.tablet()) {
 
   console.log('Device seems to be computer')
@@ -1880,6 +1954,15 @@ if (!md.mobile() && !md.tablet()) {
 
   //lsd components
   document.getElementById('lsd_components_vertical').style.display = 'none';
+  document.getElementById('lsd_components_caption').style.display = 'none';
+
+  //lsd mesh
+  document.getElementById('3d_lsds_mesh_vertical').style.display = 'none';
+  document.getElementById('3d_lsds_mesh').style.display = 'block';
+
+  //gt vs pred
+  document.getElementById('gt_vs_pred_lsds').style.display = 'none';
+  document.getElementById('gt_vs_pred_lsds_caption').style.display = 'none';
 
   //zfinch
   document.getElementById('zfinch_dataset_vertical').style.display = 'none';
@@ -1887,6 +1970,7 @@ if (!md.mobile() && !md.tablet()) {
 
   //hemi
   document.getElementById('hemi_dataset_vertical').style.display = 'none';
+  document.getElementById('hemi_caption_vertical').style.display = 'none';
   document.getElementById('hemi_dataset').style.display = 'block';
 
   //fib25
@@ -1927,7 +2011,6 @@ if (!md.mobile() && !md.tablet()) {
     document.getElementById('fafb_div').style.display = 'none';
     document.getElementById('labels_div').style.display = 'none';
     document.getElementById('gt_lsds_div').style.display = 'none';
-    document.getElementById('pred_lsds_div').style.display = 'none';
     document.getElementById('gt_vs_pred_div').style.display = 'none';
     document.getElementById('zfinch_div').style.display = 'none';
     document.getElementById('hemi_div').style.display = 'none';
@@ -1960,12 +2043,20 @@ else {
   //lsd components
   document.getElementById('lsd_components_vertical').style.display = 'block';
 
+  //lsd mesh
+  document.getElementById('3d_lsds_mesh').style.display = 'none';
+  document.getElementById('3d_lsds_mesh_vertical').style.display = 'block';
+
+  //gt vs pred
+  document.getElementById('gt_vs_pred_lsds').style.display = 'block';
+
   //zfinch
   document.getElementById('zfinch_dataset').style.display = 'none';
   document.getElementById('zfinch_dataset_vertical').style.display = 'block';
 
   //hemi
   document.getElementById('hemi_dataset').style.display = 'none';
+  document.getElementById('hemi_caption').style.display = 'none';
   document.getElementById('hemi_dataset_vertical').style.display = 'block';
 
   //fib25
@@ -1997,7 +2088,6 @@ else {
   document.getElementById('fafb_div').style.display = 'none';
   document.getElementById('labels_div').style.display = 'none';
   document.getElementById('gt_lsds_div').style.display = 'none';
-  document.getElementById('pred_lsds_div').style.display = 'none';
   document.getElementById('gt_vs_pred_div').style.display = 'none';
   document.getElementById('zfinch_div').style.display = 'none';
   document.getElementById('hemi_div').style.display = 'none';

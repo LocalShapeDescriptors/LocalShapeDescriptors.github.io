@@ -71,7 +71,11 @@ no significant difference in accuracy:
     data-src="assets/img/zfinch_auto.png"
     style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">Auto-context
+  comparison. A vanilla auto-context network (dashed green line) does not
+  improve affinity accuracy (blue line). Using the LSDs in an auto-context setup
+  (dashed orange line), improves multi-task LSD accuracy (red
+  line).</figcaption></td>
   </tr></table>
 </div>
 
@@ -107,7 +111,10 @@ absence of masks when scaling to larger datasets:
     data-src="assets/img/zfinch_mask_delta_voi.png"
     style="display: block; margin: auto; width: 100%;"/>
   <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">foo</figcaption></td>
+  <td width="100%"><figcaption style="text-align: center;">Masking improves
+  accuracy on the Zebrafinch. As we scale up, the accuracy decreases drastically
+  without using a neuropil mask (the change in VoI sum gets larger between
+  non-masked and masked predictions as ROI increases).</figcaption></td>
   </tr></table>
 </div>
 
