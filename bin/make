@@ -14,6 +14,6 @@ cat draft_header.html abstract.html toc.html tldr.html background.html methods.h
 
 cp draft.html index.html
 
-rm {draft,abstract,toc,tldr,background,methods,results,discussion,cleanup,appendix}.html
+rm {draft,abstract,toc,tldr,background,methods,results,discussion,conclusions,cleanup,appendix}.html
 
 echo "Compiled markdown."
