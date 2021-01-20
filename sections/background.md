@@ -19,9 +19,9 @@ key="schneider-mizell_quantitative_2016,motta_dense_2019,bates_complete_2020"></
 
 Currently, only Electron Microscopy (EM) allows imaging of neural tissue at a
 resolution sufficient to see individual synapses. Unfortunately, by imaging
-brains at such high resolution, the resulting data is massive. Let's consider
-the fruit fly example.  A full adult fruit fly brain (**FAFB**) imaged with
-ssTEM <dt-cite key="zheng_complete_2018"></dt-cite> at a pixel resolution of ~4
+brains at such high resolution, the resulting data is massive. Let's consider a
+fruit fly example.  A full adult fruit fly brain (**FAFB**) imaged with ssTEM
+<dt-cite key="zheng_complete_2018"></dt-cite> at a pixel resolution of ~4
 nanometers and ~40 nanometer thick sections, comprises ~50 teravoxels of data
 (neuropil)<dt-cite key="heinrich_synaptic_2018"></dt-cite>. For reference, a
 voxel is a volumetric pixel, and the "tera" prefix means 10<sup>12</sup>. So,
@@ -298,7 +298,7 @@ affinities, losses are computed on maximin edges and a maximal spanning tree
 * Flood Filling Networks (FFN)
   * The current state of the art approach <dt-cite
     key="januszewski_high-precision_2018"></dt-cite> eliminates the need for a
-    separate post-processing step. After generateing seed points within neurons,
+    separate post-processing step. After generating seed points within neurons,
     a recurrent CNN iteratively fills each object by predicting which voxels
     belong to the same objects as the seeds.
 

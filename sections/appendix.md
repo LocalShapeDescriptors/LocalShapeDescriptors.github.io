@@ -7,10 +7,11 @@ feedback on Neuroglancer; Viren Jain, Michał Januszewski, Jörgen Kornfeld, an
 Steve Plaza for access to data used for training and evaluation. Funding. This
 work was supported by the Howard Hughes Medical Institute.
 
-This post was inspired by the <a class="name" target="_blank" rel="noopener
-noreferrer" href="https://weightagnostic.github.io/">Weight Agnostic Neural
-Networks</a> article and built using <a class="name" target="_blank"
-rel="noopener noreferrer" href="https://distill.pub/about/">Distill</a>.
+Emma Mayette and Tri Nguyen helped create this post. It was inspired by the <a
+class="name" target="_blank" rel="noopener noreferrer"
+href="https://weightagnostic.github.io/">Weight Agnostic Neural Networks</a>
+article and built using <a class="name" target="_blank" rel="noopener
+noreferrer" href="https://distill.pub/about/">Distill</a>.
 
 **Cite**
 <pre class="citation long">@article{sheridan_local_2021,

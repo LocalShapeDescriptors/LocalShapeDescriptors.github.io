@@ -44,11 +44,11 @@ body {
 }
 
 pre {
- white-space: pre-wrap;       /* css-3 */
- white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
- white-space: -pre-wrap;      /* Opera 4-6 */
- white-space: -o-pre-wrap;    /* Opera 7 */
- word-wrap: break-word;       /* Internet Explorer 5.5+ */
+ white-space: pre-wrap;
+ white-space: -moz-pre-wrap;
+ white-space: -pre-wrap;
+ white-space: -o-pre-wrap;
+ word-wrap: break-word;
 }
 
 .row {
@@ -57,7 +57,6 @@ pre {
   padding: 0 4px;
 }
 
-/* Create four equal columns that sits next to each other */
 .column {
   flex: 25%;
   max-width: 25%;
@@ -69,7 +68,6 @@ pre {
   width: 100%;
 }
 
-/* Responsive layout - makes a two column-layout instead of four columns */
 @media screen and (max-width: 800px) {
   .column {
     flex: 50%;
@@ -77,7 +75,6 @@ pre {
   }
 }
 
-/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
 @media screen and (max-width: 600px) {
   .column {
     flex: 100%;
@@ -91,6 +88,7 @@ pre {
   width: 90%;
   margin: 0 auto;
 }
+
 .grid-image {
   display: block;
   flex-basis: 100%;
@@ -455,7 +453,6 @@ text-decoration: none;
 color: #3D5AFE;
 }
 
-/* Add a background color on hover */
 .btn-group button:hover {
   background-color: #FF6C00;
 }
@@ -683,9 +680,9 @@ drive future experiments <dt-cite
 key="schneider-mizell_quantitative_2016,motta_dense_2019,bates_complete_2020"></dt-cite>.</p>
 <p>Currently, only Electron Microscopy (EM) allows imaging of neural tissue at a
 resolution sufficient to see individual synapses. Unfortunately, by imaging
-brains at such high resolution, the resulting data is massive. Let's consider
-the fruit fly example.  A full adult fruit fly brain (<strong>FAFB</strong>) imaged with
-ssTEM <dt-cite key="zheng_complete_2018"></dt-cite> at a pixel resolution of ~4
+brains at such high resolution, the resulting data is massive. Let's consider a
+fruit fly example.  A full adult fruit fly brain (<strong>FAFB</strong>) imaged with ssTEM
+<dt-cite key="zheng_complete_2018"></dt-cite> at a pixel resolution of ~4
 nanometers and ~40 nanometer thick sections, comprises ~50 teravoxels of data
 (neuropil)<dt-cite key="heinrich_synaptic_2018"></dt-cite>. For reference, a
 voxel is a volumetric pixel, and the &quot;tera&quot; prefix means 10<sup>12</sup>. So,
@@ -953,7 +950,7 @@ affinities, losses are computed on maximin edges and a maximal spanning tree
 <ul>
 <li>The current state of the art approach <dt-cite
 key="januszewski_high-precision_2018"></dt-cite> eliminates the need for a
-separate post-processing step. After generateing seed points within neurons,
+separate post-processing step. After generating seed points within neurons,
 a recurrent CNN iteratively fills each object by predicting which voxels
 belong to the same objects as the seeds.</li>
 </ul>
@@ -1932,10 +1929,11 @@ Berg for code to help with data acquisition; Jeremy Maitin-Shepard for helpful
 feedback on Neuroglancer; Viren Jain, Michał Januszewski, Jörgen Kornfeld, and
 Steve Plaza for access to data used for training and evaluation. Funding. This
 work was supported by the Howard Hughes Medical Institute.</p>
-<p>This post was inspired by the <a class="name" target="_blank" rel="noopener
-noreferrer" href="https://weightagnostic.github.io/">Weight Agnostic Neural
-Networks</a> article and built using <a class="name" target="_blank"
-rel="noopener noreferrer" href="https://distill.pub/about/">Distill</a>.</p>
+<p>Emma Mayette and Tri Nguyen helped create this post. It was inspired by the <a
+class="name" target="_blank" rel="noopener noreferrer"
+href="https://weightagnostic.github.io/">Weight Agnostic Neural Networks</a>
+article and built using <a class="name" target="_blank" rel="noopener
+noreferrer" href="https://distill.pub/about/">Distill</a>.</p>
 <p><strong>Cite</strong></p>
 <pre class="citation long">@article{sheridan_local_2021,
 	title = {Local Shape Descriptors for Neuron Segmentation},
