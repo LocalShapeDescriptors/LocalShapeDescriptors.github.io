@@ -106,9 +106,9 @@ component of the LSDs (LSDs[3:6]):
   <td width="100%"><figcaption style="text-align: center;">3D reconstruction of
   a segmented neuron (blue mesh), with the corresponding LSD direction vectors.
   The orientation of the neuron is directly mapped to RGB space. If the neuron
-  is moving in the Z direction, it is visualized as red. The Y direction
-  (vertical) is mapped to green, and the X direction is mapped to blue.
-  Intermediate directions are mapped to intermediate colors.</figcaption></td>
+  is moving in the Z direction, it is visualized as red. The Y direction is
+  mapped to green, and the X direction is mapped to blue. Intermediate
+  directions are mapped to intermediate colors.</figcaption></td>
   </tr></table>
 </div>
 
@@ -138,19 +138,18 @@ noreferrer"
 href="https://towardsdatascience.com/the-most-intuitive-and-easiest-guide-for-convolutional-neural-network-3607be47480">Convolutional
 Neural Network (CNN)</a> which has both a downsampling and upsampling path
 (giving it the shape of a "U")</dt-fn></a><dt-cite
-key="funke_large_2019"></dt-cite>. The first is a multitask approach (MtLSD) in
-which the LSDs are predicted along with affinities in a single pass, which is a
-similar approach to the Long Range affinities:
-
-<div style="text-align: center;">
-<img class="b-lazy"
-src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-data-src="assets/img/mtlsd.png" style="display: block; margin: auto; width: 100%;"/>
-<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-</tr></table>
-</div>
-
-The second two architectures use an auto-context approach. The first pass predicts LSDs directly from raw data:
+key="funke_large_2019"></dt-cite>. The best performing architecture uses an
+auto-context approach. The first pass predicts LSDs directly from raw data:
+<!--The first is a multitask approach (MtLSD) in-->
+<!--which the LSDs are predicted along with affinities in a single pass, which is a-->
+<!--similar approach to the Long Range affinities (see the paper for details).-->
+<!--<div style="text-align: center;">-->
+<!--<img class="b-lazy"-->
+<!--src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==-->
+<!--data-src="assets/img/mtlsd.png" style="display: block; margin: auto; width: 100%;"/>-->
+<!--<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>-->
+<!--</tr></table>-->
+<!--</div>-->
 
 <div style="text-align: center;">
 <img class="b-lazy"
@@ -161,20 +160,20 @@ data-src="assets/img/lsd.png" style="display: block; margin: auto; width: 100%;"
 </div>
 
 The LSD network weights are then used to predict LSDs in a larger region. The
-predicted LSDs are fed into a second network (AcLSD) in order to predict
-affinities:
+predicted LSDs are fed into a second network (AcRLSD) along with raw data in
+order to predict affinities:
 
-<div style="text-align: center;">
-<img class="b-lazy"
-src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-data-src="assets/img/aclsd.png" style="display: block; margin: auto; width: 100%;"/>
-<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-</tr></table>
-</div>
+<!--<div style="text-align: center;">-->
+<!--<img class="b-lazy"-->
+<!--src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==-->
+<!--data-src="assets/img/aclsd.png" style="display: block; margin: auto; width: 100%;"/>-->
+<!--<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>-->
+<!--</tr></table>-->
+<!--</div>-->
 
-The other auto-context network (AcrLSD) does the same as AcLSD but also includes
-a cropped version of the raw data as input to the network, in addition to the
-LSDs:
+<!--The other auto-context network (AcrLSD) does the same as AcLSD but also includes-->
+<!--a cropped version of the raw data as input to the network, in addition to the-->
+<!--LSDs:-->
 
 <div style="text-align: center;">
 <img class="b-lazy"
@@ -184,8 +183,11 @@ data-src="assets/img/acrlsd.png" style="display: block; margin: auto; width: 100
 </tr></table>
 </div>
 
-After training the networks for a number of iterations (usually several hundred thousand), the predicted LSDs start to
-resemble the ground truth LSDs. For example, when considering the offset vectors, we can see sharp contrasts at object boundaries, and smooth gradients within objects:
+See the paper for details on the other two networks (MtLSD & AcLSD). After
+training the networks for a number of iterations (usually several hundred
+thousand), the predicted LSDs start to resemble the ground truth LSDs. For
+example, when considering the offset vectors, we can see sharp contrasts at
+object boundaries, and smooth gradients within objects:
 
 <div style="text-align: center;">
 <img class="b-lazy"

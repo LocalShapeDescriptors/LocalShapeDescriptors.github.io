@@ -43,6 +43,14 @@ body {
   margin: 0px;
 }
 
+pre {
+ white-space: pre-wrap;       /* css-3 */
+ white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+ white-space: -pre-wrap;      /* Opera 4-6 */
+ white-space: -o-pre-wrap;    /* Opera 7 */
+ word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
 .row {
   display: flex;
   flex-wrap: wrap;
@@ -428,7 +436,7 @@ dt-article figcaption b {
   background: #eee;
   font-size: 0.8em;
   padding: 1em 1em;
-  margin: 0 1em 0 1em;
+  margin: 0 2em 1em 2em;
   border: 1px solid #aaa;
 }
 
@@ -543,9 +551,10 @@ color: #3D5AFE;
         <a class="affiliation" target="_blank" rel="noopener noreferrer" href="https://www.janelia.org/lab/funke-lab">HHMI Janelia</a>
     </div>
   </div>
-  <div class="date">
-    <div class="month">LSD</div>
-    <div class="year" style="color: #2AAFCF;"><a target="_blank" rel="noopener noreferrer" href="https://github.com/funkelab/lsd_paper" target="_blank">Paper</a></div>
+  <div class="date"> <div style="color: #2AAFCF;"><a target="_blank"
+        rel="noopener noreferrer"
+        href="https://www.biorxiv.org/content/10.1101/2021.01.18.427039v1"
+        target="_blank">LSD Paper</a></div>
   </div>
 </div>
 </dt-byline>
@@ -610,26 +619,53 @@ for future method contributions.</p>
   </ul>
 <li><a href="#results">3. Results</a></li>
   <ul>
-    <li><a href="#metrics">3.1 Metrics</a></li>
-    <li><a href="#datasets">3.2 Datasets</a></li>
-    <li><a href="#accuracy">3.3 Accuracy</a></li>
-    <li><a href="#throughput">3.4 Throughput</a></li>
+    <li><a href="#datasets">3.1 Datasets</a></li>
+    <li><a href="#accuracy">3.2 Accuracy</a></li>
+    <li><a href="#throughput">3.3 Throughput</a></li>
   </ul>
 <li><a href="#discussion">4. Discussion</a></li>
-  <ul>
-    <li><a href="#metric_eval">4.1 Metric Evaluation</a></li>
-    <li><a href="#auxiliary_learning">4.2 Auxiliary Learning</a></li>
-    <li><a href="#auto_context">4.3 Auto-Context</a></li>
-    <li><a href="#masking">4.4 Masking</a></li>
-  </ul>
-<li><a href="#conclusions">5. Conclusions</a></li>
-<li><a href="#tldr">6. Tl;dr</a></li>
-<li><a href="#acknowledgements">7. Acknowledgements</a></li>
-<li><a href="#code">8. Code</a></li>
-<li><a href="#supplementary">9. Supplementary</a></li>
-<li><a href="#references">10. References</a></li>
+<li><a href="#acknowledgements">5. Acknowledgements</a></li>
+<li><a href="#code">6. Code</a></li>
+<li><a href="#references">7. References</a></li>
 </ul>
 </div>
+<h2 id="tldr">Tl;dr</h2>
+<ul>
+<li>
+<p>Connectomics is a relatively new field combining neuroscience, microscopy, biology and computer science.</p>
+</li>
+<li>
+<p>The goal is to generate maps of the brain at synaptic resolution. By doing so,
+it will hopefully lead to a better understanding of how things work and
+subsequently advance medical approaches to various diseases.</p>
+</li>
+<li>
+<p>The datasets required to produce these brain maps are massive since they have
+to be imaged at such a high resolution.</p>
+</li>
+<li>
+<p>Manually reconstructing wiring diagrams in the datasets is extremely time consuming and
+expensive so there is a great need to automate the process.</p>
+</li>
+<li>
+<p>Reconstructing neurons is challenging because many consecutively correct decisions must be made. Errors can propagate throughout a dataset easily.</p>
+</li>
+<li>
+<p>Methods need to also be computationally efficient and scalable to account
+for the size of the data.</p>
+</li>
+<li>
+<p>We present a novel approach to neuron segmentation, Local Shape Descriptors
+(LSDs) - a 10-Dimensional embedding used as an auxiliary learning objective
+for boundary detection.</p>
+</li>
+<li>
+<p>We find that the LSDs help improve boundaries and subsequent neuron
+reconstructions in several large and diverse datasets and are competitive with
+the current state of the art, albeit two orders of magnitude faster.</p>
+</li>
+</ul>
+<hr>
 <h2 id="background">Background</h2>
 <h3 id="connectomics">Connectomics</h3>
 <p>Connectomics is an emerging field which integrates multiple domains including
@@ -645,36 +681,20 @@ complement existing techniques <dt-cite
 key="schlegel_synaptic_2016,turner-evans_neuroanatomical_2020"></dt-cite> and
 drive future experiments <dt-cite
 key="schneider-mizell_quantitative_2016,motta_dense_2019,bates_complete_2020"></dt-cite>.</p>
-<p>Okay, but how are the brain maps generated?</p>
-<p>Before generating neural wiring diagrams, we first need to acquire the brain
-tissue to use. Currently, only Electron Microscopy (EM) allows imaging of neural
-tissue at a resolution sufficient to see individual synapses. After extracting a
-brain (for example, from a fruit fly), the tissue is generally stained with
-heavy metals to increase contrast between structures of interest (i.e neuron
-membranes). Once stained, the tissue is imaged with an electron microscope.
-There are a few types of EM imaging approaches. Three popular techniques are
-serial section transmission EM (ssTEM), serial block-face scanning EM (SBF-SEM)
-and focused ion beam scanning EM (FIB-SEM). The former two methods involve
-slicing the brain into super thin (e.g 20 nanometer) sections. The latter uses
-an ion beam to erode the tissue. In either case, electrons are shot at the
-tissue to produce an image of the data. This is a way oversimplified
-explanation, for a better overview of these EM imaging techniques (and others),
-see <dt-cite key="briggman_volume_2012"> this paper</dt-cite>, specifically
-Figure 1.</p>
-<p>Sweet! Let's image a human brain and be done with it.</p>
-<p>Unfortunately, by imaging brains at such high resolution, the resulting data is
-massive. Let's consider the fruit fly example.  A full adult fruit fly brain
-(<strong>FAFB</strong>) imaged with ssTEM <dt-cite key="zheng_complete_2018"></dt-cite> at a
-pixel resolution of ~4 nanometers and ~40 nanometer thick sections, comprises
-~50 teravoxels of data (neuropil)<dt-cite
-key="heinrich_synaptic_2018"></dt-cite>. For reference, a voxel is a volumetric
-pixel, and the &quot;tera&quot; prefix means 10<sup>12</sup>. So, one fly brain contains
-upwards of 50,000,000,000,000 volumetric pixels. To put that in perspective,
-<dt-cite key="abbott_mind_2020">Abbott et al.</dt-cite> argue that, assuming a
-scale where 1000 cubic microns is equivalent to 1 centimeter, a fruit fly brain
-would comprise the length of 6 and a half Boeing 747 aeroplanes. This still
-pales in comparison to a mouse brain which would require the acquisition of 1
-million terabytes of data.</p>
+<p>Currently, only Electron Microscopy (EM) allows imaging of neural tissue at a
+resolution sufficient to see individual synapses. Unfortunately, by imaging
+brains at such high resolution, the resulting data is massive. Let's consider
+the fruit fly example.  A full adult fruit fly brain (<strong>FAFB</strong>) imaged with
+ssTEM <dt-cite key="zheng_complete_2018"></dt-cite> at a pixel resolution of ~4
+nanometers and ~40 nanometer thick sections, comprises ~50 teravoxels of data
+(neuropil)<dt-cite key="heinrich_synaptic_2018"></dt-cite>. For reference, a
+voxel is a volumetric pixel, and the &quot;tera&quot; prefix means 10<sup>12</sup>. So,
+one fly brain contains upwards of 50,000,000,000,000 volumetric pixels. To put
+that in perspective, <dt-cite key="abbott_mind_2020">Abbott et al.</dt-cite>
+argue that, assuming a scale where 1000 cubic microns is equivalent to 1
+centimeter, a fruit fly brain would comprise the length of 6 and a half Boeing
+747 aeroplanes. This still pales in comparison to a mouse brain which would
+require the acquisition of 1 million terabytes of data.</p>
 <div style="text-align: center;">
   <img class="b-lazy"
   id="scale_large"
@@ -1098,9 +1118,9 @@ component of the LSDs (LSDs[3:6]):</p>
   <td width="100%"><figcaption style="text-align: center;">3D reconstruction of
   a segmented neuron (blue mesh), with the corresponding LSD direction vectors.
   The orientation of the neuron is directly mapped to RGB space. If the neuron
-  is moving in the Z direction, it is visualized as red. The Y direction
-  (vertical) is mapped to green, and the X direction is mapped to blue.
-  Intermediate directions are mapped to intermediate colors.</figcaption></td>
+  is moving in the Z direction, it is visualized as red. The Y direction is
+  mapped to green, and the X direction is mapped to blue. Intermediate
+  directions are mapped to intermediate colors.</figcaption></td>
   </tr></table>
 </div>
 <!--<div class="accordion-container" id="three_div">-->
@@ -1125,17 +1145,18 @@ noreferrer"
 href="https://towardsdatascience.com/the-most-intuitive-and-easiest-guide-for-convolutional-neural-network-3607be47480">Convolutional
 Neural Network (CNN)</a> which has both a downsampling and upsampling path
 (giving it the shape of a &quot;U&quot;)</dt-fn></a><dt-cite
-key="funke_large_2019"></dt-cite>. The first is a multitask approach (MtLSD) in
-which the LSDs are predicted along with affinities in a single pass, which is a
-similar approach to the Long Range affinities:</p>
-<div style="text-align: center;">
-<img class="b-lazy"
-src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-data-src="assets/img/mtlsd.png" style="display: block; margin: auto; width: 100%;"/>
-<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-</tr></table>
-</div>
-<p>The second two architectures use an auto-context approach. The first pass predicts LSDs directly from raw data:</p>
+key="funke_large_2019"></dt-cite>. The best performing architecture uses an
+auto-context approach. The first pass predicts LSDs directly from raw data:</p>
+<!--The first is a multitask approach (MtLSD) in-->
+<!--which the LSDs are predicted along with affinities in a single pass, which is a-->
+<!--similar approach to the Long Range affinities (see the paper for details).-->
+<!--<div style="text-align: center;">-->
+<!--<img class="b-lazy"-->
+<!--src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==-->
+<!--data-src="assets/img/mtlsd.png" style="display: block; margin: auto; width: 100%;"/>-->
+<!--<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>-->
+<!--</tr></table>-->
+<!--</div>-->
 <div style="text-align: center;">
 <img class="b-lazy"
 src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
@@ -1144,18 +1165,18 @@ data-src="assets/img/lsd.png" style="display: block; margin: auto; width: 100%;"
 </tr></table>
 </div>
 <p>The LSD network weights are then used to predict LSDs in a larger region. The
-predicted LSDs are fed into a second network (AcLSD) in order to predict
-affinities:</p>
-<div style="text-align: center;">
-<img class="b-lazy"
-src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-data-src="assets/img/aclsd.png" style="display: block; margin: auto; width: 100%;"/>
-<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-</tr></table>
-</div>
-<p>The other auto-context network (AcrLSD) does the same as AcLSD but also includes
-a cropped version of the raw data as input to the network, in addition to the
-LSDs:</p>
+predicted LSDs are fed into a second network (AcRLSD) along with raw data in
+order to predict affinities:</p>
+<!--<div style="text-align: center;">-->
+<!--<img class="b-lazy"-->
+<!--src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==-->
+<!--data-src="assets/img/aclsd.png" style="display: block; margin: auto; width: 100%;"/>-->
+<!--<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>-->
+<!--</tr></table>-->
+<!--</div>-->
+<!--The other auto-context network (AcrLSD) does the same as AcLSD but also includes-->
+<!--a cropped version of the raw data as input to the network, in addition to the-->
+<!--LSDs:-->
 <div style="text-align: center;">
 <img class="b-lazy"
 src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
@@ -1163,8 +1184,11 @@ data-src="assets/img/acrlsd.png" style="display: block; margin: auto; width: 100
 <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
 </tr></table>
 </div>
-<p>After training the networks for a number of iterations (usually several hundred thousand), the predicted LSDs start to
-resemble the ground truth LSDs. For example, when considering the offset vectors, we can see sharp contrasts at object boundaries, and smooth gradients within objects:</p>
+<p>See the paper for details on the other two networks (MtLSD &amp; AcLSD). After
+training the networks for a number of iterations (usually several hundred
+thousand), the predicted LSDs start to resemble the ground truth LSDs. For
+example, when considering the offset vectors, we can see sharp contrasts at
+object boundaries, and smooth gradients within objects:</p>
 <div style="text-align: center;">
 <img class="b-lazy"
 id="gt_vs_pred_lsds"
@@ -1205,67 +1229,66 @@ vectors</label>
 previous affinity-based methods: (1) direct neighbor and (2) long-range
 affinities with mean squared error (MSE) loss, and (3) direct neighbor
 affinities with MALIS loss. We also include comparisons against single FFN
-segmentations<dt-cite key="januszewski_high-precision_2018"></dt-cite>. The LSD
-architectures are described <a href="#network_architectures">here</a>. For a
+segmentations<dt-cite key="januszewski_high-precision_2018"></dt-cite>. For a
 more detailed overview, see section 3.1 in the paper.</p>
-<h3 id="metrics">Metrics</h3>
-<p>One challenge of neuron segmentation is finding an evaluation metric which
-accurately reflects the quality of a reconstruction. We used two established
-metrics: Variation of Information (VoI) and Expected Run-Length (ERL). We also
-propose a new metric, which we call the Min-Cut Metric (MCM).</p>
-<p><strong>Variation of Information (VoI)<dt-cite key="meila_comparing_2007"></dt-cite></strong> - An established metric which measures the amount of over-segmentation (false
-splits) and under-segmentation (false merges) between a proposed segmentation
-and ground truth. Taken together, they constitute the VoI Sum. The goal is to
-<strong>minimize</strong> the VoI; a perfect score would be zero, meaning a segmentation
-differs as little as possible from the ground truth.</p>
-<p><strong>Expected Run Length (ERL)<dt-cite
-key="januszewski_high-precision_2018"></dt-cite></strong> - A relatively new metric
-which measures the expected length of an error-free path along neurons in a
-volume. It is an appealing metric to both engineers and neuroscientists since it
-relates segmentation errors to neuron cable length. The goal is to <strong>maximize</strong>
-the ERL; we want to have as much error free cable length as possible.</p>
-<p><strong>Min-Cut Metric (MCM)</strong> - We propose a new metric designed to emulate a human
-annotator splitting and merging objects in a segmentation. Specifically, it
-gives an approximation of how many clicks are needed to get from a
-reconstruction to the correct ground truth (assuming ground truth in the form of
-skeletons is available). The goal is to <strong>minimize</strong> the MCM; the fewer splits
-and merges required to fix a segmentation, the better. Consider the following cases:</p>
-<div style="text-align: center;">
-  <img class="b-lazy"
-    id="neurons"
-    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-    data-src="assets/img/mcm_easy_case.jpeg"
-    style="display: block; margin: auto; width: 100%;"/>
-  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-<td width="100%"><figcaption style="text-align: center;">Simple case. Two ground-truth <span style="color:#017100">skeletons</span> are contained inside an erroneously merged <span style="color:#9313C6">segment</span>. Dashed lines represent supervoxel boundaries and the closest skeleton <span style="color:#B51700">nodes</span> need to be split to resolve the merge (1). A <span style="color:#FF9300">min-cut</span> is performed (2), resulting in a new <span style="color:#00A2FF">segment</span> (3). </figcaption></td>
-  </tr></table>
-  </div>
-<p>Sometimes a min-cut can fail to separate all nodes of the merged skeletons with
-a single cut from two selected nodes. In this case, the procedure is repeated
-until all skeletons are separated, leading to additional split errors:</p>
-<div style="text-align: center;">
-  <img class="b-lazy"
-    id="neurons"
-    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-    data-src="assets/img/mcm_complex_case.jpeg"
-    style="display: block; margin: auto; width: 100%;"/>
-  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">Complex case. Two
-  <span style="color:#017100">skeletons</span> are contained in a falsely merged
-  <span style="color:#9313C6">segment</span> as before (1), but the supervoxels
-  are more fragmented. A <span style="color:#FF9300">min-cut</span> is performed
-  (2), resulting in a new <span style="color:#00A2FF">segment</span> (3).
-  However, two <span style="color:#B51700">nodes</span> contained within the
-  original <span style="color:#9313C6">segment</span> need to be split. A second
-  <span style="color:#FF9300">min-cut</span> is performed (4), which produces
-  another <span style="color:#EF5FA7">segment</span> (5). This results in an
-  additional split error caused by the original cut.</figcaption></td>
-  </tr></table>
-  </div>
+<!--<h3 id="metrics">Metrics</h3>-->
+<!--One challenge of neuron segmentation is finding an evaluation metric which-->
+<!--accurately reflects the quality of a reconstruction. We used two established-->
+<!--metrics: Variation of Information (VoI) and Expected Run-Length (ERL). We also-->
+<!--propose a new metric, which we call the Min-Cut Metric (MCM).-->
+<!--**Variation of Information (VoI)<dt-cite key="meila_comparing_2007"></dt-cite>** - An established metric which measures the amount of over-segmentation (false-->
+<!--splits) and under-segmentation (false merges) between a proposed segmentation-->
+<!--and ground truth. Taken together, they constitute the VoI Sum. The goal is to-->
+<!--**minimize** the VoI; a perfect score would be zero, meaning a segmentation-->
+<!--differs as little as possible from the ground truth.-->
+<!--**Expected Run Length (ERL)<dt-cite-->
+<!--key="januszewski_high-precision_2018"></dt-cite>** - A relatively new metric-->
+<!--which measures the expected length of an error-free path along neurons in a-->
+<!--volume. It is an appealing metric to both engineers and neuroscientists since it-->
+<!--relates segmentation errors to neuron cable length. The goal is to **maximize**-->
+<!--the ERL; we want to have as much error free cable length as possible.-->
+<!--**Min-Cut Metric (MCM)** - We propose a new metric designed to emulate a human-->
+<!--annotator splitting and merging objects in a segmentation. Specifically, it-->
+<!--gives an approximation of how many clicks are needed to get from a-->
+<!--reconstruction to the correct ground truth (assuming ground truth in the form of-->
+<!--skeletons is available). The goal is to **minimize** the MCM; the fewer splits-->
+<!--and merges required to fix a segmentation, the better. Consider the following cases:-->
+<!--<div style="text-align: center;">-->
+  <!--<img class="b-lazy"-->
+  <!--id="neurons"-->
+  <!--src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==-->
+  <!--data-src="assets/img/mcm_easy_case.jpeg"-->
+  <!--style="display: block; margin: auto; width: 100%;"/>-->
+  <!--<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>-->
+<!--<td width="100%"><figcaption style="text-align: center;">Simple case. Two ground-truth <span style="color:#017100">skeletons</span> are contained inside an erroneously merged <span style="color:#9313C6">segment</span>. Dashed lines represent supervoxel boundaries and the closest skeleton <span style="color:#B51700">nodes</span> need to be split to resolve the merge (1). A <span style="color:#FF9300">min-cut</span> is performed (2), resulting in a new <span style="color:#00A2FF">segment</span> (3). </figcaption></td>-->
+  <!--</tr></table>-->
+  <!--</div>-->
+<!--Sometimes a min-cut can fail to separate all nodes of the merged skeletons with-->
+<!--a single cut from two selected nodes. In this case, the procedure is repeated-->
+<!--until all skeletons are separated, leading to additional split errors:-->
+<!--<div style="text-align: center;">-->
+  <!--<img class="b-lazy"-->
+  <!--id="neurons"-->
+  <!--src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==-->
+  <!--data-src="assets/img/mcm_complex_case.jpeg"-->
+  <!--style="display: block; margin: auto; width: 100%;"/>-->
+  <!--<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>-->
+  <!--<td width="100%"><figcaption style="text-align: center;">Complex case. Two-->
+  <!--<span style="color:#017100">skeletons</span> are contained in a falsely merged-->
+  <!--<span style="color:#9313C6">segment</span> as before (1), but the supervoxels-->
+  <!--are more fragmented. A <span style="color:#FF9300">min-cut</span> is performed-->
+  <!--(2), resulting in a new <span style="color:#00A2FF">segment</span> (3).-->
+  <!--However, two <span style="color:#B51700">nodes</span> contained within the-->
+  <!--original <span style="color:#9313C6">segment</span> need to be split. A second-->
+  <!--<span style="color:#FF9300">min-cut</span> is performed (4), which produces-->
+  <!--another <span style="color:#EF5FA7">segment</span> (5). This results in an-->
+  <!--additional split error caused by the original cut.</figcaption></td>-->
+  <!--</tr></table>-->
+  <!--</div>-->
 <h3 id="datasets">Datasets</h3>
 <p>We used three large and diverse EM datasets to evaluate all methods and compare
 metrics.</p>
-<p><strong>Zebrafinch:</strong> The main component of the study was a region taken from songbird
+<p>The main component of the study was a region taken from songbird
 neural tissue <dt-cite key="januszewski_high-precision_2018"></dt-cite>. The
 volume comprises ~10<sup>6</sup> cubic microns of raw data. It was imaged using
 SBFEM at 9x9x20 (xyx) nanometer resolution. 0.02% of the data was using for
@@ -1296,135 +1319,132 @@ cubic microns) which we refer to as the Benchmark ROI (region of interest). We
 created two sets of supervoxels, one without any masking, and one constrained to
 a neuropil mask. For each affinity-based network, we created segmentations over
 a range of ROIs in order to assess performance with scale. We then evaluated
-VoI, ERL, and MCM.</p>
-<div class="accordion-container" id="zfinch_div">
-<nav class="accordion arrows">
-<input type="radio" name="accordion" id="zfinch" />
-<section class="box">
-<label class="box-title" for="zfinch">Zebrafinch raw data and neuropil mask</label>
-<label class="box-close" for="acc-close"></label>
-<div class="box-content"><div><p>The raw data and mask used to restrict
-predictions to the neuropil (blue). Cell bodies, blood vessels, myelin and
-background voxels were ignored.</p> </div>
-<div class="box-content"><div class="responsive-container">
-  <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B2e-8%2C%22m%22%5D%2C%22y%22:%5B2e-8%2C%22m%22%5D%2C%22z%22:%5B2e-8%2C%22m%22%5D%7D%2C%22position%22:%5B2522.154052734375%2C2508.88134765625%2C2990.42919921875%5D%2C%22crossSectionScale%22:16.860758498545437%2C%22projectionOrientation%22:%5B-0.183084174990654%2C-0.3018076419830322%2C0.007873492315411568%2C0.935590922832489%5D%2C%22projectionScale%22:8192%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://j0126-nature-methods-data/GgwKmcKgrcoNxJccKuGIzRnQqfit9hnfK1ctZzNbnuU/rawdata_realigned%22%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#ff00f7%22%2C%22name%22:%22rawdata_realigned%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22precomputed://gs://j0126-nature-methods-data/GgwKmcKgrcoNxJccKuGIzRnQqfit9hnfK1ctZzNbnuU/tissue_classification%22%2C%22transform%22:%7B%22outputDimensions%22:%7B%22x%22:%5B2e-8%2C%22m%22%5D%2C%22y%22:%5B2e-8%2C%22m%22%5D%2C%22z%22:%5B2e-8%2C%22m%22%5D%2C%22c%27%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22tab%22:%22annotations%22%2C%22localDimensions%22:%7B%22c%27%22:%5B1%2C%22%22%5D%7D%2C%22localPosition%22:%5B4%5D%2C%22annotationColor%22:%22#d400ff%22%2C%22shader%22:%22#uicontrol%20vec3%20color%20color%28default=%5C%22magenta%5C%22%29%5Cnvoid%20main%28%29%20%7B%5Cn%20%20emitRGBA%28vec4%28color%2C%20toNormalized%28getDataValue%28%29%29%29%29%3B%5Cn%7D%5Cn%22%2C%22shaderControls%22:%7B%22color%22:%22#0088ff%22%7D%2C%22name%22:%22neuropil%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22neuropil%22%2C%22size%22:649%7D%2C%22layout%22:%224panel%22%7D"></iframe>
-</div>
-</div>
-</section>
-<input type="radio" name="accordion" id="acc-close" />
-</nav>
-</div>
-<p><strong>Hemi-Brain:</strong> A volume taken from the <em>Drosophila melanogaster</em> central brain
-<dt-cite key="scheffer_connectome_2020"></dt-cite>. It was imaged with FIBSEM at
-8 nanometer isotropic resolution and contains a total of 26 teravoxels of image
-data. We restricted experiments to the Ellipsoid Body, a neuropil implicated in
-spatial navigation <dt-cite key="turner-evans_insect_2016"></dt-cite>. 0.002% of
-the data was used for training (~450 cubic microns of labeled neurons). We
-restricted segmentations to three ROIs and evaluated against a filtered list of
-neurons traced to completion (voxel-based rather than skeletons).</p>
-<div style="text-align: center;">
-  <img class="b-lazy"
-    id="hemi_dataset"
-    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-    data-src="assets/img/hemi_dataset_large.jpeg"
-    style="margin: auto; width: 100%;"/>
-  <img class="b-lazy"
-    id="hemi_dataset_vertical"
-    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-    data-src="assets/img/hemi_dataset_vertical_medium.jpeg"
-    style="margin: auto; width: 100%;"/>
-  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%">
-  <figcaption
-  id="hemi_caption"
-  style="text-align: center;">
-  Hemi-Brain dataset overview. 1. 8 ground-truth volumes were used for training.
-  2. Full Hemi-brain volume, scale bar = 30 μm. Experiments were restricted to
-  Ellipsoid Body (circled region). 3. Volumes used for testing. 4. Example
-  sparse ground-truth testing data, scale bar = 2.5 μm. 5. Zoom-in, scale bar =
-  800 nm. 6. Example 3D renderings of selected neurons.
-  </figcaption>
-  <figcaption
-  id="hemi_caption_vertical"
-  style="text-align: center;">
-  Hemi-Brain dataset overview.
-  1. Full Hemi-brain volume, scale bar = 30 μm. Experiments were restricted to
-     Ellipsoid Body (circled region). 2. 8 ground-truth volumes were used for
-     training. 3. Volumes used for testing. 4. Example sparse ground-truth
-     testing data, scale bar = 2.5 μm. 5. Zoom-in, scale bar = 800 nm. 6.
-     Example 3D renderings of selected neurons.
-  </figcaption>
-  </td>
-  </tr></table>
-</div>
-<div class="accordion-container" id="hemi_div">
-<nav class="accordion arrows">
-<input type="radio" name="accordion" id="hemi" />
-<section class="box">
-<label class="box-title" for="hemi">Hemi-brain and EB mask</label>
-<label class="box-close" for="acc-close"></label>
-<div class="box-content"><div class="responsive-container">
-  <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B8e-9%2C%22m%22%5D%2C%22y%22:%5B8e-9%2C%22m%22%5D%2C%22z%22:%5B8e-9%2C%22m%22%5D%7D%2C%22position%22:%5B25962.435546875%2C25359.71484375%2C20296.431640625%5D%2C%22crossSectionScale%22:47.72354919422505%2C%22crossSectionDepth%22:-37.62185354999912%2C%22projectionOrientation%22:%5B-0.008687195368111134%2C-0.7010441422462463%2C-0.7130189538002014%2C-0.008097930811345577%5D%2C%22projectionScale%22:21207.72950167948%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://neuroglancer-janelia-flyem-hemibrain/emdata/clahe_yz/jpeg%22%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#0091ff%22%2C%22name%22:%22emdata%22%7D%2C%7B%22type%22:%22segmentation%22%2C%22source%22:%7B%22url%22:%22precomputed://gs://neuroglancer-janelia-flyem-hemibrain/v1.0/rois%22%2C%22subsources%22:%7B%22default%22:true%2C%22properties%22:true%2C%22mesh%22:true%7D%2C%22enableDefaultSubsources%22:false%7D%2C%22pick%22:false%2C%22selectedAlpha%22:0.44%2C%22ignoreNullVisibleSet%22:false%2C%22meshSilhouetteRendering%22:1%2C%22colorSeed%22:2359850678%2C%22segments%22:%5B%2217%22%5D%2C%22segmentQuery%22:%22EB%22%2C%22name%22:%22roi%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22roi%22%2C%22size%22:290%7D%2C%22layout%22:%224panel%22%7D"></iframe>
-</div>
-</div>
-</section>
-<input type="radio" name="accordion" id="acc-close" />
-</nav>
-</div>
-<p><strong>FIB-25:</strong> An older dataset taken from the <em>Drosophila</em> visual system <dt-cite
-key="takemura_synaptic_2015"></dt-cite>. It contains ~346 gigavoxels of raw EM
-data and was imaged with FIBSEM at 8 nanometer resolution. Four volumes
-containing ~160 cubic microns of labeled data were used for training. We
-predicted inside the entire volume and then restricted supervoxels to an
-irregularly shaped neuropil mask. Segmentations were evaluated inside a 13.6
-gigavoxel region contained in the bottom half of the full ROI. Similar to the
-Hemi-brain, evaluations were done using a filtered list of completely traced
-neurons.</p>
-<div style="text-align: center;">
-  <img class="b-lazy"
-    id="fib25_dataset"
-    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-    data-src="assets/img/fib25_dataset_large.jpeg"
-    style="margin: auto; width: 100%;"/>
-  <img class="b-lazy"
-    id="fib25_dataset_vertical"
-    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-    data-src="assets/img/fib25_dataset_vertical_medium.jpeg"
-    style="margin: auto; width: 100%;"/>
-  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">FIB-25 dataset
-  overview. 1. 4 ground-truth volumes were used for training. 2. Full volume
-  with cutout showing testing region, scale bar = 5 μm. 3. Cross section with
-  sparsely labeled testing ground-truth. 4. Zoom-in, scale bar = 750 nm. 5.
-  Sub-volume corresponding to zoomed-in plane. 6. Subset of full RoI testing
-  neurons. Small volume shown for context.</figcaption></td>
-  </tr></table>
-</div>
-<div class="accordion-container" id="fib25_div">
-<nav class="accordion arrows">
-<input type="radio" name="accordion" id="fib25" />
-<section class="box">
-<label class="box-title" for="fib25">FIB-25</label>
-<label class="box-close" for="acc-close"></label>
-<div class="box-content"><div class="responsive-container">
-  <iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B8e-9%2C%22m%22%5D%2C%22y%22:%5B8e-9%2C%22m%22%5D%2C%22z%22:%5B8e-9%2C%22m%22%5D%7D%2C%22position%22:%5B3425.203857421875%2C2993.146240234375%2C3936.575927734375%5D%2C%22crossSectionScale%22:29.90334336415725%2C%22projectionOrientation%22:%5B-0.09087008237838745%2C0.8137544393539429%2C-0.4936932325363159%2C0.292939156293869%5D%2C%22projectionScale%22:11797.675238192334%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://neuroglancer-public-data/flyem_fib-25/image%22%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#007bff%22%2C%22name%22:%22image%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22image%22%7D%2C%22layout%22:%224panel%22%7D"></iframe>
-</div>
-</div>
-</section>
-<input type="radio" name="accordion" id="acc-close" />
-</nav>
-</div>
+VoI, ERL, and MCM. See the paper for details on the other two datasets.</p>
+<!--<div class="accordion-container" id="zfinch_div">-->
+<!--<nav class="accordion arrows">-->
+<!--<input type="radio" name="accordion" id="zfinch" />-->
+<!--<section class="box">-->
+<!--<label class="box-title" for="zfinch">Zebrafinch raw data and neuropil mask</label>-->
+<!--<label class="box-close" for="acc-close"></label>-->
+<!--<div class="box-content"><div><p>The raw data and mask used to restrict-->
+<!--predictions to the neuropil (blue). Cell bodies, blood vessels, myelin and-->
+<!--background voxels were ignored.</p> </div>-->
+<!--<div class="box-content"><div class="responsive-container">-->
+  <!--<iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B2e-8%2C%22m%22%5D%2C%22y%22:%5B2e-8%2C%22m%22%5D%2C%22z%22:%5B2e-8%2C%22m%22%5D%7D%2C%22position%22:%5B2522.154052734375%2C2508.88134765625%2C2990.42919921875%5D%2C%22crossSectionScale%22:16.860758498545437%2C%22projectionOrientation%22:%5B-0.183084174990654%2C-0.3018076419830322%2C0.007873492315411568%2C0.935590922832489%5D%2C%22projectionScale%22:8192%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://j0126-nature-methods-data/GgwKmcKgrcoNxJccKuGIzRnQqfit9hnfK1ctZzNbnuU/rawdata_realigned%22%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#ff00f7%22%2C%22name%22:%22rawdata_realigned%22%7D%2C%7B%22type%22:%22image%22%2C%22source%22:%7B%22url%22:%22precomputed://gs://j0126-nature-methods-data/GgwKmcKgrcoNxJccKuGIzRnQqfit9hnfK1ctZzNbnuU/tissue_classification%22%2C%22transform%22:%7B%22outputDimensions%22:%7B%22x%22:%5B2e-8%2C%22m%22%5D%2C%22y%22:%5B2e-8%2C%22m%22%5D%2C%22z%22:%5B2e-8%2C%22m%22%5D%2C%22c%27%22:%5B1%2C%22%22%5D%7D%7D%7D%2C%22tab%22:%22annotations%22%2C%22localDimensions%22:%7B%22c%27%22:%5B1%2C%22%22%5D%7D%2C%22localPosition%22:%5B4%5D%2C%22annotationColor%22:%22#d400ff%22%2C%22shader%22:%22#uicontrol%20vec3%20color%20color%28default=%5C%22magenta%5C%22%29%5Cnvoid%20main%28%29%20%7B%5Cn%20%20emitRGBA%28vec4%28color%2C%20toNormalized%28getDataValue%28%29%29%29%29%3B%5Cn%7D%5Cn%22%2C%22shaderControls%22:%7B%22color%22:%22#0088ff%22%7D%2C%22name%22:%22neuropil%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22neuropil%22%2C%22size%22:649%7D%2C%22layout%22:%224panel%22%7D"></iframe>-->
+<!--</div>-->
+<!--</div>-->
+<!--</section>-->
+<!--<input type="radio" name="accordion" id="acc-close" />-->
+<!--</nav>-->
+<!--</div>-->
+<!--**Hemi-Brain:** A volume taken from the *Drosophila melanogaster* central brain-->
+<!--<dt-cite key="scheffer_connectome_2020"></dt-cite>. It was imaged with FIBSEM at-->
+<!--8 nanometer isotropic resolution and contains a total of 26 teravoxels of image-->
+<!--data. We restricted experiments to the Ellipsoid Body, a neuropil implicated in-->
+<!--spatial navigation <dt-cite key="turner-evans_insect_2016"></dt-cite>. 0.002% of-->
+<!--the data was used for training (~450 cubic microns of labeled neurons). We-->
+<!--restricted segmentations to three ROIs and evaluated against a filtered list of-->
+<!--neurons traced to completion (voxel-based rather than skeletons).-->
+<!--<div style="text-align: center;">-->
+  <!--<img class="b-lazy"-->
+  <!--id="hemi_dataset"-->
+  <!--src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==-->
+  <!--data-src="assets/img/hemi_dataset_large.jpeg"-->
+  <!--style="margin: auto; width: 100%;"/>-->
+<!--<img class="b-lazy"-->
+  <!--id="hemi_dataset_vertical"-->
+  <!--src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==-->
+  <!--data-src="assets/img/hemi_dataset_vertical_medium.jpeg"-->
+  <!--style="margin: auto; width: 100%;"/>-->
+  <!--<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>-->
+  <!--<td width="100%">-->
+  <!--<figcaption-->
+  <!--id="hemi_caption"-->
+  <!--style="text-align: center;">-->
+  <!--Hemi-Brain dataset overview. 1. 8 ground-truth volumes were used for training.-->
+  <!--2. Full Hemi-brain volume, scale bar = 30 μm. Experiments were restricted to-->
+  <!--Ellipsoid Body (circled region). 3. Volumes used for testing. 4. Example-->
+  <!--sparse ground-truth testing data, scale bar = 2.5 μm. 5. Zoom-in, scale bar =-->
+  <!--800 nm. 6. Example 3D renderings of selected neurons.-->
+  <!--</figcaption>-->
+  <!--<figcaption-->
+  <!--id="hemi_caption_vertical"-->
+  <!--style="text-align: center;">-->
+  <!--Hemi-Brain dataset overview.-->
+  <!--1. Full Hemi-brain volume, scale bar = 30 μm. Experiments were restricted to-->
+   <!--Ellipsoid Body (circled region). 2. 8 ground-truth volumes were used for-->
+   <!--training. 3. Volumes used for testing. 4. Example sparse ground-truth-->
+   <!--testing data, scale bar = 2.5 μm. 5. Zoom-in, scale bar = 800 nm. 6.-->
+   <!--Example 3D renderings of selected neurons.-->
+  <!--</figcaption>-->
+  <!--</td>-->
+  <!--</tr></table>-->
+<!--</div>-->
+<!--<div class="accordion-container" id="hemi_div">-->
+<!--<nav class="accordion arrows">-->
+<!--<input type="radio" name="accordion" id="hemi" />-->
+<!--<section class="box">-->
+<!--<label class="box-title" for="hemi">Hemi-brain and EB mask</label>-->
+<!--<label class="box-close" for="acc-close"></label>-->
+<!--<div class="box-content"><div class="responsive-container">-->
+  <!--<iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B8e-9%2C%22m%22%5D%2C%22y%22:%5B8e-9%2C%22m%22%5D%2C%22z%22:%5B8e-9%2C%22m%22%5D%7D%2C%22position%22:%5B25962.435546875%2C25359.71484375%2C20296.431640625%5D%2C%22crossSectionScale%22:47.72354919422505%2C%22crossSectionDepth%22:-37.62185354999912%2C%22projectionOrientation%22:%5B-0.008687195368111134%2C-0.7010441422462463%2C-0.7130189538002014%2C-0.008097930811345577%5D%2C%22projectionScale%22:21207.72950167948%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://neuroglancer-janelia-flyem-hemibrain/emdata/clahe_yz/jpeg%22%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#0091ff%22%2C%22name%22:%22emdata%22%7D%2C%7B%22type%22:%22segmentation%22%2C%22source%22:%7B%22url%22:%22precomputed://gs://neuroglancer-janelia-flyem-hemibrain/v1.0/rois%22%2C%22subsources%22:%7B%22default%22:true%2C%22properties%22:true%2C%22mesh%22:true%7D%2C%22enableDefaultSubsources%22:false%7D%2C%22pick%22:false%2C%22selectedAlpha%22:0.44%2C%22ignoreNullVisibleSet%22:false%2C%22meshSilhouetteRendering%22:1%2C%22colorSeed%22:2359850678%2C%22segments%22:%5B%2217%22%5D%2C%22segmentQuery%22:%22EB%22%2C%22name%22:%22roi%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22roi%22%2C%22size%22:290%7D%2C%22layout%22:%224panel%22%7D"></iframe>-->
+<!--</div>-->
+<!--</div>-->
+<!--</section>-->
+<!--<input type="radio" name="accordion" id="acc-close" />-->
+<!--</nav>-->
+<!--</div>-->
+<!--**FIB-25:** An older dataset taken from the *Drosophila* visual system <dt-cite-->
+<!--key="takemura_synaptic_2015"></dt-cite>. It contains ~346 gigavoxels of raw EM-->
+<!--data and was imaged with FIBSEM at 8 nanometer resolution. Four volumes-->
+<!--containing ~160 cubic microns of labeled data were used for training. We-->
+<!--predicted inside the entire volume and then restricted supervoxels to an-->
+<!--irregularly shaped neuropil mask. Segmentations were evaluated inside a 13.6-->
+<!--gigavoxel region contained in the bottom half of the full ROI. Similar to the-->
+<!--Hemi-brain, evaluations were done using a filtered list of completely traced-->
+<!--neurons.-->
+<!--<div style="text-align: center;">-->
+  <!--<img class="b-lazy"-->
+  <!--id="fib25_dataset"-->
+  <!--src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==-->
+  <!--data-src="assets/img/fib25_dataset_large.jpeg"-->
+  <!--style="margin: auto; width: 100%;"/>-->
+  <!--<img class="b-lazy"-->
+  <!--id="fib25_dataset_vertical"-->
+  <!--src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==-->
+  <!--data-src="assets/img/fib25_dataset_vertical_medium.jpeg"-->
+  <!--style="margin: auto; width: 100%;"/>-->
+  <!--<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>-->
+  <!--<td width="100%"><figcaption style="text-align: center;">FIB-25 dataset-->
+  <!--overview. 1. 4 ground-truth volumes were used for training. 2. Full volume-->
+  <!--with cutout showing testing region, scale bar = 5 μm. 3. Cross section with-->
+  <!--sparsely labeled testing ground-truth. 4. Zoom-in, scale bar = 750 nm. 5.-->
+  <!--Sub-volume corresponding to zoomed-in plane. 6. Subset of full RoI testing-->
+  <!--neurons. Small volume shown for context.</figcaption></td>-->
+  <!--</tr></table>-->
+<!--</div>-->
+<!--<div class="accordion-container" id="fib25_div">-->
+<!--<nav class="accordion arrows">-->
+<!--<input type="radio" name="accordion" id="fib25" />-->
+<!--<section class="box">-->
+<!--<label class="box-title" for="fib25">FIB-25</label>-->
+<!--<label class="box-close" for="acc-close"></label>-->
+<!--<div class="box-content"><div class="responsive-container">-->
+  <!--<iframe class="responsive-iframe" src="https://neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B8e-9%2C%22m%22%5D%2C%22y%22:%5B8e-9%2C%22m%22%5D%2C%22z%22:%5B8e-9%2C%22m%22%5D%7D%2C%22position%22:%5B3425.203857421875%2C2993.146240234375%2C3936.575927734375%5D%2C%22crossSectionScale%22:29.90334336415725%2C%22projectionOrientation%22:%5B-0.09087008237838745%2C0.8137544393539429%2C-0.4936932325363159%2C0.292939156293869%5D%2C%22projectionScale%22:11797.675238192334%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://neuroglancer-public-data/flyem_fib-25/image%22%2C%22tab%22:%22annotations%22%2C%22annotationColor%22:%22#007bff%22%2C%22name%22:%22image%22%7D%5D%2C%22selectedLayer%22:%7B%22layer%22:%22image%22%7D%2C%22layout%22:%224panel%22%7D"></iframe>-->
+<!--</div>-->
+<!--</div>-->
+<!--</section>-->
+<!--<input type="radio" name="accordion" id="acc-close" />-->
+<!--</nav>-->
+<!--</div>-->
 <h3 id="accuracy">Accuracy</h3>
 <p>We found that the LSDs are beneficial for improving the accuracy of direct
 neighbor affinities and subsequently the resulting neuron segmentations. On the
-<strong>Zebrafinch</strong> dataset, we found that LSD architectures out-perform other
-affinity-based networks over a range of ROIs. Interestingly, auto-context does
-not seem to be necessary on smaller ROIs. The multitask network outperforms the
-auto-context network up until the 54 micron ROI. However, after that, the
-auto-context networks produce drastically better results, making the
-computational overhead justifiable. When considering segmentation performance
-restricted directly to neuropil, our best auto-context network (AcrLSD) performs
-on par with the current state of the art when considering VoI:</p>
+Zebrafinch dataset, we found that LSD architectures out-perform other
+affinity-based networks over a range of ROIs when used in an auto-context
+approach. When considering segmentation performance restricted directly to
+neuropil, our best auto-context network (AcRLSD) performs on par with the
+current state of the art when considering VoI:</p>
 <div style="text-align: center;">
   <img class="b-lazy"
     id="neurons"
@@ -1439,13 +1459,11 @@ on par with the current state of the art when considering VoI:</p>
   </tr></table>
 </div>
 <p>We did not find this to be the case when evaluating ERL, which could be a direct
-result of asymmetric contributions of split and merge errors in the metric. We
-see that the ERL increases non-monotonically (jumps up and down) as scale
-increases, rather than consistently decreasing or increasing (as is the case
-with VoI). This is likely due to the following: as scale increases, the chances
-for errors increases, which leads to a drop in ERL (especially with merge
-errors). At the same time, the total cable length of the ground-truth neurons
-increases, which leads to an increased ERL on correctly reconstructed neurons:</p>
+result of asymmetric contributions of split and merge errors in the metric. ERL
+can not exceed the average length of skeletons, and thus the addition of shorter
+skeletons fragments can result in a decrease of ERL, even in the absence of
+errors. ERL measures do not progress monotonically over RoI sizes and absolute
+values are likely not comparable across different dataset sizes:</p>
 <div style="text-align: center;">
   <img class="b-lazy"
     id="neurons"
@@ -1460,96 +1478,96 @@ increases, which leads to an increased ERL on correctly reconstructed neurons:</
   </figcaption></td>
   </tr></table>
 </div>
-<p>We designed the MCM to simulate the amount of human interactions (clicks) needed
-to split and merge neurons in a proposed segmentation. Since repeated min-cuts
-need to be made on large fragment graphs, the computational costs limited MCM
-calculations to the three smallest ROIs (the largest being ~16,000 cubic
-microns). We observed an expected linear increase in MCM with scale (more clicks
-required to resolve larger volumes). We also found VoI to serve as a reasonable
-proxy to the MCM, which suggests that VoI is a good metric to compare
-segmentation quality in the context of a proofreading workflow that allows
-annotators to split false merges using a min-cut on the fragment graph:</p>
-<div style="text-align: center;">
-  <img class="b-lazy"
-    id="voi_mcm"
-    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-    data-src="assets/img/voi_mcm_rois.jpeg"
-    style="margin: auto; width: 100%;"/>
-  <img class="b-lazy"
-    id="voi_mcm_vertical"
-    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-    data-src="assets/img/voi_mcm_rois_vertical.jpeg"
-    style="margin: auto; width: 80%;"/>
-  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">Comparison of VoI and
-  MCM on first three ROIs (up to ~16k cubic microns). As expected, the number of
-  splits and merges needed to fix a segmentation increases linearly with scale.
-  The same network order is seen in VoI, suggesting that it might be a
-  reasonable to MCM on larger volumes.</figcaption></td>
-  </tr></table>
-</div>
-<div class="accordion-container">
-<nav class="accordion arrows">
-<input type="radio" name="accordion" id="fib_results" />
-<section class="box">
-<label class="box-title" for="fib_results">Fib Results</label>
-<label class="box-close" for="acc-close"></label>
-<div class="box-content"><div>
-  <p> <b>Hemi-Brain - </b> We evaluated segmentations on three ROIs contained
-  within the Ellipsoid Body. Since the ground truth data was voxel-based (not
-  skeletons), we only considered VoI. We found LSD methods out-performed other
-  affinity-based methods and were on par with FFN. The multitask network
-  performs well on the smaller two ROIs but shows worse results on the largest
-  ROI (in comparison to AcLSD & AcrLSD), strengthening the argument for using
-  auto-context on larger volumes: </p>
-</div>
-<div class="box-content"><div style="text-align: center;">
-  <img
-  id="hemi_voi"
-  src="assets/img/hemi_rois.jpeg"
-  style="margin: auto; width: 100%;"/>
-  <img
-  id="hemi_voi_vertical"
-  src="assets/img/hemi_rois_vertical.jpeg"
-  style="margin: auto; width: 70%;"/>
-  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">VoI split/merge
-  curves (lines) across thresholds, for each of the three investigated ROIs.
-  Points indicate the threshold at which VoI Sum is minimized. LSDs maintain
-  competitiveness with FFN on larger two ROIs.</figcaption></td>
-  </tr></table>
-</div>
-<div class="box-content"><div>
-  <p> <b>FIB-25 - </b>Similar to the Hemi-Brain, we only evaluated VoI since the
-  ground truth was voxel based. On the full testing RoI, we found that only one
-  LSD method (MtLSD) performed well. Interestingly, the auto-context methods
-  performed poorly here. Upon visual inspection, we found false merges occurring
-  outside of the testing RoI. We then cropped two volumes contained entirely
-  within dense neuropil and found auto-context results to improve, further
-  highlighting the importance of masking: </p>
-</div>
-<div class="box-content"><div style="text-align: center;">
-  <img
-  id="fib25_voi"
-  src="assets/img/fib25_rois.jpeg"
-  style="margin: auto; width: 100%;"/>
-  <img
-  id="fib25_voi_vertical"
-  src="assets/img/fib25_rois_vertical.jpeg"
-  style="margin: auto; width: 70%;"/>
-  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">VoI split/merge
-  curves (lines) across thresholds on investigated ROIs. On the Full ROI,
-  auto-context methods did not perform well. This was likely caused by
-  peripheral merges. Evaluation on two sub ROIs showed results consistent with
-  what was seen on the other datasets.</figcaption></td>
-  </tr></table>
-</div>
-</div>
-</section>
-<input type="radio" name="accordion" id="acc-close" />
-</nav>
-</div>
+<!--We designed the MCM to simulate the amount of human interactions (clicks) needed-->
+<!--to split and merge neurons in a proposed segmentation. Since repeated min-cuts-->
+<!--need to be made on large fragment graphs, the computational costs limited MCM-->
+<!--calculations to the three smallest ROIs (the largest being ~16,000 cubic-->
+<!--microns). We observed an expected linear increase in MCM with scale (more clicks-->
+<!--required to resolve larger volumes). We also found VoI to serve as a reasonable-->
+<!--proxy to the MCM, which suggests that VoI is a good metric to compare-->
+<!--segmentation quality in the context of a proofreading workflow that allows-->
+<!--annotators to split false merges using a min-cut on the fragment graph:-->
+<!--<div style="text-align: center;">-->
+  <!--<img class="b-lazy"-->
+  <!--id="voi_mcm"-->
+  <!--src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==-->
+  <!--data-src="assets/img/voi_mcm_rois.jpeg"-->
+  <!--style="margin: auto; width: 100%;"/>-->
+  <!--<img class="b-lazy"-->
+  <!--id="voi_mcm_vertical"-->
+  <!--src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==-->
+  <!--data-src="assets/img/voi_mcm_rois_vertical.jpeg"-->
+  <!--style="margin: auto; width: 80%;"/>-->
+  <!--<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>-->
+  <!--<td width="100%"><figcaption style="text-align: center;">Comparison of VoI and-->
+  <!--MCM on first three ROIs (up to ~16k cubic microns). As expected, the number of-->
+  <!--splits and merges needed to fix a segmentation increases linearly with scale.-->
+  <!--The same network order is seen in VoI, suggesting that it might be a-->
+  <!--reasonable to MCM on larger volumes.</figcaption></td>-->
+  <!--</tr></table>-->
+<!--</div>-->
+<!--<div class="accordion-container">-->
+<!--<nav class="accordion arrows">-->
+<!--<input type="radio" name="accordion" id="fib_results" />-->
+<!--<section class="box">-->
+<!--<label class="box-title" for="fib_results">Fib Results</label>-->
+<!--<label class="box-close" for="acc-close"></label>-->
+<!--<div class="box-content"><div>-->
+  <!--<p> <b>Hemi-Brain - </b> We evaluated segmentations on three ROIs contained-->
+  <!--within the Ellipsoid Body. Since the ground truth data was voxel-based (not-->
+  <!--skeletons), we only considered VoI. We found LSD methods out-performed other-->
+  <!--affinity-based methods and were on par with FFN. The multitask network-->
+  <!--performs well on the smaller two ROIs but shows worse results on the largest-->
+  <!--ROI (in comparison to AcLSD & AcrLSD), strengthening the argument for using-->
+  <!--auto-context on larger volumes: </p>-->
+<!--</div>-->
+<!--<div class="box-content"><div style="text-align: center;">-->
+  <!--<img-->
+  <!--id="hemi_voi"-->
+  <!--src="assets/img/hemi_rois.jpeg"-->
+  <!--style="margin: auto; width: 100%;"/>-->
+  <!--<img-->
+  <!--id="hemi_voi_vertical"-->
+  <!--src="assets/img/hemi_rois_vertical.jpeg"-->
+  <!--style="margin: auto; width: 70%;"/>-->
+  <!--<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>-->
+  <!--<td width="100%"><figcaption style="text-align: center;">VoI split/merge-->
+  <!--curves (lines) across thresholds, for each of the three investigated ROIs.-->
+  <!--Points indicate the threshold at which VoI Sum is minimized. LSDs maintain-->
+  <!--competitiveness with FFN on larger two ROIs.</figcaption></td>-->
+  <!--</tr></table>-->
+<!--</div>-->
+<!--<div class="box-content"><div>-->
+  <!--<p> <b>FIB-25 - </b>Similar to the Hemi-Brain, we only evaluated VoI since the-->
+  <!--ground truth was voxel based. On the full testing RoI, we found that only one-->
+  <!--LSD method (MtLSD) performed well. Interestingly, the auto-context methods-->
+  <!--performed poorly here. Upon visual inspection, we found false merges occurring-->
+  <!--outside of the testing RoI. We then cropped two volumes contained entirely-->
+  <!--within dense neuropil and found auto-context results to improve, further-->
+  <!--highlighting the importance of masking: </p>-->
+<!--</div>-->
+<!--<div class="box-content"><div style="text-align: center;">-->
+  <!--<img-->
+  <!--id="fib25_voi"-->
+  <!--src="assets/img/fib25_rois.jpeg"-->
+  <!--style="margin: auto; width: 100%;"/>-->
+  <!--<img-->
+  <!--id="fib25_voi_vertical"-->
+  <!--src="assets/img/fib25_rois_vertical.jpeg"-->
+  <!--style="margin: auto; width: 70%;"/>-->
+  <!--<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>-->
+  <!--<td width="100%"><figcaption style="text-align: center;">VoI split/merge-->
+  <!--curves (lines) across thresholds on investigated ROIs. On the Full ROI,-->
+  <!--auto-context methods did not perform well. This was likely caused by-->
+  <!--peripheral merges. Evaluation on two sub ROIs showed results consistent with-->
+  <!--what was seen on the other datasets.</figcaption></td>-->
+  <!--</tr></table>-->
+<!--</div>-->
+<!--</div>-->
+<!--</section>-->
+<!--<input type="radio" name="accordion" id="acc-close" />-->
+<!--</nav>-->
+<!--</div>-->
 <h3 id="throughput">Throughput</h3>
 <p>As described previously, the acquisition size of datasets is growing rapidly.
 Segmentation methods should complement this trajectory by being fast and
@@ -1608,37 +1626,20 @@ is processed. Consider watershed as an example:</p>
   neurons are processed simultaneosuly.</figcaption></td>
   </tr></table>
 </div>
-<p>For a more complete explanation of the block-wise processing sheme, see below:</p>
-<div class="accordion-container">
-<nav class="accordion arrows">
-<input type="radio" name="accordion" id="block" />
-<section class="box">
-<label class="box-title" for="block">Block-wise processing overview</label>
-<label class="box-close" for="acc-close"></label>
-<div class="box-content"><div>
-<p>Blockwise processing is necessary to process
-such large volumes in a reasonable amount of time. The idea is to chunk up a
-dataset into small blocks which easily fit in memory, and then distribute
-these blocks over many workers (GPUs for prediction, CPUs for
-post-processing). A little bit of context is required to read the input data
+<p>Blockwise processing is necessary to process such large volumes in a reasonable
+amount of time. A little bit of context is required to read the input data
 necessary to write the output data. Because of this, only blocks that do not
-touch can be processed simultaneously. Once they finish processing, the next
-set of blocks can begin, and so on until all blocks are complete. Consider
-watershed for a single neuron:
-</p>
+touch can be processed simultaneously:</p>
+<div style="text-align: center;">
+  <img class="b-lazy"
+    id="watershed_separate_large"
+    src="assets/gifs/watershed_separate_large.gif" style="margin: auto; width: 100%;">
+  <img class="b-lazy"
+    id="watershed_separate_medium"
+    src="assets/gifs/watershed_separate_medium.gif" style="margin: auto; width: 100%;"/>
 </div>
-<div class="box-content"><div style="text-align: center;">
-<img class="b-lazy"
-  id="watershed_separate_large"
-  src="assets/gifs/watershed_separate_large.gif" style="margin: auto; width: 100%;">
-<img class="b-lazy"
-  id="watershed_separate_medium"
-  src="assets/gifs/watershed_separate_medium.gif" style="margin: auto; width: 100%;"/>
-</div>
-<div class="box-content"><div>
-<p>The blocks are processed in an alternating fashion ensuring that none touch. Piecing it together gives us the fragments required to generate a neuron:  </p>
-</div>
-<div class="box-content"><div style="text-align: center;">
+<p>The blocks are processed in an alternating fashion ensuring that none touch. Piecing it together gives us the fragments required to generate a neuron:</p>
+<div style="text-align: center;">
 <img class="b-lazy"
   id="watershed_joined_large"
   src="assets/gifs/watershed_joined_large.gif" style="margin: auto; width: 100%;">
@@ -1646,11 +1647,9 @@ watershed for a single neuron:
   id="watershed_joined_medium"
   src="assets/gifs/watershed_joined_medium.gif" style="margin: auto; width: 100%;"/>
 </div>
-<div class="box-content"><div>
 <p>The same logic can be used to stitch the fragments together based on
 the underlying affinities. The result is an agglomerated neuron:</p>
-</div>
-<div class="box-content"><div style="text-align: center;">
+<div style="text-align: center;">
 <img class="b-lazy"
   id="agglom_joined_large"
   src="assets/gifs/agglom_joined_large.gif" style="margin: auto; width: 100%;">
@@ -1658,18 +1657,11 @@ the underlying affinities. The result is an agglomerated neuron:</p>
   id="agglom_joined_medium"
   src="assets/gifs/agglom_joined_medium.gif" style="margin: auto; width: 100%;"/>
 </div>
-<div class="box-content"><div>
-<p>This just shows what is happening on an example neuron. In reality every
-object inside every block contained in the full volume is processed in
-parallel. The result is a very efficient processing scheme. For example
-predicting ~115,000 blocks distributed over 100 GPUs took under 2 hours to
-complete (~800,000 total cubic microns). </p>
-</div>
-</div>
-</section>
-<input type="radio" name="accordion" id="acc-close" />
-</nav>
-</div>
+<p>This just shows what is happening on an example neuron. In reality every object
+inside every block contained in the full volume is processed in parallel. The
+result is a very efficient processing scheme. For example predicting ~115,000
+blocks distributed over 100 GPUs took under 2 hours to complete (~800,000 total
+cubic microns).</p>
 <hr>
 <h2 id="discussion">Discussion</h2>
 <p>We introduce the LSDs as an auxiliary learning task for boundary prediction. In
@@ -1678,37 +1670,37 @@ improve neuron segmentations across specimen, resolution, and imaging
 techniques. When considering performance on neuropil, LSDs implemented in an
 auto-context architecture are competitive with the current state of the art and
 two orders of magnitude more efficient.</p>
-<h3 id="metric_eval">Metric Evaluation</h3>
-<p>It is difficult to find a robust metric for assessing the quality of a
-segmentation - an ideal metric would reflect the amount of time needed to
-proofread a segmentation. In this study, we evaluated two established metrics
-(VoI, ERL).</p>
-<p>While both are useful measures, they each have shortcomings. For example, VoI can
-be sensitive to slight shifts in boundaries. Additionally, small topological
-changes sometimes go unnoticed which can be problematic in fine neurites where
-synapses are often located. Since both neurons and their synaptic connections
-are required to generate a connectome, it is important to consider these
-regions. ERL is also insenstive to small topological changes and is
-disproportionately harsh towards merge errors. This means that it favors methods
-which split more than they merge. Furthermore, ERL seems to be brittle when
-evaluating on cropped regions, since the cutting of ground truth skeletons
-introduces variability.</p>
-<p>Neither metric directly reflects the labor required to resolve a segmentation,
-which is arguably the relevant quantity to optimize <dt-cite
-key="plaza_focused_2016,funke_ted_2017"></dt-cite>. Acknowledging that current
-proofreading tools <dt-fn> <a class="name" target="_blank" rel="noopener
-noreferrer"
-href="https://github.com/seung-lab/PyChunkedGraph">PyChunkedGraph</a>, <a
-class="name" target="_blank" rel="noopener noreferrer"
-href="https://github.com/janelia-flyem/NeuTu">NeuTu</a></dt-fn> allow annotators
-to correct merge errors with a few interactions, we introduced the MCM, a metric
-which relies on graph cuts to represent the amount of interactions needed to fix
-a segmentation. Assuming an equal distribution of errors, a metric should
-demonstrate linear growth with volume size. The MCM shows linear growth but is
-expensive to compute because of repetitive cuts on massive graphs.
-Interestingly, we found VoI to show general agreement with MCM suggesting it
-could be used as a reasonable alternative for evaluating larger datasets.</p>
-<h3 id="auxiliary_learning">Auxiliary Learning</h3>
+<!--<h3 id="metric_eval">Metric Evaluation</h3>-->
+<!--It is difficult to find a robust metric for assessing the quality of a-->
+<!--segmentation - an ideal metric would reflect the amount of time needed to-->
+<!--proofread a segmentation. In this study, we evaluated two established metrics-->
+<!--(VoI, ERL).-->
+<!--While both are useful measures, they each have shortcomings. For example, VoI can-->
+<!--be sensitive to slight shifts in boundaries. Additionally, small topological-->
+<!--changes sometimes go unnoticed which can be problematic in fine neurites where-->
+<!--synapses are often located. Since both neurons and their synaptic connections-->
+<!--are required to generate a connectome, it is important to consider these-->
+<!--regions. ERL is also insenstive to small topological changes and is-->
+<!--disproportionately harsh towards merge errors. This means that it favors methods-->
+<!--which split more than they merge. Furthermore, ERL seems to be brittle when-->
+<!--evaluating on cropped regions, since the cutting of ground truth skeletons-->
+<!--introduces variability.-->
+<!--Neither metric directly reflects the labor required to resolve a segmentation,-->
+<!--which is arguably the relevant quantity to optimize <dt-cite-->
+<!--key="plaza_focused_2016,funke_ted_2017"></dt-cite>. Acknowledging that current-->
+<!--proofreading tools <dt-fn> <a class="name" target="_blank" rel="noopener-->
+<!--noreferrer"-->
+<!--href="https://github.com/seung-lab/PyChunkedGraph">PyChunkedGraph</a>, <a-->
+<!--class="name" target="_blank" rel="noopener noreferrer"-->
+<!--href="https://github.com/janelia-flyem/NeuTu">NeuTu</a></dt-fn> allow annotators-->
+<!--to correct merge errors with a few interactions, we introduced the MCM, a metric-->
+<!--which relies on graph cuts to represent the amount of interactions needed to fix-->
+<!--a segmentation. Assuming an equal distribution of errors, a metric should-->
+<!--demonstrate linear growth with volume size. The MCM shows linear growth but is-->
+<!--expensive to compute because of repetitive cuts on massive graphs.-->
+<!--Interestingly, we found VoI to show general agreement with MCM suggesting it-->
+<!--could be used as a reasonable alternative for evaluating larger datasets.-->
+<!--<h3 id="auxiliary_learning">Auxiliary Learning</h3>-->
 <p>So why do the LSDs improve segmentations?</p>
 <p>We hypothesize that using LSDs as an auxiliary learning task incentivizes the
 network to consider higher-level features. Since additional local structure has
@@ -1720,128 +1712,66 @@ network to correlate boundary prediction to LSD prediction.</p>
 steps), we found they do not perform as well across the investigated datasets.
 This could result from several factors including blind spots (missing
 neighborhood steps), masking during training, and the isotropy of the data.</p>
-<h3 id="auto_context">Auto-Context</h3>
-<p>We found that using an auto-context approach produced superior segmentations on
-larger datasets. To test if this was also the case for vanilla boundary
-detection, we evaluated an affinity auto-context network and found that it made
-no significant difference in accuracy:</p>
-<div style="text-align: center;">
-  <img class="b-lazy"
-    id="neurons"
-    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-    data-src="assets/img/zfinch_auto.png"
-    style="display: block; margin: auto; width: 100%;"/>
-  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">Auto-context
-  comparison. A vanilla auto-context network (dashed green line) does not
-  improve affinity accuracy (blue line). Using the LSDs in an auto-context setup
-  (dashed orange line), improves multi-task LSD accuracy (red
-  line).</figcaption></td>
-  </tr></table>
-</div>
-<p>Predicting affinities from affinities is likely too similar to predicting
-affinities from raw data. We suspect that the second pass of the network simply
-copies data from the first pass instead of learning new information. Conversely,
-predicting affinities from LSDs forces the network to incorporate features from
-the LSDs in the second pass. This improves the final boundary predictions which
-results in better segmentations.</p>
-<h3 id="masking">Masking</h3>
-<p>A big takeaway we found was how important masking becomes when processing large
-volumes. For reference, binary masks are often used to ignore certain parts of
-the data (i.e background, artifacts). When segmenting neurons, networks often
-fail in areas which do not reflect their accuracy on the target task. For
-example, objects that are underrepresented in the training data (e.g myelin
-sheaths), or objects that are much larger than the field of view of a network
-(e.g cell bodies), can lead to false merges in a segmentation. Evaluating
-performance on neuropil, should be independent of performance on these types of
-structures (since these objects can be separately predicted and then later
-merged with a neuron segmentation). This is not a new strategy; recent work on
-processing large volumes have also included masking at various points in the
-pipeline<dt-cite
-key="januszewski_high-precision_2018,li_automated_2019,dorkenwald_binary_2019,scheffer_connectome_2020"></dt-cite>.
-What was surprising, however, was the extent of accuracy degradation in the
-absence of masks when scaling to larger datasets:</p>
-<div style="text-align: center;">
-  <img class="b-lazy"
-    id="neurons"
-    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-    data-src="assets/img/zfinch_mask_delta_voi.png"
-    style="display: block; margin: auto; width: 100%;"/>
-  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">Masking improves
-  accuracy on the Zebrafinch. As we scale up, the accuracy decreases drastically
-  without using a neuropil mask (the change in VoI sum gets larger between
-  non-masked and masked predictions as ROI increases).</figcaption></td>
-  </tr></table>
-</div>
-<p>Aside from using masks during post-processing, masks can also be incorporated
-directly into training. On the zebrafinch, we found that when masking glia out
-during training, networks that succeeded in learning to mask these areas out
-(Baseline, MtLSD, AcLSD, AcrLSD) produced better results than those that did not
-(MALIS, LR).</p>
-<hr>
-<h2 id="conclusions">Conclusions</h2>
-<p>Although the LSDs significantly increase boundary prediction accuracy, it is
-unclear whether different shape descriptors could lead to further improvements.
-The LSDs we propose were subjectively engineered based on features deemed
-important to encode object shape. Future experiments could incorporate different
-features or focus on learning an optimal embedding. Additionally, the LSDs are
-only implemented as an auxiliary learning task for affinity prediction. An
-interesting direction would be to agglomerate directly from the LSDs and remove
-the need for affinities entirely.</p>
-<p>Aside from aiding boundary detection, LSDs could also be used in other ways. For example, they could be incorporated to provide a secondary source of information for
-identifying errors in a segmentation. Specifically, after generating a segmentation, LSDs could be calculated on the
-labels and then compared with the initial LSD predictions. The difference
-between the two would likely highlight regions containing errors:</p>
-<div style="text-align: center;">
-  <img class="b-lazy"
-    id="error_detection"
-    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-    data-src="assets/img/error_detection.jpeg"
-    style="display: block; margin: auto; width: 100%;"/>
-  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">Example predicted LSDs between two neurons (1). If the resulting segmentation is correct (2), segmentation LSDs do not differ from predicted LSDs. If the resulting segmentation is incorrect (3), segmentation LSDs (4) might differ from the predicted LSDs. The difference (5) could expose errors in a segmentation.</figcaption></td>
-  </tr></table>
-</div>
-<p>We've also seen promising results when using the LSDs for other segmentation
-problems. For example, LSDs have been successful in generating segmentations of
-cell bodies:</p>
-<div style="text-align: center;">
-  <img class="b-lazy"
-    id="zfinch"
-    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-    data-src="assets/img/zfinch.jpeg"
-    style="display: block; margin: auto; width: 100%;"/>
-  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">Nuclei segmentation
-  on full zebrafish brain<dt-cite key="hildebrand_whole-brain_2017"></dt-cite>.
-  Columns from left to right: raw, LSD offset vectors, LSD direction vectors
-  (covariance), LSD direction vectors (Pearson’s), size, resulting segmentation.
-  Scale bars from top to bottom: ∼ 150μm, 20μm, 5μm.</figcaption></td>
-  </tr></table>
-</div>
-<p>The LSDs also produce nice segmentations on mitochondria:</p>
-<div style="text-align: center;">
-  <img class="b-lazy"
-    id="mito"
-    src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-    data-src="assets/img/mito.jpeg"
-    style="display: block; margin: auto; width: 100%;"/>
-  <table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>
-  <td width="100%"><figcaption style="text-align: center;">Mitochondria
-  segmentation on cropout from FIB-25. Inset shows LSD predictions and
-  corresponding segmentation. Right image shows 3D reconstructions of a random
-  sample (n=1000) in predicted ROI. Scale bars from left to right: ∼ 3μm, 750nm,
-  4μm.</figcaption></td>
-  </tr></table>
-</div>
-<p>Additionally, LSDs have been used for Golgi apparatus and endoplasmic reticulum
-segmentation <dt-cite key="gallusser_2020"></dt-cite>. It is likely that objects
-with a blob-like structure such as other organelles and various cell types would
-benefit from LSDs. Although originally designed for the goal of neuron
-segmentation, it would be exciting to see LSDs extended and applied to other
-scientific problems.</p>
-<hr>
+<p>See the paper for further details on auto-context, masking and metrics.</p>
+<!--<h3 id="auto_context">Auto-Context</h3>-->
+<!--We found that using an auto-context approach produced superior segmentations on-->
+<!--larger datasets. To test if this was also the case for vanilla boundary-->
+<!--detection, we evaluated an affinity auto-context network and found that it made-->
+<!--no significant difference in accuracy:-->
+<!--<div style="text-align: center;">-->
+  <!--<img class="b-lazy"-->
+  <!--id="neurons"-->
+  <!--src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==-->
+  <!--data-src="assets/img/zfinch_auto.png"-->
+  <!--style="display: block; margin: auto; width: 100%;"/>-->
+  <!--<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>-->
+  <!--<td width="100%"><figcaption style="text-align: center;">Auto-context-->
+  <!--comparison. A vanilla auto-context network (dashed green line) does not-->
+  <!--improve affinity accuracy (blue line). Using the LSDs in an auto-context setup-->
+  <!--(dashed orange line), improves multi-task LSD accuracy (red-->
+  <!--line).</figcaption></td>-->
+  <!--</tr></table>-->
+<!--</div>-->
+<!--Predicting affinities from affinities is likely too similar to predicting-->
+<!--affinities from raw data. We suspect that the second pass of the network simply-->
+<!--copies data from the first pass instead of learning new information. Conversely,-->
+<!--predicting affinities from LSDs forces the network to incorporate features from-->
+<!--the LSDs in the second pass. This improves the final boundary predictions which-->
+<!--results in better segmentations.-->
+<!--<h3 id="masking">Masking</h3>-->
+<!--A big takeaway we found was how important masking becomes when processing large-->
+<!--volumes. For reference, binary masks are often used to ignore certain parts of-->
+<!--the data (i.e background, artifacts). When segmenting neurons, networks often-->
+<!--fail in areas which do not reflect their accuracy on the target task. For-->
+<!--example, objects that are underrepresented in the training data (e.g myelin-->
+<!--sheaths), or objects that are much larger than the field of view of a network-->
+<!--(e.g cell bodies), can lead to false merges in a segmentation. Evaluating-->
+<!--performance on neuropil, should be independent of performance on these types of-->
+<!--structures (since these objects can be separately predicted and then later-->
+<!--merged with a neuron segmentation). This is not a new strategy; recent work on-->
+<!--processing large volumes have also included masking at various points in the-->
+<!--pipeline<dt-cite-->
+<!--key="januszewski_high-precision_2018,li_automated_2019,dorkenwald_binary_2019,scheffer_connectome_2020"></dt-cite>.-->
+<!--What was surprising, however, was the extent of accuracy degradation in the-->
+<!--absence of masks when scaling to larger datasets:-->
+<!--<div style="text-align: center;">-->
+  <!--<img class="b-lazy"-->
+  <!--id="neurons"-->
+  <!--src=data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==-->
+  <!--data-src="assets/img/zfinch_mask_delta_voi.png"-->
+  <!--style="display: block; margin: auto; width: 100%;"/>-->
+  <!--<table style="width: 100%;" cellspacing="0" cellpadding="0"><tr>-->
+  <!--<td width="100%"><figcaption style="text-align: center;">Masking improves-->
+  <!--accuracy on the Zebrafinch. As we scale up, the accuracy decreases drastically-->
+  <!--without using a neuropil mask (the change in VoI sum gets larger between-->
+  <!--non-masked and masked predictions as ROI increases).</figcaption></td>-->
+  <!--</tr></table>-->
+<!--</div>-->
+<!--Aside from using masks during post-processing, masks can also be incorporated-->
+<!--directly into training. On the zebrafinch, we found that when masking glia out-->
+<!--during training, networks that succeeded in learning to mask these areas out-->
+<!--(Baseline, MtLSD, AcLSD, AcrLSD) produced better results than those that did not-->
+<!--(MALIS, LR).-->
 <script>
 
 //lazy script to choose images with respect to whether user is using
@@ -1913,27 +1843,6 @@ if (!md.mobile() && !md.tablet()) {
   document.getElementById('zfinch_dataset_vertical').style.display = 'none';
   document.getElementById('zfinch_dataset').style.display = 'block';
 
-  //hemi
-  document.getElementById('hemi_dataset_vertical').style.display = 'none';
-  document.getElementById('hemi_caption_vertical').style.display = 'none';
-  document.getElementById('hemi_dataset').style.display = 'block';
-
-  //fib25
-  document.getElementById('fib25_dataset_vertical').style.display = 'none';
-  document.getElementById('fib25_dataset').style.display = 'block';
-
-  //voi_mcm
-  document.getElementById('voi_mcm_vertical').style.display = 'none';
-  document.getElementById('voi_mcm').style.display = 'block';
-
-  //hemi_voi
-  document.getElementById('hemi_voi_vertical').style.display = 'none';
-  document.getElementById('hemi_voi').style.display = 'block';
-
-  //fib25_voi
-  document.getElementById('fib25_voi_vertical').style.display = 'none';
-  document.getElementById('fib25_voi').style.display = 'block';
-
   // watershed & agglom
   document.getElementById('watershed_separate_medium').style.display = 'none';
   document.getElementById('watershed_joined_medium').style.display = 'none';
@@ -1957,9 +1866,6 @@ if (!md.mobile() && !md.tablet()) {
     document.getElementById('labels_div').style.display = 'none';
     document.getElementById('gt_lsds_div').style.display = 'none';
     document.getElementById('gt_vs_pred_div').style.display = 'none';
-    document.getElementById('zfinch_div').style.display = 'none';
-    document.getElementById('hemi_div').style.display = 'none';
-    document.getElementById('fib25_div').style.display = 'none';
   }
 }
 
@@ -1999,27 +1905,6 @@ else {
   document.getElementById('zfinch_dataset').style.display = 'none';
   document.getElementById('zfinch_dataset_vertical').style.display = 'block';
 
-  //hemi
-  document.getElementById('hemi_dataset').style.display = 'none';
-  document.getElementById('hemi_caption').style.display = 'none';
-  document.getElementById('hemi_dataset_vertical').style.display = 'block';
-
-  //fib25
-  document.getElementById('fib25_dataset').style.display = 'none';
-  document.getElementById('fib25_dataset_vertical').style.display = 'block';
-
-  //voi_mcm
-  document.getElementById('voi_mcm').style.display = 'none';
-  document.getElementById('voi_mcm_vertical').style.display = 'block';
-
-  //hemi_voi
-  document.getElementById('hemi_voi').style.display = 'none';
-  document.getElementById('hemi_voi_vertical').style.display = 'block';
-
-  //fib25_voi
-  document.getElementById('fib25_voi').style.display = 'none';
-  document.getElementById('fib25_voi_vertical').style.display = 'block';
-
   // watershed / agglom
   document.getElementById('watershed_separate_large').style.display = 'none';
   document.getElementById('watershed_joined_large').style.display = 'none';
@@ -2034,75 +1919,37 @@ else {
   document.getElementById('labels_div').style.display = 'none';
   document.getElementById('gt_lsds_div').style.display = 'none';
   document.getElementById('gt_vs_pred_div').style.display = 'none';
-  document.getElementById('zfinch_div').style.display = 'none';
-  document.getElementById('hemi_div').style.display = 'none';
-  document.getElementById('fib25_div').style.display = 'none';
 
 }
 
 </script>
-<h2 id="tldr">Tl;dr</h2>
-<ul>
-<li>
-<p>Connectomics is a relatively new field combining neuroscience, microscopy, biology and computer science.</p>
-</li>
-<li>
-<p>The goal is to generate maps of the brain at synaptic resolution. By doing so,
-it will hopefully lead to a better understanding of how things work and
-subsequently advance medical approaches to various diseases.</p>
-</li>
-<li>
-<p>The datasets required to produce these brain maps are massive since they have
-to be imaged at such a high resolution.</p>
-</li>
-<li>
-<p>Manually reconstructing wiring diagrams in the datasets is extremely time consuming and
-expensive so there is a great need to automate the process.</p>
-</li>
-<li>
-<p>Reconstructing neurons is challenging because many consecutively correct decisions must be made. Errors can propagate throughout a dataset easily.</p>
-</li>
-<li>
-<p>Methods need to also be computationally efficient and scalable to account
-for the size of the data.</p>
-</li>
-<li>
-<p>We present a novel approach to neuron segmentation, Local Shape Descriptors
-(LSDs) - a 10-Dimensional embedding used as an auxiliary learning objective
-for boundary detection.</p>
-</li>
-<li>
-<p>We find that the LSDs help improve boundaries and subsequent neuron
-reconstructions in several large and diverse datasets and are competitive with
-the current state of the art, albeit two orders of magnitude faster.</p>
-</li>
-<li>
-<p>We also propose a new evaluation metric, designed to provide insight into how
-many clicks are required by a user to proofread a segmentation.</p>
-</li>
-</ul>
 </dt-article>
 <dt-appendix>
 <h2 id="acknowledgements">Acknowledgements</h2>
+<p>We thank Caroline Malin-Mayor, William Patton, and Julia Buhmann for code
+contributions; Nils Eckstein and Julia Buhmann for helpful discussions; Stuart
+Berg for code to help with data acquisition; Jeremy Maitin-Shepard for helpful
+feedback on Neuroglancer; Viren Jain, Michał Januszewski, Jörgen Kornfeld, and
+Steve Plaza for access to data used for training and evaluation. Funding. This
+work was supported by the Howard Hughes Medical Institute.</p>
+<p>This post was inspired by the <a class="name" target="_blank" rel="noopener
+noreferrer" href="https://weightagnostic.github.io/">Weight Agnostic Neural
+Networks</a> article and built using <a class="name" target="_blank"
+rel="noopener noreferrer" href="https://distill.pub/about/">Distill</a>.</p>
+<p><strong>Cite</strong></p>
+<pre class="citation long">@article{sheridan_local_2021,
+	title = {Local Shape Descriptors for Neuron Segmentation},
+	url = {https://www.biorxiv.org/content/10.1101/2021.01.18.427039v1},
+	urldate = {2021-01-20},
+	journal = {bioRxiv},
+	author = {Sheridan, Arlo and Nguyen, Tri and Deb, Diptodip and Lee, Wei-Chung Allen and Saalfeld, Stephan and Turaga, Srinivas and Manor, Uri and Funke, Jan},
+	year = {2021}
+}</pre>
 <hr>
 <h2 id="code">Code</h2>
 <ul>
 <li>
-<p>LSDs</p>
-<ul>
-<li>
-<p><a class="name" target="_blank" rel="noopener noreferrer" href="https://github.com/funkelab/lsd">LSD</a></p>
-</li>
-<li>
-<p><a class="name" target="_blank" rel="noopener noreferrer" href="https://github.com/funkelab/lsd_paper_code">LSD run scripts / examples</a></p>
-</li>
-<li>
-<p><a class="name" target="_blank" rel="noopener noreferrer" href="https://github.com/funkelab/lsd_paper">LSD paper</a></p>
-</li>
-<li>
-<p><a class="name" target="_blank" rel="noopener noreferrer" href="https://github.com/LocalShapeDescriptors/LocalShapeDescriptors.github.io/tree/draft">LSD blog</a></p>
-</li>
-</ul>
+<p><a class="name" target="_blank" rel="noopener noreferrer" href="https://github.com/funkelab/lsd">LSDs</a></p>
 </li>
 <li>
 <p><a class="name" target="_blank" rel="noopener noreferrer" href="https://github.com/funkey/gunpowder/tree/patch-1.1.6">Training / Inference</a></p>
@@ -2120,8 +1967,6 @@ many clicks are required by a user to proofread a segmentation.</p>
 <p><a class="name" target="_blank" rel="noopener noreferrer" href="https://github.com/funkelab/funlib.evaluate">Evaluation</a></p>
 </li>
 </ul>
-<hr>
-<h2 id="supplementary">Supplementary</h2>
 <hr>
 <h2 id="references"></h2>
 </dt-appendix>

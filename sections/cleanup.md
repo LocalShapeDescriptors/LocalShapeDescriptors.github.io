@@ -69,27 +69,6 @@ if (!md.mobile() && !md.tablet()) {
   document.getElementById('zfinch_dataset_vertical').style.display = 'none';
   document.getElementById('zfinch_dataset').style.display = 'block';
 
-  //hemi
-  document.getElementById('hemi_dataset_vertical').style.display = 'none';
-  document.getElementById('hemi_caption_vertical').style.display = 'none';
-  document.getElementById('hemi_dataset').style.display = 'block';
-
-  //fib25
-  document.getElementById('fib25_dataset_vertical').style.display = 'none';
-  document.getElementById('fib25_dataset').style.display = 'block';
-
-  //voi_mcm
-  document.getElementById('voi_mcm_vertical').style.display = 'none';
-  document.getElementById('voi_mcm').style.display = 'block';
-
-  //hemi_voi
-  document.getElementById('hemi_voi_vertical').style.display = 'none';
-  document.getElementById('hemi_voi').style.display = 'block';
-
-  //fib25_voi
-  document.getElementById('fib25_voi_vertical').style.display = 'none';
-  document.getElementById('fib25_voi').style.display = 'block';
-
   // watershed & agglom
   document.getElementById('watershed_separate_medium').style.display = 'none';
   document.getElementById('watershed_joined_medium').style.display = 'none';
@@ -113,9 +92,6 @@ if (!md.mobile() && !md.tablet()) {
     document.getElementById('labels_div').style.display = 'none';
     document.getElementById('gt_lsds_div').style.display = 'none';
     document.getElementById('gt_vs_pred_div').style.display = 'none';
-    document.getElementById('zfinch_div').style.display = 'none';
-    document.getElementById('hemi_div').style.display = 'none';
-    document.getElementById('fib25_div').style.display = 'none';
   }
 }
 
@@ -155,27 +131,6 @@ else {
   document.getElementById('zfinch_dataset').style.display = 'none';
   document.getElementById('zfinch_dataset_vertical').style.display = 'block';
 
-  //hemi
-  document.getElementById('hemi_dataset').style.display = 'none';
-  document.getElementById('hemi_caption').style.display = 'none';
-  document.getElementById('hemi_dataset_vertical').style.display = 'block';
-
-  //fib25
-  document.getElementById('fib25_dataset').style.display = 'none';
-  document.getElementById('fib25_dataset_vertical').style.display = 'block';
-
-  //voi_mcm
-  document.getElementById('voi_mcm').style.display = 'none';
-  document.getElementById('voi_mcm_vertical').style.display = 'block';
-
-  //hemi_voi
-  document.getElementById('hemi_voi').style.display = 'none';
-  document.getElementById('hemi_voi_vertical').style.display = 'block';
-
-  //fib25_voi
-  document.getElementById('fib25_voi').style.display = 'none';
-  document.getElementById('fib25_voi_vertical').style.display = 'block';
-
   // watershed / agglom
   document.getElementById('watershed_separate_large').style.display = 'none';
   document.getElementById('watershed_joined_large').style.display = 'none';
@@ -190,9 +145,6 @@ else {
   document.getElementById('labels_div').style.display = 'none';
   document.getElementById('gt_lsds_div').style.display = 'none';
   document.getElementById('gt_vs_pred_div').style.display = 'none';
-  document.getElementById('zfinch_div').style.display = 'none';
-  document.getElementById('hemi_div').style.display = 'none';
-  document.getElementById('fib25_div').style.display = 'none';
 
 }
 

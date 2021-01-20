@@ -43,6 +43,14 @@ body {
   margin: 0px;
 }
 
+pre {
+ white-space: pre-wrap;       /* css-3 */
+ white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+ white-space: -pre-wrap;      /* Opera 4-6 */
+ white-space: -o-pre-wrap;    /* Opera 7 */
+ word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
 .row {
   display: flex;
   flex-wrap: wrap;
@@ -428,7 +436,7 @@ dt-article figcaption b {
   background: #eee;
   font-size: 0.8em;
   padding: 1em 1em;
-  margin: 0 1em 0 1em;
+  margin: 0 2em 1em 2em;
   border: 1px solid #aaa;
 }
 
@@ -543,9 +551,10 @@ color: #3D5AFE;
         <a class="affiliation" target="_blank" rel="noopener noreferrer" href="https://www.janelia.org/lab/funke-lab">HHMI Janelia</a>
     </div>
   </div>
-  <div class="date">
-    <div class="month">LSD</div>
-    <div class="year" style="color: #2AAFCF;"><a target="_blank" rel="noopener noreferrer" href="https://github.com/funkelab/lsd_paper" target="_blank">Paper</a></div>
+  <div class="date"> <div style="color: #2AAFCF;"><a target="_blank"
+        rel="noopener noreferrer"
+        href="https://www.biorxiv.org/content/10.1101/2021.01.18.427039v1"
+        target="_blank">LSD Paper</a></div>
   </div>
 </div>
 </dt-byline>
